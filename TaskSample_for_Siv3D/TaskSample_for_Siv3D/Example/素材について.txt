@@ -1,0 +1,32 @@
+﻿------------------------------------------------------------------------------
+	Example ディレクトリのサウンドおよびイメージの著作者
+------------------------------------------------------------------------------
+
+Windmill.png, Particle.png, Sound.mp3
+	Siv3D | http://play-siv3d.hateblo.jp/
+
+Prokofiev.mid
+	S. S. Prokofiev「ロメオとジュリエット」組曲第１番 Op.64-bis - タイボルトの死
+	幻想交響曲 -Fantastic Symphony- | http://www.geocities.jp/kamotomusic/index.html
+
+風の丘.mp3
+	SAM FREE Music | http://sam-free.com/
+
+YomogiFont.ttf
+	よもぎフォント
+	ASTERISM | http://www.asterism-m.com/
+
+Earth.jpg
+	NASA | http://visibleearth.nasa.gov/
+
+Ground.jpg
+	qubodup | http://opengameart.org/node/7998
+
+Grass.jpg
+	Seamless Green Grass Textures By Goodtextures | http://www.brusheezy.com/textures/20185-seamless-green-grass-textures
+
+Brick.jpg
+	arikel | http://proceduraldeathjam.com/node/10176
+
+siv3d-kun.png
+	Siv3D-kun, ©2015 Siv3D, licensed under a CC BY-NC: http://creativecommons.org/licenses/by-nc/4.0/
