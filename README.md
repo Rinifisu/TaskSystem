@@ -22,4 +22,5 @@ Siv3D 用のタスクシステムライブラリです。
 
 ##ライセンス
 Copyright (c) 2016 Rinifisu
+
 Released under the MIT license
