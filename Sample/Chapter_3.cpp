@@ -23,7 +23,7 @@ private:
 
 public:
 	Spark(const Vec2 & vec, const Color & color) : Task()
-		, m_Pos(vec), m_Vec(Vec2(Random(-1.0, 1.0), Random(-1.0, 1.0)).normalized())
+		, m_Pos(vec), m_Vec(RandomVec2())
 		, m_Speed(Random(5.0, 20.0)), m_Color(color)
 		, m_Update(this, &Spark::Update)
 	{ }
@@ -54,7 +54,7 @@ private:
 public:
 	Fireworks() : Task()
 		, m_Time(Random(30, 90)), m_Pos(Mouse::Pos().x, 480.0)
-		, m_Color(Random(63, 255), Random(63, 255), Random(63, 255))
+		, m_Color(RandomColor())
 		, m_Update(this, &Fireworks::Update)
 	{ }
 
