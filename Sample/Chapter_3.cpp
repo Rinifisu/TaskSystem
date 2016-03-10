@@ -22,8 +22,8 @@ private:
 	TaskCall	m_Update;	//更新設定
 
 public:
-	Spark(const Vec2 & vec, const Color & color) : Task()
-		, m_Pos(vec), m_Vec(RandomVec2())
+	Spark(const Vec2 & pos, const Color & color) : Task()
+		, m_Pos(pos), m_Vec(RandomVec2())
 		, m_Speed(Random(5.0, 20.0)), m_Color(color)
 		, m_Update(this, &Spark::Update)
 	{ }
@@ -35,6 +35,7 @@ private:
 		if (--m_Speed <= 0.0) this->Destroy();
 		//移動
 		m_Pos += m_Vec * m_Speed;
+
 		//描画
 		Circle(m_Pos, 2.0).draw(m_Color);
 	}
@@ -72,6 +73,7 @@ private:
 
 		//移動
 		m_Pos.y -= 5;
+
 		//描画
 		Circle(m_Pos, 5.0).draw(m_Color);
 	}

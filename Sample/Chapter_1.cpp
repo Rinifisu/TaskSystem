@@ -29,6 +29,7 @@ private:
 	{
 		//生存時間が0以下で消去
 		if (--m_Time <= 0) this->Destroy();
+
 		//描画
 		Circle(m_Pos, 5.0).draw();
 	}
