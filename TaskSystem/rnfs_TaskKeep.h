@@ -27,25 +27,27 @@ namespace rnfs
 		bool	m_Safety;	//キープカウント保障
 
 	private:
-		TaskKeep(const TaskKeep<TYPE> & taskKeep) = delete;
-		TaskKeep(TaskKeep<TYPE> && taskKeep) = delete;
-
 		void _Reset_(TYPE* p_Task);
 
 	public:
 		TaskKeep();
+		TaskKeep(TYPE* p_Task);
+		TaskKeep(const TaskKeep<TYPE> & taskKeep);
+		TaskKeep(TaskKeep<TYPE> && taskKeep) = delete;
 		~TaskKeep();
 
 		void operator = (TYPE* p_Task);
 		void operator = (const TaskKeep<TYPE> & taskKeep);
+		void operator = (TaskKeep<TYPE> && taskKeep) = delete;
 
 		void Clear();
 		void Free();
 
 		void Safety(const bool safety);
 
+		operator TYPE* () const;
+
 		TYPE* operator -> () const;
-		TYPE& operator () () const;
 
 		TYPE& getTask() const;
 		TYPE* getTaskPointer() const;
@@ -98,6 +100,30 @@ namespace rnfs
 
 	}
 
+	/// <summary>
+	/// <para>──────────────────────</para>
+	/// <para>タスクをキープします。</para>
+	/// <para>既にキープ中であるタスクは消去、または解放されます。</para>
+	/// <para>──────────────────────</para>
+	/// </summary>
+	///
+	/// <param name="p_Task">
+	/// <para>キープ対象のタスク</para>
+	/// </param>
+	template<class TYPE>
+	inline TaskKeep<TYPE>::TaskKeep(TYPE* p_Task)
+		: mp_Task(nullptr), m_Safety(true)
+	{
+		_Reset_(p_Task);
+	}
+
+	template<class TYPE>
+	inline TaskKeep<TYPE>::TaskKeep(const TaskKeep<TYPE> & taskKeep)
+		: mp_Task(nullptr), m_Safety(taskKeep.m_Safety)
+	{
+		_Reset_(taskKeep.mp_Task);
+	}
+
 	//タスクの消去
 	template<class TYPE>
 	inline TaskKeep<TYPE>::~TaskKeep()
@@ -134,7 +160,7 @@ namespace rnfs
 	template<class TYPE>
 	inline void TaskKeep<TYPE>::operator = (const TaskKeep<TYPE> & taskKeep)
 	{
-		_Reset_(taskKeep.getTaskPointer());
+		_Reset_(taskKeep.mp_Task);
 	}
 
 	/// <summary>
@@ -203,13 +229,8 @@ namespace rnfs
 		}
 	}
 
-	/// <summary>
-	/// <para>────────</para>
-	/// <para>タスクを取得します。</para>
-	/// <para>────────</para>
-	/// </summary>
 	template<class TYPE>
-	inline TYPE* TaskKeep<TYPE>::operator -> () const
+	inline TaskKeep<TYPE>::operator TYPE* () const
 	{
 		return mp_Task;
 	}
@@ -220,9 +241,9 @@ namespace rnfs
 	/// <para>────────</para>
 	/// </summary>
 	template<class TYPE>
-	inline TYPE & TaskKeep<TYPE>::operator () () const
+	inline TYPE* TaskKeep<TYPE>::operator -> () const
 	{
-		return *mp_Task;
+		return mp_Task;
 	}
 
 	/// <summary>

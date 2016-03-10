@@ -34,22 +34,21 @@ namespace rnfs
 		std::deque<size_t>							m_RegistID;		//登録済みの番号一覧
 		std::deque<size_t>							m_DeleteID;		//消去済みの番号一覧
 
-	private:
-		TaskKeepArray(const TaskKeepArray<TYPE> & taskKeepArray) = delete;
-		TaskKeepArray(TaskKeepArray<TYPE> && taskKeepArray) = delete;
-
-		void operator =(const TaskKeepArray<TYPE> & taskKeepArray) = delete;
-		void operator =(TaskKeepArray<TYPE> && taskKeepArray) = delete;
-
 	public:
 		TaskKeepArray();
 		~TaskKeepArray() = default;
+
+		TaskKeepArray(const TaskKeepArray<TYPE> & taskKeepArray) = default;
+		TaskKeepArray(TaskKeepArray<TYPE> && taskKeepArray) = delete;
 
 		typename std::unordered_map<size_t, TaskKeep<TYPE>>::iterator begin();
 		typename std::unordered_map<size_t, TaskKeep<TYPE>>::iterator end();
 
 		typename std::unordered_map<size_t, TaskKeep<TYPE>>::const_iterator begin() const;
 		typename std::unordered_map<size_t, TaskKeep<TYPE>>::const_iterator end() const;
+
+		void operator =(const TaskKeepArray<TYPE> & taskKeepArray) = delete;
+		void operator =(TaskKeepArray<TYPE> && taskKeepArray) = delete;
 
 		TYPE & operator () (const size_t number);
 		TYPE & operator [] (const size_t number);
@@ -73,6 +72,10 @@ namespace rnfs
 
 		void Free_ID(const size_t number);
 		void Free(const size_t number);
+
+		void Free_Back();
+		void Free_Front();
+		void Free_All();
 
 		void Swap_ID(const size_t left, const size_t right);
 		void Swap(const size_t left, const size_t right);
@@ -538,6 +541,66 @@ namespace rnfs
 		m_RegistID.erase(m_RegistID.begin() + number);
 	}
 
+	template<class TYPE>
+	inline void TaskKeepArray<TYPE>::Free_Back()
+	{
+		//存在しない場合は終了
+		if (m_Data.empty()) return;
+
+		//タスクの解放
+		m_Data[m_RegistID.back()].Free();
+
+		//空のタスクキープの消去
+		m_Data.erase(m_RegistID.back());
+
+		//消去済み配列に追加
+		m_DeleteID.emplace_back(m_RegistID.back());
+
+		//登録済み配列から消去
+		m_RegistID.erase(m_RegistID.end());
+	}
+
+	template<class TYPE>
+	inline void TaskKeepArray<TYPE>::Free_Front()
+	{
+		//存在しない場合は終了
+		if (m_Data.empty()) return;
+
+		//タスクの解放
+		m_Data[m_RegistID.front()].Free();
+
+		//空のタスクキープの消去
+		m_Data.erase(m_RegistID.front());
+
+		//消去済み配列に追加
+		m_DeleteID.emplace_back(m_RegistID.front());
+
+		//登録済み配列から消去
+		m_RegistID.erase(m_RegistID.begin());
+	}
+
+	template<class TYPE>
+	inline void TaskKeepArray<TYPE>::Free_All()
+	{
+		//タスクの全解放
+		for (auto & i : m_Data)
+		{
+			i.second.Free();
+		}
+
+		//タスク配列の全初期化
+		m_Data.clear();
+
+		//登録済み配列の全初期化
+		m_RegistID.clear();
+
+		//消去済み配列の全初期化
+		m_DeleteID.clear();
+
+		//識別番号を先頭の位置へ移動
+		m_NextID = 0;
+	}
+
 	/// <summary>
 	/// <para>─────────────────────────</para>
 	/// <para>識別番号を使用して、タスクキープの配列位置を入れ替えます。</para>
@@ -656,7 +719,7 @@ namespace rnfs
 		size_t count = 0;
 
 		//登録済み配列の位置が、識別番号の順にはなっていないので探索する
-		for (auto& i : m_RegistID)
+		for (auto & i : m_RegistID)
 		{
 			//識別番号が一致した場合は現時点の配列番号を返す
 			if (number == i) return count;

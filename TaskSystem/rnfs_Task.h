@@ -95,4 +95,24 @@ namespace rnfs
 			static void Update();
 		};
 	};
+
+	/// <summary>
+	/// <para>───────────────────────────────────────────────────────</para>
+	/// <para>タスクを生成します。</para>
+	/// <para>new タスク名(); のタスク生成も可能ですが、delete 記述を行わない事による違和感やルール違反を避ける為、この関数の使用を推奨します。</para>
+	/// <para>テンプレート引数を使用します。＜タスク名＞</para>
+	/// <para>───────────────────────────────────────────────────────</para>
+	/// <para>推奨　：Create&lt;タスク名&gt;(引数);</para>
+	/// <para>非推奨：new タスク名(引数);</para>
+	/// <para>───────────────────────────────────────────────────────</para>
+	/// </summary>
+	///
+	/// <param name="args">
+	/// <para>コンストラクタの引数</para>
+	/// </param>
+	template <class TYPE, typename ... ARGS>
+	static TYPE* Create(ARGS && ... args)
+	{
+		return new TYPE(std::forward<ARGS>(args) ...);
+	}
 }

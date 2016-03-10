@@ -14,6 +14,7 @@ public:
 		, m_Update(this, &Locus::Update) //第2引数に指定した関数が自動で呼び出される
 	{ }
 
+private:
 	void Update()
 	{
 		//生存時間が0以下で消去
@@ -28,7 +29,7 @@ void Main()
 	while (System::Update())
 	{
 		//軌跡を生成
-		new Locus();
+		Create<Locus>();
 
 		//TaskCall で設定した関数を呼び出す
 		TaskCall::System::Update();

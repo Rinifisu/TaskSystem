@@ -55,7 +55,7 @@ namespace rnfs
 			if (p_Transmit->m_Active && p_Transmit->m_Call)
 			{
 				//関数の実行
-				for (auto& i : m_Receive[p_Transmit->m_Check])
+				for (auto & i : m_Receive[p_Transmit->m_Check])
 				{
 					(i.second.getTask().*p_Transmit->m_Call)(*p_Transmit->mp_Task);
 				}

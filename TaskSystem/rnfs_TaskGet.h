@@ -41,6 +41,10 @@ namespace rnfs
 
 	public:
 		TaskGet();
+		
+		template<class TASK>
+		TaskGet(TASK* p_Task);
+
 		~TaskGet();
 
 		template<class TASK>
@@ -80,6 +84,33 @@ namespace rnfs
 		template<class TASK>
 		static const size_t size();
 	};
+
+	/// <summary>
+	/// <para>───────────────────────────────</para>
+	/// <para>タスクゲットの登録を行います。</para>
+	/// <para>───────────────────────────────</para>
+	/// <para>登録を行うことで TaskGet::get で指定したタスクが配列形式で呼び出せます。</para>
+	/// <para>───────────────────────────────</para>
+	/// </summary>
+	///
+	/// <param name="p_Task">
+	/// <para>自身のポインタ</para>
+	/// <para>必ず this を入力してください。</para>
+	/// <para>タスク識別用の名前を取得するため、テンプレートになっています。</para>
+	/// </param>
+	template<class TASK>
+	inline TaskGet::TaskGet(TASK * p_Task)
+	{
+		//登録されていたら登録解除する
+		if (mp_Task) this->_Unregister_();
+
+		//初期化
+		mp_Task = p_Task;
+		m_Name = typeid(TASK).name();
+
+		//登録
+		this->_Register_();
+	}
 
 	/// <summary>
 	/// <para>───────────────────────────────</para>
