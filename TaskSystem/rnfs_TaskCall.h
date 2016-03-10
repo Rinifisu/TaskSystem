@@ -48,6 +48,10 @@ namespace rnfs
 
 	public:
 		TaskCall();
+
+		template<class TASK, typename FUNC = void(Task::*)(), typename PRIORITY = size_t>
+		TaskCall(TASK* p_Task, const FUNC & callbackFunction = nullptr, const unsigned char group = 0, const PRIORITY & priority = 0, const bool priorityPushBack = true);
+
 		~TaskCall();
 
 		template<class TASK, typename FUNC = void(Task::*)(), typename PRIORITY = size_t>
@@ -165,9 +169,63 @@ namespace rnfs
 			/// <param name="group">
 			/// <para>グループ番号</para>
 			/// </param>
-			static void Update(const unsigned char group);
+			static void Update(const unsigned char group = 0);
 		};
 	};
+
+	/// <summary>
+	/// <para>────────────────────────────────────────────</para>
+	/// <para>コールリストの登録を行います。</para>
+	/// <para>────────────────────────────────────────────</para>
+	/// <para>登録を行うことで TaskCall::System::Update 呼び出し時に 引数や SetCall で設定した関数が呼び出されます。</para>
+	/// <para>────────────────────────────────────────────</para>
+	/// </summary>
+	///
+	/// <param name="p_Task">
+	/// <para>自身のポインタ</para>
+	/// <para>必ず this を入力してください。</para>
+	/// <para>デバッグ用の名前を取得するため、テンプレートになっています。</para>
+	/// </param>
+	///
+	/// <param name="callbackFunction">
+	/// <para>省略可能</para>
+	/// <para>TaskCall::System::Update 呼び出し時に呼ばれるコール関数</para>
+	/// <para>型変換の省略とデフォルト引数の設定のため、テンプレートになっています。</para>
+	/// </param>
+	///
+	/// <param name="group">
+	/// <para>グループ番号（TaskCall::System::Update の引数で使われる分類）</para>
+	/// </param>
+	///
+	/// <param name="priority">
+	/// <para>省略可能</para>
+	/// <para>優先度（値が少なければ少ないほどコールが先に行われる）</para>
+	/// <para>型変換の省略（主にenum class）のため、テンプレートになっています。</para>
+	/// </param>
+	///
+	/// <param name="priorityPushBack">
+	/// <para>省略可能</para>
+	/// <para>同じ優先度の集まりと競合した際の処理</para>
+	/// <para>true  -> コールの集まりの末尾に設定</para>
+	/// <para>false -> コールの集まりの先頭に設定</para>
+	/// </param>
+	template<class TASK, typename FUNC, typename PRIORITY>
+	inline TaskCall::TaskCall(TASK * p_Task, const FUNC & callbackFunction, const unsigned char group, const PRIORITY & priority, const bool priorityPushBack)
+	{
+		//コールが登録されていたら登録解除する
+		if (mp_Task) this->_Unregister_();
+
+		//初期化
+		mp_Task = p_Task;
+		m_Priority = static_cast<size_t>(priority);
+		m_Name = typeid(TASK).name();
+		m_Group = group;
+		m_Call = static_cast<void(Task::*)()>(callbackFunction);
+		m_Active = true;
+
+		//登録
+		this->_Register_(priorityPushBack);
+	}
 
 	/// <summary>
 	/// <para>────────────────────────────────────────────</para>
