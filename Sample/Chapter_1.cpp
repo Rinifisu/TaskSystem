@@ -1,6 +1,14 @@
 ﻿#include <Siv3D.hpp>
 #include "TaskSystem/rnfs.h"
 
+/*
+Chapter_2：タスクの生成と消去
+
+タスク実装に最低限必要な機能を作り、生成から消去までを行います。
+マウスカーソルの位置から円を生成し、60フレーム後に消えるようにします。
+TaskCall を使用する事で、指定した関数を自動で呼び出せます。
+*/
+
 class Locus : public Task
 {
 private:
