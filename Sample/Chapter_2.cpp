@@ -5,7 +5,7 @@
 Chapter_2：更新関数を切り替える
 
 TaskCall::SetCall を使い、更新関数を切り替えます。
-左クリックで風船が生成され、
+左クリックで風船を生成し、
 1．膨らむ
 2．破裂
 の2ステップで消去します。
@@ -62,12 +62,9 @@ void Main()
 		//左クリックで風船を生成
 		if (Input::MouseL.clicked) Create<Balloon>();
 
-		//TaskCall で設定した関数を呼び出す
 		TaskCall::System::Update();
-		//Destroy を呼び出したタスクを消去
 		Task::System::Update();
 	}
 
-	//全タスクの消去
 	Task::System::Clear();
 }
