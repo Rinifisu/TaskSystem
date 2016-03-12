@@ -2,7 +2,7 @@
 #include "TaskSystem/rnfs.h"
 
 /*
-Chapter_5：タスクキープ＆呼び出し関数分別
+Chapter_5：タスクキープ ＆ 呼び出し関数分別
 
 Ball を生成し、左クリックでジャンプを行います。
 描画関数を用意し、更新関数にあった描画処理を移動しました。
@@ -84,9 +84,9 @@ void Main()
 		//左クリックでボールのジャンプ
 		if (Input::MouseL.clicked) ball->Jump();
 
-		TaskCall::System::Update();
-		Task::System::Update();
+		TaskCall::All::Update();
+		Task::All::Update();
 	}
 
-	Task::System::Clear();
+	Task::All::Clear();
 }

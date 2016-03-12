@@ -44,7 +44,7 @@ namespace rnfs
 		m_ID = 0;
 	}
 
-	void TaskReceive::System::Update()
+	void TaskReceive::All::Update()
 	{
 		TaskSend* p_Transmit = TaskSend::mp_Begin; //現在のリストポインタ
 
@@ -57,7 +57,7 @@ namespace rnfs
 				//関数の実行
 				for (auto & i : m_Receive[p_Transmit->m_Check])
 				{
-					(i.second.getTask().*p_Transmit->m_Call)(*p_Transmit->mp_Task);
+					(i.second.task().*p_Transmit->m_Call)(*p_Transmit->mp_Task);
 				}
 			}
 

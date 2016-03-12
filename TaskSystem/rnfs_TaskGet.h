@@ -65,31 +65,39 @@ namespace rnfs
 		/// </summary>
 		const size_t id();
 
-	public:
-		template<class TASK>
-		static TASK & get(const size_t arrayNumber = 0);
+		/// <summary>
+		/// <para>────────────</para>
+		/// <para>全体の処理を行う空間です。</para>
+		/// <para>────────────</para>
+		/// </summary>
+		class All
+		{
+		public:
+			template<class TASK>
+			static TASK & task(const size_t arrayNumber = 0);
 
-		template<class TASK>
-		static TASK & get_ID(const size_t idNumber = 0);
+			template<class TASK>
+			static TASK & task_ID(const size_t idNumber = 0);
 
-		template<class TASK>
-		static const size_t toID(const size_t number);
+			template<class TASK>
+			static const size_t toID(const size_t number);
 
-		template<class TASK>
-		static const size_t toArrayNumber(const size_t number);
+			template<class TASK>
+			static const size_t toArrayNumber(const size_t number);
 
-		template<class TASK>
-		static const bool isID(const size_t number);
+			template<class TASK>
+			static const bool isID(const size_t number);
 
-		template<class TASK>
-		static const size_t size();
+			template<class TASK>
+			static const size_t size();
+		};
 	};
 
 	/// <summary>
 	/// <para>───────────────────────────────</para>
 	/// <para>タスクゲットの登録を行います。</para>
 	/// <para>───────────────────────────────</para>
-	/// <para>登録を行うことで TaskGet::get で指定したタスクが配列形式で呼び出せます。</para>
+	/// <para>登録を行うことで TaskGet::task で指定したタスクが配列形式で呼び出せます。</para>
 	/// <para>───────────────────────────────</para>
 	/// </summary>
 	///
@@ -117,7 +125,7 @@ namespace rnfs
 	/// <para>タスクゲットの登録を行います。</para>
 	/// <para>テンプレート引数を使用することで、継承元クラスに登録可能になります。</para>
 	/// <para>───────────────────────────────</para>
-	/// <para>登録を行うことで TaskGet::get で指定したタスクが配列形式で呼び出せます。</para>
+	/// <para>登録を行うことで TaskGet::task で指定したタスクが配列形式で呼び出せます。</para>
 	/// <para>───────────────────────────────</para>
 	/// </summary>
 	///
@@ -143,7 +151,7 @@ namespace rnfs
 	/// <summary>
 	/// <para>───────────────────────</para>
 	/// <para>TaskGet::Register で登録済みのタスクを取得します。</para>
-	/// <para>テンプレート引数を使用します。＜タスク名＞</para>
+	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
 	/// <para>───────────────────────</para>
 	/// </summary>
 	///
@@ -151,15 +159,15 @@ namespace rnfs
 	/// <para>配列番号</para>
 	/// </param>
 	template<class TASK>
-	inline TASK & TaskGet::get(const size_t arrayNumber)
+	inline TASK & TaskGet::All::task(const size_t arrayNumber)
 	{
-		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK).name()).getTaskPointer(arrayNumber));
+		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK).name()).taskPointer(arrayNumber));
 	}
 
 	/// <summary>
 	/// <para>───────────────────────────────</para>
 	/// <para>TaskGet::Register で登録済みのタスクを、識別番号を使用して取得します。</para>
-	/// <para>テンプレート引数を使用します。＜タスク名＞</para>
+	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
 	/// <para>───────────────────────────────</para>
 	/// </summary>
 	///
@@ -167,15 +175,15 @@ namespace rnfs
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TASK>
-	inline TASK & TaskGet::get_ID(const size_t idNumber)
+	inline TASK & TaskGet::All::task_ID(const size_t idNumber)
 	{
-		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK).name()).getTaskPointer_ID(idNumber));
+		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK).name()).taskPointer_ID(idNumber));
 	}
 
 	/// <summary>
 	/// <para>────────────────────────────────────</para>
 	/// <para>TaskGet::Register で登録済みのタスクの識別番号を、配列番号を使用して取得します。</para>
-	/// <para>テンプレート引数を使用します。＜タスク名＞</para>
+	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
 	/// <para>────────────────────────────────────</para>
 	/// </summary>
 	///
@@ -183,7 +191,7 @@ namespace rnfs
 	/// <para>配列番号</para>
 	/// </param>
 	template<class TASK>
-	inline const size_t TaskGet::toID(const size_t number)
+	inline const size_t TaskGet::All::toID(const size_t number)
 	{
 		return m_Data.at(typeid(TASK).name()).toID(number);
 	}
@@ -191,7 +199,7 @@ namespace rnfs
 	/// <summary>
 	/// <para>────────────────────────────────────</para>
 	/// <para>TaskGet::Register で登録済みのタスクの配列番号を、識別番号を使用して取得します。</para>
-	/// <para>テンプレート引数を使用します。＜タスク名＞</para>
+	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
 	/// <para>────────────────────────────────────</para>
 	/// </summary>
 	///
@@ -199,7 +207,7 @@ namespace rnfs
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TASK>
-	inline const size_t TaskGet::toArrayNumber(const size_t number)
+	inline const size_t TaskGet::All::toArrayNumber(const size_t number)
 	{
 		return m_Data.at(typeid(TASK).name()).toArrayNumber(number);
 	}
@@ -207,7 +215,7 @@ namespace rnfs
 	/// <summary>
 	/// <para>─────────────────────────────────</para>
 	/// <para>指定した識別番号の TaskGet::Register で登録済みタスクの有無を確認します。</para>
-	/// <para>テンプレート引数を使用します。＜タスク名＞</para>
+	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
 	/// <para>─────────────────────────────────</para>
 	/// </summary>
 	///
@@ -215,7 +223,7 @@ namespace rnfs
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TASK>
-	inline const bool TaskGet::isID(const size_t number)
+	inline const bool TaskGet::All::isID(const size_t number)
 	{
 		//登録済みのタスクが１つも無い場合は存在しない
 		if (m_Data.count(typeid(TASK).name()) <= 0) return false;
@@ -226,11 +234,11 @@ namespace rnfs
 	/// <summary>
 	/// <para>────────────────────────</para>
 	/// <para>TaskGet::Register で登録済みのクラス数を取得します。</para>
-	/// <para>テンプレート引数を使用します。＜タスク名＞</para>
+	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
 	/// <para>────────────────────────</para>
 	/// </summary>
 	template<class TASK>
-	inline const size_t TaskGet::size()
+	inline const size_t TaskGet::All::size()
 	{
 		//登録済みのタスクが１つも無い場合は０を返す
 		if (m_Data.count(typeid(TASK).name()) <= 0) return 0;

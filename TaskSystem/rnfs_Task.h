@@ -52,13 +52,13 @@ namespace rnfs
 		virtual ~Task() = default;
 
 		/// <summary>
-		/// <para>─────────────────</para>
+		/// <para>───────────────</para>
 		/// <para>消去フラグを立てます。</para>
 		/// <para>キープ中のタスクは消去できません。</para>
-		/// <para>─────────────────</para>
-		/// <para>次の Task::System::Update 呼び出し時に</para>
+		/// <para>───────────────</para>
+		/// <para>次の Task::All::Update 呼び出し時に</para>
 		/// <para>タスクの消去が行われます。</para>
-		/// <para>─────────────────</para>
+		/// <para>───────────────</para>
 		/// </summary>
 		virtual void Destroy() final;
 
@@ -72,11 +72,11 @@ namespace rnfs
 
 	public:
 		/// <summary>
-		/// <para>──────────────</para>
-		/// <para>タスク全体の処理を行う空間です。</para>
-		/// <para>──────────────</para>
+		/// <para>────────────</para>
+		/// <para>全体の処理を行う空間です。</para>
+		/// <para>────────────</para>
 		/// </summary>
-		class System
+		class All
 		{
 		public:
 			/// <summary>
@@ -100,9 +100,9 @@ namespace rnfs
 	/// <para>───────────────────────────────────────────────────────</para>
 	/// <para>タスクを生成します。</para>
 	/// <para>new タスク名(); のタスク生成も可能ですが、delete 記述を行わない事による違和感やルール違反を避ける為、この関数の使用を推奨します。</para>
-	/// <para>テンプレート引数を使用します。＜タスク名＞</para>
+	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
 	/// <para>───────────────────────────────────────────────────────</para>
-	/// <para>推奨　：Create&lt;タスク名&gt;(引数);</para>
+	/// <para>　推奨：Create&lt;タスク名&gt;(引数);</para>
 	/// <para>非推奨：new タスク名(引数);</para>
 	/// <para>───────────────────────────────────────────────────────</para>
 	/// </summary>

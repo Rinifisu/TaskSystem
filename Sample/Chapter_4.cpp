@@ -62,9 +62,9 @@ void Main()
 
 	while (System::Update())
 	{
-		TaskCall::System::Update();
-		Task::System::Update();
+		TaskCall::All::Update();
+		Task::All::Update();
 	}
 
-	Task::System::Clear();
+	Task::All::Clear();
 }

@@ -68,7 +68,7 @@ namespace rnfs
 		return m_Link;
 	}
 
-	void Task::System::Clear()
+	void Task::All::Clear()
 	{
 		//現在のタスク
 		Task* p_Task = mp_Begin;
@@ -83,7 +83,7 @@ namespace rnfs
 		}
 	}
 
-	void Task::System::Update()
+	void Task::All::Update()
 	{
 		//現在のタスク
 		Task* p_Task = mp_Begin;

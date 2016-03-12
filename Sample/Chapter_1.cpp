@@ -45,11 +45,11 @@ void Main()
 		Create<Locus>();
 
 		//TaskCall で設定した関数を呼び出す
-		TaskCall::System::Update();
+		TaskCall::All::Update();
 		//Destroy を呼び出したタスクを消去
-		Task::System::Update();
+		Task::All::Update();
 	}
 
 	//全タスクの消去
-	Task::System::Clear();
+	Task::All::Clear();
 }

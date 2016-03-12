@@ -46,11 +46,11 @@ namespace rnfs
 		void Unregister();
 
 		/// <summary>
-		/// <para>─────────────────────</para>
-		/// <para>タスク送信とタスク受信全体の処理を行う空間です。</para>
-		/// <para>─────────────────────</para>
+		/// <para>────────────</para>
+		/// <para>全体の処理を行う空間です。</para>
+		/// <para>────────────</para>
 		/// </summary>
-		class System
+		class All
 		{
 		public:
 			/// <summary>

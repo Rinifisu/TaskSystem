@@ -49,8 +49,8 @@ namespace rnfs
 
 		TYPE* operator -> () const;
 
-		TYPE& getTask() const;
-		TYPE* getTaskPointer() const;
+		TYPE& task() const;
+		TYPE* taskPointer() const;
 
 		operator bool() const;
 	};
@@ -252,7 +252,7 @@ namespace rnfs
 	/// <para>────────</para>
 	/// </summary>
 	template<class TYPE>
-	inline TYPE & TaskKeep<TYPE>::getTask() const
+	inline TYPE & TaskKeep<TYPE>::task() const
 	{
 		return *mp_Task;
 	}
@@ -263,7 +263,7 @@ namespace rnfs
 	/// <para>───────────</para>
 	/// </summary>
 	template<class TYPE>
-	inline TYPE* TaskKeep<TYPE>::getTaskPointer() const
+	inline TYPE* TaskKeep<TYPE>::taskPointer() const
 	{
 		return mp_Task;
 	}

@@ -153,7 +153,7 @@ namespace rnfs
 		return m_Group;
 	}
 
-	void TaskCall::System::Update(const unsigned char group)
+	void TaskCall::All::Update(const unsigned char group)
 	{
 		TaskCall* p_TaskCall = m_Begin[group]; //現在のリストポインタ
 

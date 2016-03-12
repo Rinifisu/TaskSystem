@@ -62,9 +62,9 @@ void Main()
 		//左クリックで風船を生成
 		if (Input::MouseL.clicked) Create<Balloon>();
 
-		TaskCall::System::Update();
-		Task::System::Update();
+		TaskCall::All::Update();
+		Task::All::Update();
 	}
 
-	Task::System::Clear();
+	Task::All::Clear();
 }

@@ -18,11 +18,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 namespace rnfs
 {
 	/// <summary>
-	/// <para>───────────────────────</para>
+	/// <para>─────────────────────</para>
 	/// <para>タスクキープ配列</para>
 	/// <para>タスクを配列で持つための専用ポインタ配列です。</para>
-	/// <para>識別番号を利用して、タスク内からキープ解除が行えます。</para>
-	/// <para>───────────────────────</para>
+	/// <para>ソート機能が無い代わりに、識別番号を使用します。</para>
+	/// <para>─────────────────────</para>
 	/// </summary>
 	template<class TYPE = Task>
 	class TaskKeepArray final
@@ -53,11 +53,11 @@ namespace rnfs
 		TYPE & operator () (const size_t number);
 		TYPE & operator [] (const size_t number);
 
-		TYPE & getTask_ID(const size_t number);
-		TYPE & getTask(const size_t number);
+		TYPE & task_ID(const size_t number);
+		TYPE & task(const size_t number);
 
-		TYPE* getTaskPointer_ID(const size_t number);
-		TYPE* getTaskPointer(const size_t number);
+		TYPE* taskPointer_ID(const size_t number);
+		TYPE* taskPointer(const size_t number);
 
 		void Add_Back(TYPE* p_Task);
 		void Add_Front(TYPE* p_Task);
@@ -76,9 +76,6 @@ namespace rnfs
 		void Free_Back();
 		void Free_Front();
 		void Free_All();
-
-		void Swap_ID(const size_t left, const size_t right);
-		void Swap(const size_t left, const size_t right);
 
 		void Safety_ID(const size_t number, const bool safety);
 		void Safety(const size_t number, const bool safety);
@@ -172,7 +169,7 @@ namespace rnfs
 	inline TYPE & TaskKeepArray<TYPE>::operator () (const size_t number)
 	{
 		//実体が生成されないように参照する
-		return m_Data[number].getTask();
+		return m_Data[number].task();
 	}
 
 	/// <summary>
@@ -188,7 +185,7 @@ namespace rnfs
 	inline TYPE & TaskKeepArray<TYPE>::operator [] (const size_t number)
 	{
 		//実体が生成されないように参照する
-		return m_Data[m_RegistID[number]].getTask();
+		return m_Data[m_RegistID[number]].task();
 	}
 
 	/// <summary>
@@ -201,10 +198,10 @@ namespace rnfs
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TYPE>
-	inline TYPE & TaskKeepArray<TYPE>::getTask_ID(const size_t number)
+	inline TYPE & TaskKeepArray<TYPE>::task_ID(const size_t number)
 	{
 		//実体が生成されないように参照する
-		return m_Data[number].getTask();
+		return m_Data[number].task();
 	}
 
 	/// <summary>
@@ -217,10 +214,10 @@ namespace rnfs
 	/// <para>配列番号</para>
 	/// </param>
 	template<class TYPE>
-	inline TYPE & TaskKeepArray<TYPE>::getTask(const size_t number)
+	inline TYPE & TaskKeepArray<TYPE>::task(const size_t number)
 	{
 		//実体が生成されないように参照する
-		return m_Data[m_RegistID[number]].getTask();
+		return m_Data[m_RegistID[number]].task();
 	}
 
 	/// <summary>
@@ -233,9 +230,9 @@ namespace rnfs
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TYPE>
-	inline TYPE* TaskKeepArray<TYPE>::getTaskPointer_ID(const size_t number)
+	inline TYPE* TaskKeepArray<TYPE>::taskPointer_ID(const size_t number)
 	{
-		return m_Data[number].getTaskPointer();
+		return m_Data[number].taskPointer();
 	}
 
 	/// <summary>
@@ -248,9 +245,9 @@ namespace rnfs
 	/// <para>配列番号</para>
 	/// </param>
 	template<class TYPE>
-	inline TYPE* TaskKeepArray<TYPE>::getTaskPointer(const size_t number)
+	inline TYPE* TaskKeepArray<TYPE>::taskPointer(const size_t number)
 	{
-		return m_Data[m_RegistID[number]].getTaskPointer();
+		return m_Data[m_RegistID[number]].taskPointer();
 	}
 
 	/// <summary>
@@ -583,10 +580,7 @@ namespace rnfs
 	inline void TaskKeepArray<TYPE>::Free_All()
 	{
 		//タスクの全解放
-		for (auto & i : m_Data)
-		{
-			i.second.Free();
-		}
+		for (auto & i : m_Data) i.second.Free();
 
 		//タスク配列の全初期化
 		m_Data.clear();
@@ -599,49 +593,6 @@ namespace rnfs
 
 		//識別番号を先頭の位置へ移動
 		m_NextID = 0;
-	}
-
-	/// <summary>
-	/// <para>─────────────────────────</para>
-	/// <para>識別番号を使用して、タスクキープの配列位置を入れ替えます。</para>
-	/// <para>─────────────────────────</para>
-	/// </summary>
-	///
-	/// <param name="left">
-	/// <para>配列の識別番号</para>
-	/// </param>
-	///
-	/// <param name="right">
-	/// <para>配列の識別番号</para>
-	/// </param>
-	template<class TYPE>
-	inline void TaskKeepArray<TYPE>::Swap_ID(const size_t left, const size_t right)
-	{
-		//識別番号を入れ替える
-		m_RegistID[toArrayNumber(left)] = right;
-		m_RegistID[toArrayNumber(right)] = left;
-	}
-
-	/// <summary>
-	/// <para>────────────────</para>
-	/// <para>タスクキープの配列位置を入れ替えます。</para>
-	/// <para>────────────────</para>
-	/// </summary>
-	///
-	/// <param name="left">
-	/// <para>配列番号</para>
-	/// </param>
-	///
-	/// <param name="right">
-	/// <para>配列番号</para>
-	/// </param>
-	template<class TYPE>
-	inline void TaskKeepArray<TYPE>::Swap(const size_t left, const size_t right)
-	{
-		//識別番号を入れ替える
-		size_t tmp = m_RegistID[left];
-		m_RegistID[left] = m_RegistID[right];
-		m_RegistID[right] = tmp;
 	}
 
 	/// <summary>

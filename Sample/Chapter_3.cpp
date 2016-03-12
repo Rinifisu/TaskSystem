@@ -93,9 +93,9 @@ void Main()
 		//花火を15フレームごとに生成
 		if (nextTime == 0) Create<Fireworks>();
 
-		TaskCall::System::Update();
-		Task::System::Update();
+		TaskCall::All::Update();
+		Task::All::Update();
 	}
 
-	Task::System::Clear();
+	Task::All::Clear();
 }

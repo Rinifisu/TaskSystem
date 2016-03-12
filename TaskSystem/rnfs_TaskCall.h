@@ -68,11 +68,11 @@ namespace rnfs
 		void SetCall(const FUNC & callbackFunction);
 
 		/// <summary>
-		/// <para>──────────────────────────────</para>
-		/// <para>TaskCall::System::Update 呼び出し時に呼ばれるコール関数を消去します。</para>
+		/// <para>────────────────────────────</para>
+		/// <para>TaskCall::All::Update 呼び出し時に呼ばれるコール関数を消去します。</para>
 		/// <para>TaskCall::isCall で false が返されるようになります。</para>
 		/// <para>コールを終了する際に使用します。</para>
-		/// <para>──────────────────────────────</para>
+		/// <para>────────────────────────────</para>
 		/// </summary>
 		void ClearCall();
 
@@ -87,10 +87,10 @@ namespace rnfs
 		const bool isCall() const;
 
 		/// <summary>
-		/// <para>──────────────────────────────</para>
-		/// <para>TaskCall::System::Update 呼び出し時にコールが行われるかを設定します。</para>
+		/// <para>────────────────────────────</para>
+		/// <para>TaskCall::All::Update 呼び出し時にコールが行われるかを設定します。</para>
 		/// <para>一時停止などに使用できます。</para>
-		/// <para>──────────────────────────────</para>
+		/// <para>────────────────────────────</para>
 		/// </summary>
 		///
 		/// <param name="active">
@@ -101,12 +101,12 @@ namespace rnfs
 		void SetActive(const bool active);
 
 		/// <summary>
-		/// <para>──────────────────────────────</para>
-		/// <para>TaskCall::System::Update 呼び出し時にコールが行われるかを確認します。</para>
-		/// <para>──────────────────────────────</para>
+		/// <para>────────────────────────────</para>
+		/// <para>TaskCall::All::Update 呼び出し時にコールが行われるかを確認します。</para>
+		/// <para>────────────────────────────</para>
 		/// <para>true  -> コール有効</para>
 		/// <para>false -> コール無効</para>
-		/// <para>──────────────────────────────</para>
+		/// <para>────────────────────────────</para>
 		/// </summary>
 		const bool isActive() const;
 
@@ -141,7 +141,7 @@ namespace rnfs
 		/// </summary>
 		///
 		/// <param name="group">
-		/// <para>グループ番号（TaskCall::System::Update の引数で使われる分類）</para>
+		/// <para>グループ番号（TaskCall::All::Update の引数で使われる分類）</para>
 		/// </param>
 		void SetGroup(const unsigned char group);
 
@@ -153,11 +153,11 @@ namespace rnfs
 		const unsigned char group() const;
 
 		/// <summary>
-		/// <para>──────────────</para>
-		/// <para>コール全体の処理を行う空間です。</para>
-		/// <para>──────────────</para>
+		/// <para>────────────</para>
+		/// <para>全体の処理を行う空間です。</para>
+		/// <para>────────────</para>
 		/// </summary>
-		class System
+		class All
 		{
 		public:
 			/// <summary>
@@ -174,11 +174,11 @@ namespace rnfs
 	};
 
 	/// <summary>
-	/// <para>────────────────────────────────────────────</para>
+	/// <para>──────────────────────────────────────────</para>
 	/// <para>コールリストの登録を行います。</para>
-	/// <para>────────────────────────────────────────────</para>
-	/// <para>登録を行うことで TaskCall::System::Update 呼び出し時に 引数や SetCall で設定した関数が呼び出されます。</para>
-	/// <para>────────────────────────────────────────────</para>
+	/// <para>──────────────────────────────────────────</para>
+	/// <para>登録を行うことで TaskCall::All::Update 呼び出し時に 引数や SetCall で設定した関数が呼び出されます。</para>
+	/// <para>──────────────────────────────────────────</para>
 	/// </summary>
 	///
 	/// <param name="p_Task">
@@ -189,12 +189,12 @@ namespace rnfs
 	///
 	/// <param name="callbackFunction">
 	/// <para>省略可能</para>
-	/// <para>TaskCall::System::Update 呼び出し時に呼ばれるコール関数</para>
+	/// <para>TaskCall::All::Update 呼び出し時に呼ばれるコール関数</para>
 	/// <para>型変換の省略とデフォルト引数の設定のため、テンプレートになっています。</para>
 	/// </param>
 	///
 	/// <param name="group">
-	/// <para>グループ番号（TaskCall::System::Update の引数で使われる分類）</para>
+	/// <para>グループ番号（TaskCall::All::Update の引数で使われる分類）</para>
 	/// </param>
 	///
 	/// <param name="priority">
@@ -228,11 +228,11 @@ namespace rnfs
 	}
 
 	/// <summary>
-	/// <para>────────────────────────────────────────────</para>
+	/// <para>──────────────────────────────────────────</para>
 	/// <para>コールリストの登録を行います。</para>
-	/// <para>────────────────────────────────────────────</para>
-	/// <para>登録を行うことで TaskCall::System::Update 呼び出し時に 引数や SetCall で設定した関数が呼び出されます。</para>
-	/// <para>────────────────────────────────────────────</para>
+	/// <para>──────────────────────────────────────────</para>
+	/// <para>登録を行うことで TaskCall::All::Update 呼び出し時に 引数や SetCall で設定した関数が呼び出されます。</para>
+	/// <para>──────────────────────────────────────────</para>
 	/// </summary>
 	///
 	/// <param name="p_Task">
@@ -243,12 +243,12 @@ namespace rnfs
 	///
 	/// <param name="callbackFunction">
 	/// <para>省略可能</para>
-	/// <para>TaskCall::System::Update 呼び出し時に呼ばれるコール関数</para>
+	/// <para>TaskCall::All::Update 呼び出し時に呼ばれるコール関数</para>
 	/// <para>型変換の省略とデフォルト引数の設定のため、テンプレートになっています。</para>
 	/// </param>
 	///
 	/// <param name="group">
-	/// <para>グループ番号（TaskCall::System::Update の引数で使われる分類）</para>
+	/// <para>グループ番号（TaskCall::All::Update の引数で使われる分類）</para>
 	/// </param>
 	///
 	/// <param name="priority">
@@ -282,10 +282,10 @@ namespace rnfs
 	}
 
 	/// <summary>
-	/// <para>──────────────────────────────</para>
-	/// <para>TaskCall::System::Update 呼び出し時に呼ばれるコール関数を設定します。</para>
+	/// <para>────────────────────────────</para>
+	/// <para>TaskCall::All::Update 呼び出し時に呼ばれるコール関数を設定します。</para>
 	/// <para>前回の更新関数リストは消去され、新たに上書きされます。</para>
-	/// <para>──────────────────────────────</para>
+	/// <para>────────────────────────────</para>
 	/// </summary>
 	///
 	/// <param name="callbackFunction">
@@ -298,9 +298,9 @@ namespace rnfs
 	}
 
 	/// <summary>
-	/// <para>────────────────────────────</para>
-	/// <para>TaskCall::System::Update 呼び出し時のコール優先度を変更します。</para>
-	/// <para>────────────────────────────</para>
+	/// <para>──────────────────────────</para>
+	/// <para>TaskCall::All::Update 呼び出し時のコール優先度を変更します。</para>
+	/// <para>──────────────────────────</para>
 	/// </summary>
 	///
 	/// <param name="priority">
@@ -326,10 +326,10 @@ namespace rnfs
 	}
 
 	/// <summary>
-	/// <para>──────────────────────────────</para>
+	/// <para>─────────────────────────────</para>
 	/// <para>優先度を取得します。</para>
-	/// <para>テンプレート引数を使用します。＜優先度の型名（デフォルトでは size_t）＞</para>
-	/// <para>──────────────────────────────</para>
+	/// <para>テンプレート引数を使用します。&lt;優先度の型名（デフォルトでは size_t）&gt;</para>
+	/// <para>─────────────────────────────</para>
 	/// </summary>
 	template<typename PRIORITY>
 	inline const PRIORITY TaskCall::priority() const
