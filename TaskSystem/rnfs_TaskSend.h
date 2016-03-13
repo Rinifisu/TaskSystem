@@ -63,9 +63,6 @@ namespace rnfs
 		/// </summary>
 		void Unregister();
 
-		template<typename TARGET>
-		void SetCall(const std::function<void(TARGET &)> & callbackFunction);
-
 		/// <summary>
 		/// <para>─────────────────────────────────</para>
 		/// <para>TaskConnect::Update 呼び出し時に呼ばれる送信対象のコール関数を消去します。</para>
@@ -184,23 +181,6 @@ namespace rnfs
 
 		//登録
 		this->_Register_(priorityPushBack);
-	}
-
-	/// <summary>
-	/// <para>──────────────────────────────────</para>
-	/// <para>TaskConnect::Update 呼び出し時に呼ばれる送信対象のコール関数を設定します。</para>
-	/// <para>前回の更新関数リストは消去され、新たに上書きされます。</para>
-	/// <para>──────────────────────────────────</para>
-	/// </summary>
-	///
-	/// <param name="callbackFunction">
-	/// <para>コール関数</para>
-	/// </param>
-	template<typename TARGET>
-	inline void TaskSend::SetCall(const std::function<void(TARGET &)> & callbackFunction)
-	{
-		m_Call = (void(Task::*)(Task &))callbackFunction;
-		m_Check = typeid(TARGET).name();
 	}
 
 	/// <summary>
