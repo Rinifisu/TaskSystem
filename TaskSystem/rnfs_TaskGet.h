@@ -74,20 +74,19 @@ namespace rnfs
 		{
 		public:
 			template<class TASK>
+			static TASK & task_ID(const size_t id = 0);
+			template<class TASK>
 			static TASK & task(const size_t arrayNumber = 0);
 
 			template<class TASK>
-			static TASK & task_ID(const size_t idNumber = 0);
+			static const size_t toArrayNumber(const size_t id);
+			template<class TASK>
+			static const size_t toID(const size_t arrayNumber);
 
 			template<class TASK>
-			static const size_t toID(const size_t number);
-
+			static const bool isID(const size_t id);
 			template<class TASK>
-			static const size_t toArrayNumber(const size_t number);
-
-			template<class TASK>
-			static const bool isID(const size_t number);
-
+			static const bool isEmpty();
 			template<class TASK>
 			static const size_t size();
 		};
@@ -107,7 +106,7 @@ namespace rnfs
 	/// <para>タスク識別用の名前を取得するため、テンプレートになっています。</para>
 	/// </param>
 	template<class TASK>
-	inline TaskGet::TaskGet(TASK * p_Task)
+	inline TaskGet::TaskGet(TASK* p_Task)
 	{
 		//登録されていたら登録解除する
 		if (mp_Task) this->_Unregister_();
@@ -149,6 +148,22 @@ namespace rnfs
 	}
 
 	/// <summary>
+	/// <para>───────────────────────────────</para>
+	/// <para>TaskGet::Register で登録済みのタスクを、識別番号を使用して取得します。</para>
+	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	/// <para>───────────────────────────────</para>
+	/// </summary>
+	///
+	/// <param name="id">
+	/// <para>配列の識別番号</para>
+	/// </param>
+	template<class TASK>
+	inline TASK & TaskGet::All::task_ID(const size_t id)
+	{
+		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK).name()).taskPointer_ID(id));
+	}
+
+	/// <summary>
 	/// <para>───────────────────────</para>
 	/// <para>TaskGet::Register で登録済みのタスクを取得します。</para>
 	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
@@ -165,19 +180,19 @@ namespace rnfs
 	}
 
 	/// <summary>
-	/// <para>───────────────────────────────</para>
-	/// <para>TaskGet::Register で登録済みのタスクを、識別番号を使用して取得します。</para>
+	/// <para>────────────────────────────────────</para>
+	/// <para>TaskGet::Register で登録済みのタスクの配列番号を、識別番号を使用して取得します。</para>
 	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	/// <para>───────────────────────────────</para>
+	/// <para>────────────────────────────────────</para>
 	/// </summary>
 	///
-	/// <param name="idNumber">
+	/// <param name="id">
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TASK>
-	inline TASK & TaskGet::All::task_ID(const size_t idNumber)
+	inline const size_t TaskGet::All::toArrayNumber(const size_t id)
 	{
-		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK).name()).taskPointer_ID(idNumber));
+		return m_Data.at(typeid(TASK).name()).toArrayNumber(id);
 	}
 
 	/// <summary>
@@ -187,29 +202,13 @@ namespace rnfs
 	/// <para>────────────────────────────────────</para>
 	/// </summary>
 	///
-	/// <param name="number">
+	/// <param name="arrayNumber">
 	/// <para>配列番号</para>
 	/// </param>
 	template<class TASK>
-	inline const size_t TaskGet::All::toID(const size_t number)
+	inline const size_t TaskGet::All::toID(const size_t arrayNumber)
 	{
-		return m_Data.at(typeid(TASK).name()).toID(number);
-	}
-
-	/// <summary>
-	/// <para>────────────────────────────────────</para>
-	/// <para>TaskGet::Register で登録済みのタスクの配列番号を、識別番号を使用して取得します。</para>
-	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	/// <para>────────────────────────────────────</para>
-	/// </summary>
-	///
-	/// <param name="number">
-	/// <para>配列の識別番号</para>
-	/// </param>
-	template<class TASK>
-	inline const size_t TaskGet::All::toArrayNumber(const size_t number)
-	{
-		return m_Data.at(typeid(TASK).name()).toArrayNumber(number);
+		return m_Data.at(typeid(TASK).name()).toID(arrayNumber);
 	}
 
 	/// <summary>
@@ -219,16 +218,28 @@ namespace rnfs
 	/// <para>─────────────────────────────────</para>
 	/// </summary>
 	///
-	/// <param name="number">
+	/// <param name="id">
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TASK>
-	inline const bool TaskGet::All::isID(const size_t number)
+	inline const bool TaskGet::All::isID(const size_t id)
 	{
 		//登録済みのタスクが１つも無い場合は存在しない
 		if (m_Data.count(typeid(TASK).name()) <= 0) return false;
 		//要素数の取得
-		return m_Data.at(typeid(TASK).name()).isID(number);
+		return m_Data.at(typeid(TASK).name()).isID(id);
+	}
+
+	/// <summary>
+	/// <para>──────────────────────────────</para>
+	/// <para>TaskGet::Register で登録が全く行われていない状態であるかを取得します。</para>
+	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	/// <para>──────────────────────────────</para>
+	/// </summary>
+	template<class TASK>
+	inline const bool TaskGet::All::isEmpty()
+	{
+		return m_Data.count(typeid(TASK).name()) <= 0;
 	}
 
 	/// <summary>

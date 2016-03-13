@@ -59,6 +59,13 @@ private:
 		//描画
 		Circle(m_Pos, m_Radius).drawFrame(1.0, 1.0, Alpha(m_Alpha));
 	}
+
+public:
+	void Up()
+	{
+		//上昇する
+		m_Pos.y -= 5.0;
+	}
 };
 
 //-------------------------------------------- 区切り --------------------------------------------//
@@ -70,8 +77,11 @@ void Main()
 		//リングの生成
 		s_Ring.Add_Back(Create<Ring>());
 
-		//左クリックで全消去
-		if (Input::MouseL.clicked) s_Ring.Clear_All();
+		//左クリックで上昇
+		if (Input::MouseL.pressed)
+		{
+			for (auto & i : s_Ring) i.second->Up();
+		}
 
 		TaskCall::All::Update(CallGroup_Update);
 		TaskCall::All::Update(CallGroup_Draw);

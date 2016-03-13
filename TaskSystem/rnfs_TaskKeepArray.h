@@ -50,42 +50,42 @@ namespace rnfs
 		void operator =(const TaskKeepArray<TYPE> & taskKeepArray) = delete;
 		void operator =(TaskKeepArray<TYPE> && taskKeepArray) = delete;
 
-		TYPE & operator () (const size_t number);
-		TYPE & operator [] (const size_t number);
+		TYPE & operator () (const size_t id);
+		TYPE & operator [] (const size_t arrayNumber);
 
-		TYPE & task_ID(const size_t number);
-		TYPE & task(const size_t number);
+		TYPE & task_ID(const size_t id);
+		TYPE & task(const size_t arrayNumber);
 
-		TYPE* taskPointer_ID(const size_t number);
-		TYPE* taskPointer(const size_t number);
+		TYPE* taskPointer_ID(const size_t id);
+		TYPE* taskPointer(const size_t arrayNumber);
 
 		void Add_Back(TYPE* p_Task);
 		void Add_Front(TYPE* p_Task);
-		void Insert(const size_t number, TYPE* p_Task);
+		void Insert(const size_t arrayNumber, TYPE* p_Task);
 
-		void Clear_ID(const size_t number);
-		void Clear(const size_t number);
+		void Clear_ID(const size_t id);
+		void Clear(const size_t arrayNumber);
 
 		void Clear_Back();
 		void Clear_Front();
 		void Clear_All();
 
-		void Free_ID(const size_t number);
-		void Free(const size_t number);
+		void Free_ID(const size_t id);
+		void Free(const size_t arrayNumber);
 
 		void Free_Back();
 		void Free_Front();
 		void Free_All();
 
-		void Safety_ID(const size_t number, const bool safety);
-		void Safety(const size_t number, const bool safety);
+		void Safety_ID(const size_t id, const bool safety);
+		void Safety(const size_t arrayNumber, const bool safety);
 
-		const size_t toID(const size_t number) const;
-		const size_t toArrayNumber(const size_t number) const;
+		const size_t toArrayNumber(const size_t id) const;
+		const size_t toID(const size_t arrayNumber) const;
 
 		const size_t nextID() const;
 
-		const bool isID(const size_t number) const;
+		const bool isID(const size_t id) const;
 		const bool isEmpty() const;
 		const size_t size() const;
 
@@ -162,14 +162,14 @@ namespace rnfs
 	/// <para>─────────────────</para>
 	/// </summary>
 	///
-	/// <param name="number">
+	/// <param name="id">
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TYPE>
-	inline TYPE & TaskKeepArray<TYPE>::operator () (const size_t number)
+	inline TYPE & TaskKeepArray<TYPE>::operator () (const size_t id)
 	{
 		//実体が生成されないように参照する
-		return m_Data[number].task();
+		return m_Data[id].task();
 	}
 
 	/// <summary>
@@ -178,14 +178,14 @@ namespace rnfs
 	/// <para>────────</para>
 	/// </summary>
 	///
-	/// <param name="number">
+	/// <param name="arrayNumber">
 	/// <para>配列番号</para>
 	/// </param>
 	template<class TYPE>
-	inline TYPE & TaskKeepArray<TYPE>::operator [] (const size_t number)
+	inline TYPE & TaskKeepArray<TYPE>::operator [] (const size_t arrayNumber)
 	{
 		//実体が生成されないように参照する
-		return m_Data[m_RegistID[number]].task();
+		return m_Data[m_RegistID[arrayNumber]].task();
 	}
 
 	/// <summary>
@@ -194,14 +194,14 @@ namespace rnfs
 	/// <para>─────────────────</para>
 	/// </summary>
 	///
-	/// <param name="number">
+	/// <param name="id">
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TYPE>
-	inline TYPE & TaskKeepArray<TYPE>::task_ID(const size_t number)
+	inline TYPE & TaskKeepArray<TYPE>::task_ID(const size_t id)
 	{
 		//実体が生成されないように参照する
-		return m_Data[number].task();
+		return m_Data[id].task();
 	}
 
 	/// <summary>
@@ -210,14 +210,14 @@ namespace rnfs
 	/// <para>────────</para>
 	/// </summary>
 	///
-	/// <param name="number">
+	/// <param name="arrayNumber">
 	/// <para>配列番号</para>
 	/// </param>
 	template<class TYPE>
-	inline TYPE & TaskKeepArray<TYPE>::task(const size_t number)
+	inline TYPE & TaskKeepArray<TYPE>::task(const size_t arrayNumber)
 	{
 		//実体が生成されないように参照する
-		return m_Data[m_RegistID[number]].task();
+		return m_Data[m_RegistID[arrayNumber]].task();
 	}
 
 	/// <summary>
@@ -226,13 +226,13 @@ namespace rnfs
 	/// <para>────────────────────</para>
 	/// </summary>
 	///
-	/// <param name="number">
+	/// <param name="id">
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TYPE>
-	inline TYPE* TaskKeepArray<TYPE>::taskPointer_ID(const size_t number)
+	inline TYPE* TaskKeepArray<TYPE>::taskPointer_ID(const size_t id)
 	{
-		return m_Data[number].taskPointer();
+		return m_Data[id].taskPointer();
 	}
 
 	/// <summary>
@@ -241,13 +241,13 @@ namespace rnfs
 	/// <para>───────────</para>
 	/// </summary>
 	///
-	/// <param name="number">
+	/// <param name="arrayNumber">
 	/// <para>配列番号</para>
 	/// </param>
 	template<class TYPE>
-	inline TYPE* TaskKeepArray<TYPE>::taskPointer(const size_t number)
+	inline TYPE* TaskKeepArray<TYPE>::taskPointer(const size_t arrayNumber)
 	{
-		return m_Data[m_RegistID[number]].taskPointer();
+		return m_Data[m_RegistID[arrayNumber]].taskPointer();
 	}
 
 	/// <summary>
@@ -331,7 +331,7 @@ namespace rnfs
 	/// <para>─────────────────</para>
 	/// </summary>
 	///
-	/// <param name="number">
+	/// <param name="arrayNumber">
 	/// <para>追加する配列番号位置</para>
 	/// </param>
 	///
@@ -339,7 +339,7 @@ namespace rnfs
 	/// <para>キープ対象のタスク</para>
 	/// </param>
 	template<class TYPE>
-	inline void TaskKeepArray<TYPE>::Insert(const size_t number, TYPE * p_Task)
+	inline void TaskKeepArray<TYPE>::Insert(const size_t arrayNumber, TYPE * p_Task)
 	{
 		//消去済み配列が空であれば
 		if (m_DeleteID.empty())
@@ -348,7 +348,7 @@ namespace rnfs
 			m_Data[m_NextID] = p_Task;
 
 			//新規識別番号を登録済み配列に追加
-			m_RegistID.emplace(m_RegistID.begin() + number, 1, m_NextID);
+			m_RegistID.emplace(m_RegistID.begin() + arrayNumber, 1, m_NextID);
 
 			//識別番号を次に移動する
 			++m_NextID;
@@ -360,7 +360,7 @@ namespace rnfs
 			m_Data[m_DeleteID.front()] = p_Task;
 
 			//消去済み識別番号を登録済み配列に追加
-			m_RegistID.insert(m_RegistID.begin() + number, 1, m_DeleteID.front());
+			m_RegistID.insert(m_RegistID.begin() + arrayNumber, 1, m_DeleteID.front());
 
 			//消去済みではなくなったので、先頭を削除
 			m_DeleteID.pop_front();
@@ -373,23 +373,23 @@ namespace rnfs
 	/// <para>───────────────────</para>
 	/// </summary>
 	///
-	/// <param name="number">
+	/// <param name="id">
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TYPE>
-	inline void TaskKeepArray<TYPE>::Clear_ID(const size_t number)
+	inline void TaskKeepArray<TYPE>::Clear_ID(const size_t id)
 	{
 		//存在しない場合は終了
-		if (m_Data.count(number) <= 0) return;
+		if (m_Data.count(id) <= 0) return;
 
 		//タスクキープの消去
-		m_Data.erase(number);
+		m_Data.erase(id);
 
 		//消去済み配列に追加
-		m_DeleteID.emplace_back(number);
+		m_DeleteID.emplace_back(id);
 
 		//登録済み配列から消去
-		m_RegistID.erase(m_RegistID.begin() + toArrayNumber(number));
+		m_RegistID.erase(m_RegistID.begin() + toArrayNumber(id));
 	}
 
 	/// <summary>
@@ -398,23 +398,23 @@ namespace rnfs
 	/// <para>───────────</para>
 	/// </summary>
 	///
-	/// <param name="number">
+	/// <param name="arrayNumber">
 	/// <para>配列番号</para>
 	/// </param>
 	template<class TYPE>
-	inline void TaskKeepArray<TYPE>::Clear(const size_t number)
+	inline void TaskKeepArray<TYPE>::Clear(const size_t arrayNumber)
 	{
 		//存在しない場合は終了
-		if (m_Data.count(m_RegistID[number]) <= 0) return;
+		if (m_Data.count(m_RegistID[arrayNumber]) <= 0) return;
 
 		//タスクキープの消去
-		m_Data.erase(m_RegistID[number]);
+		m_Data.erase(m_RegistID[arrayNumber]);
 
 		//消去済み配列に追加
-		m_DeleteID.emplace_back(m_RegistID[number]);
+		m_DeleteID.emplace_back(m_RegistID[arrayNumber]);
 
 		//登録済み配列から消去
-		m_RegistID.erase(m_RegistID.begin() + number);
+		m_RegistID.erase(m_RegistID.begin() + arrayNumber);
 	}
 
 	/// <summary>
@@ -487,26 +487,26 @@ namespace rnfs
 	/// <para>───────────────────────────────────</para>
 	/// </summary>
 	///
-	/// <param name="number">
+	/// <param name="id">
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TYPE>
-	inline void TaskKeepArray<TYPE>::Free_ID(const size_t number)
+	inline void TaskKeepArray<TYPE>::Free_ID(const size_t id)
 	{
 		//存在しない場合は終了
-		if (m_Data.count(number) <= 0) return;
+		if (m_Data.count(id) <= 0) return;
 
 		//タスクの解放
-		m_Data[number].Free();
+		m_Data[id].Free();
 
 		//空のタスクキープの消去
-		m_Data.erase(number);
+		m_Data.erase(id);
 
 		//消去済み配列に追加
-		m_DeleteID.emplace_back(number);
+		m_DeleteID.emplace_back(id);
 
 		//登録済み配列から消去
-		m_RegistID.erase(m_RegistID.begin() + toArrayNumber(number));
+		m_RegistID.erase(m_RegistID.begin() + toArrayNumber(id));
 	}
 
 	/// <summary>
@@ -516,26 +516,26 @@ namespace rnfs
 	/// <para>───────────────────────────────────</para>
 	/// </summary>
 	///
-	/// <param name="number">
+	/// <param name="arrayNumber">
 	/// <para>配列番号</para>
 	/// </param>
 	template<class TYPE>
-	inline void TaskKeepArray<TYPE>::Free(const size_t number)
+	inline void TaskKeepArray<TYPE>::Free(const size_t arrayNumber)
 	{
 		//存在しない場合は終了
-		if (m_Data.count(m_RegistID[number]) <= 0) return;
+		if (m_Data.count(m_RegistID[arrayNumber]) <= 0) return;
 
 		//タスクの解放
-		m_Data[m_RegistID[number]].Free();
+		m_Data[m_RegistID[arrayNumber]].Free();
 
 		//空のタスクキープの消去
-		m_Data.erase(m_RegistID[number]);
+		m_Data.erase(m_RegistID[arrayNumber]);
 
 		//消去済み配列に追加
-		m_DeleteID.emplace_back(m_RegistID[number]);
+		m_DeleteID.emplace_back(m_RegistID[arrayNumber]);
 
 		//登録済み配列から消去
-		m_RegistID.erase(m_RegistID.begin() + number);
+		m_RegistID.erase(m_RegistID.begin() + arrayNumber);
 	}
 
 	template<class TYPE>
@@ -601,7 +601,7 @@ namespace rnfs
 	/// <para>───────────────────────────────</para>
 	/// </summary>
 	///
-	/// <param name="number">
+	/// <param name="id">
 	/// <para>配列の識別番号</para>
 	/// </param>
 	///
@@ -611,10 +611,10 @@ namespace rnfs
 	/// <para>false -> 無効</para>
 	/// </param>
 	template<class TYPE>
-	inline void TaskKeepArray<TYPE>::Safety_ID(const size_t number, const bool safety)
+	inline void TaskKeepArray<TYPE>::Safety_ID(const size_t id, const bool safety)
 	{
 		//安全保障機能を設定
-		m_Data[number].Safety(safety);
+		m_Data[id].Safety(safety);
 	}
 
 	/// <summary>
@@ -623,7 +623,7 @@ namespace rnfs
 	/// <para>──────────────────────</para>
 	/// </summary>
 	///
-	/// <param name="number">
+	/// <param name="arrayNumber">
 	/// <para>配列番号</para>
 	/// </param>
 	///
@@ -633,25 +633,10 @@ namespace rnfs
 	/// <para>false -> 無効</para>
 	/// </param>
 	template<class TYPE>
-	inline void TaskKeepArray<TYPE>::Safety(const size_t number, const bool safety)
+	inline void TaskKeepArray<TYPE>::Safety(const size_t arrayNumber, const bool safety)
 	{
 		//安全保障機能を設定
-		m_Data[m_RegistID[number]].Safety(safety);
-	}
-
-	/// <summary>
-	/// <para>──────────</para>
-	/// <para>識別番号を取得します。</para>
-	/// <para>──────────</para>
-	/// </summary>
-	///
-	/// <param name="number">
-	/// <para>配列番号</para>
-	/// </param>
-	template<class TYPE>
-	inline const size_t TaskKeepArray<TYPE>::toID(const size_t number) const
-	{
-		return m_RegistID[number];
+		m_Data[m_RegistID[arrayNumber]].Safety(safety);
 	}
 
 	/// <summary>
@@ -660,11 +645,11 @@ namespace rnfs
 	/// <para>───────────────────</para>
 	/// </summary>
 	///
-	/// <param name="number">
+	/// <param name="id">
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TYPE>
-	inline const size_t TaskKeepArray<TYPE>::toArrayNumber(const size_t number) const
+	inline const size_t TaskKeepArray<TYPE>::toArrayNumber(const size_t id) const
 	{
 		//配列番号を調べる
 		size_t count = 0;
@@ -673,7 +658,7 @@ namespace rnfs
 		for (auto & i : m_RegistID)
 		{
 			//識別番号が一致した場合は現時点の配列番号を返す
-			if (number == i) return count;
+			if (id == i) return count;
 			//カウントアップ
 			else ++count;
 		}
@@ -683,6 +668,21 @@ namespace rnfs
 
 		//安全のため、先頭の要素を返す
 		return 0;
+	}
+
+	/// <summary>
+	/// <para>──────────</para>
+	/// <para>識別番号を取得します。</para>
+	/// <para>──────────</para>
+	/// </summary>
+	///
+	/// <param name="arrayNumber">
+	/// <para>配列番号</para>
+	/// </param>
+	template<class TYPE>
+	inline const size_t TaskKeepArray<TYPE>::toID(const size_t arrayNumber) const
+	{
+		return m_RegistID[arrayNumber];
 	}
 
 	/// <summary>
@@ -702,13 +702,13 @@ namespace rnfs
 	/// <para>────────────────────</para>
 	/// </summary>
 	///
-	/// <param name="number">
+	/// <param name="id">
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TYPE>
-	inline const bool TaskKeepArray<TYPE>::isID(const size_t number) const
+	inline const bool TaskKeepArray<TYPE>::isID(const size_t id) const
 	{
-		return m_Data.count(number) != 0;
+		return m_Data.count(id) != 0;
 	}
 
 	/// <summary>
