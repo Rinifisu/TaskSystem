@@ -9,34 +9,52 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #pragma once
 
-#include "rnfs_Task.h"
+#include <functional> //std::function
+
+#include "rnfs_TaskSend.h"
 
 namespace rnfs
 {
 	/// <summary>
-	/// <para>───────────────────</para>
+	/// <para>─────────────</para>
 	/// <para>タスク受信</para>
 	/// <para>タスク同士のやり取りを行えます。</para>
-	/// <para>受信を許可する側のクラスです。</para>
-	/// <para>───────────────────</para>
+	/// <para>受信を設定する側のクラスです。</para>
+	/// <para>─────────────</para>
 	/// </summary>
 	class TaskReceive final
 	{
-	private:
-		Task*			mp_Task;	//コール対象タスクのポインタ
-
-		std::string		m_Name;		//識別用の名前
-		size_t			m_ID;		//消去用の管理番号
+		friend class		TaskSend;			//様々な取得や参照で必要
 
 	private:
-		static std::unordered_map<std::string, TaskKeepArray<Task>>	m_Receive; //受信リストのポインタ
+		Task*				mp_Task;			//コール対象タスクのポインタ
+
+		TaskReceive*		mp_Prev;			//自身の前のポインタ
+		TaskReceive*		mp_Next;			//自身の後のポインタ
+		size_t				m_Priority;			//自身のコール優先順位
+
+		std::string			m_Name;				//自身の名前（デバッグ等で使用）
+		std::string			m_Check;			//対象の名前（コール時に使用）
+
+		void(Task::*		m_Call)(Task &);	//コール関数
+		bool				m_Active;			//コールが行われるか
+
+	private:
+		static TaskReceive*	mp_Begin;			//受信リストの先頭ポインタ
+
+	private:
+		//受信側の登録
+		void _Register_(const bool pushBack);
+
+		//受信側の消去
+		void _Unregister_();
 
 	public:
 		TaskReceive();
 		~TaskReceive();
 
-		template<class TASK>
-		void Register(TASK* p_Task);
+		template<class TARGET, class TASK, class Func = void(Task::*)(Task &), typename PRIORITY = size_t>
+		void Register(TASK* p_Task, const Func & callbackFunction = nullptr, const PRIORITY & priority = 0, const bool priorityPushBack = true);
 
 		/// <summary>
 		/// <para>────────────</para>
@@ -46,59 +64,161 @@ namespace rnfs
 		void Unregister();
 
 		/// <summary>
-		/// <para>────────────</para>
-		/// <para>全体の処理を行う空間です。</para>
-		/// <para>────────────</para>
+		/// <para>─────────────────────────────</para>
+		/// <para>TaskSend::All::Update 呼び出し時に呼ばれるコール関数を消去します。</para>
+		/// <para>TaskReceive::isCall で false が返されるようになります。</para>
+		/// <para>コールを終了する際に使用します。</para>
+		/// <para>─────────────────────────────</para>
 		/// </summary>
-		class All
-		{
-		public:
-			/// <summary>
-			/// <para>────────────</para>
-			/// <para>関数呼び出しを開始します。</para>
-			/// <para>────────────</para>
-			/// </summary>
-			static void Update();
-		};
-	};
+		void ClearCall();
 
+		/// <summary>
+		/// <para>─────────────────</para>
+		/// <para>コール関数が設定されているか確認します。</para>
+		/// <para>─────────────────</para>
+		/// <para>true  -> コール関数が設定されている</para>
+		/// <para>false -> コール関数が設定されていない</para>
+		/// <para>─────────────────</para>
+		/// </summary>
+		const bool isCall() const;
+
+		/// <summary>
+		/// <para>────────────────────────────</para>
+		/// <para>TaskSend::All::Update 呼び出し時にコールが行われるかを設定します。</para>
+		/// <para>一時停止などに使用できます。</para>
+		/// <para>────────────────────────────</para>
+		/// </summary>
+		///
+		/// <param name="active">
+		/// <para>コールが行われるか</para>
+		/// <para>true  -> コール有効</para>
+		/// <para>false -> コール無効</para>
+		/// </param>
+		void SetActive(const bool active);
+
+		/// <summary>
+		/// <para>────────────────────────────</para>
+		/// <para>TaskSend::All::Update 呼び出し時にコールが行われるかを確認します。</para>
+		/// <para>────────────────────────────</para>
+		/// <para>true  -> コール有効</para>
+		/// <para>false -> コール無効</para>
+		/// <para>────────────────────────────</para>
+		/// </summary>
+		const bool isActive() const;
+
+		template<typename PRIORITY>
+		void SetPriority(const PRIORITY & priority, const bool pushBack = true);
+
+		template<typename PRIORITY = size_t>
+		const PRIORITY priority() const;
+
+		/// <summary>
+		/// <para>─────────────</para>
+		/// <para>デバッグ用の名前を変更します。</para>
+		/// <para>─────────────</para>
+		/// </summary>
+		///
+		/// <param name="name">
+		/// <para>デバッグ用の名前</para>
+		/// </param>
+		void SetName(const std::string & name);
+
+		/// <summary>
+		/// <para>─────────────</para>
+		/// <para>デバッグ用の名前を取得します。</para>
+		/// <para>─────────────</para>
+		/// </summary>
+		const std::string & name() const;
+	};
+	
 	/// <summary>
-	/// <para>──────────────────────────────────────────────────</para>
+	/// <para>────────────────────────────────────────────</para>
 	/// <para>タスク受信の登録を行います。</para>
-	/// <para>──────────────────────────────────────────────────</para>
-	/// <para>登録を行うことで TaskConnect::Call 呼び出し時に TaskSend で指定されたタスクの関数が呼び出されます。</para>
-	/// <para>そのままのタスクであれば呼び出されませんが、登録を行う事で呼び出されるようになります。</para>
-	/// <para>──────────────────────────────────────────────────</para>
+	/// <para>テンプレート引数を使用します。&lt;受信側のタスク名&gt;</para>
+	/// <para>────────────────────────────────────────────</para>
+	/// <para>登録を行うことで TaskSend::All::Update 呼び出し時に、対象のタスクを引数に加えた関数が呼び出されます。</para>
+	/// <para>呼び出されるものは対象のタスク側で TaskSend を宣言し、登録を行ったものに限られます。</para>
+	/// <para>────────────────────────────────────────────</para>
 	/// </summary>
 	///
 	/// <param name="p_Task">
 	/// <para>自身のポインタ</para>
 	/// <para>必ず this を入力してください。</para>
-	/// <para>タスク識別用の名前を取得するため、テンプレートになっています。</para>
+	/// <para>デバッグ用の名前を取得するため、テンプレートになっています。</para>
 	/// </param>
-	template<class TASK>
-	inline void TaskReceive::Register(TASK* p_Task)
+	///
+	/// <param name="callbackFunction">
+	/// <para>省略可能</para>
+	/// <para>TaskSend::All::Update 呼び出し時に呼ばれるコール関数</para>
+	/// <para>型変換の省略とデフォルト引数の設定のため、テンプレートになっています。</para>
+	/// </param>
+	///
+	/// <param name="priority">
+	/// <para>省略可能</para>
+	/// <para>優先度（値が少なければ少ないほどコールが先に行われる）</para>
+	/// <para>型変換の省略（主にenum class）のため、テンプレートになっています。</para>
+	/// </param>
+	///
+	/// <param name="priorityPushBack">
+	/// <para>省略可能</para>
+	/// <para>同じ優先度の集まりと競合した際の処理</para>
+	/// <para>true  -> コールの集まりの末尾に設定</para>
+	/// <para>false -> コールの集まりの先頭に設定</para>
+	/// </param>
+	template<class TARGET, class TASK, class Func, typename PRIORITY>
+	inline void TaskReceive::Register(TASK * p_Task, const Func & callbackFunction, const PRIORITY & priority, const bool priorityPushBack)
 	{
-		//登録されていたら登録解除する
-		if (mp_Task)
-		{
-			//タスクの解放
-			m_Receive[m_Name].Free_ID(m_ID);
+		//コールが登録されていたら登録解除する
+		if (mp_Task) this->_Unregister_();
 
-			//リストが空になったら、消去する
-			if (m_Receive[m_Name].isEmpty()) m_Receive.erase(m_Name);
-		}
-
+		//初期化
 		mp_Task = p_Task;
+		m_Priority = static_cast<size_t>(priority);
 		m_Name = typeid(TASK).name();
-		
-		//追加される位置を取得する
-		m_ID = m_Receive[m_Name].nextID();
+		m_Check = typeid(TARGET).name();
+		m_Call = (void(Task::*)(Task &))callbackFunction;
+		m_Active = true;
 
-		//追加
-		m_Receive[m_Name].Add_Back(mp_Task);
+		//登録
+		this->_Register_(priorityPushBack);
+	}
 
-		//カウントを無効にする
-		m_Receive[m_Name].Safety_ID(m_ID, false);
+	/// <summary>
+	/// <para>──────────────────────────</para>
+	/// <para>TaskSend::All::Update 呼び出し時のコール優先度を変更します。</para>
+	/// <para>──────────────────────────</para>
+	/// </summary>
+	///
+	/// <param name="priority">
+	/// <para>優先度（値が少なければ少ないほどコールが先に行われる）</para>
+	/// </param>
+	///
+	/// <param name="pushBack">
+	/// <para>同じ優先度の集まりと競合した際の処理</para>
+	/// <para>true  -> コールの集まりの末尾に設定</para>
+	/// <para>false -> コールの集まりの先頭に設定</para>
+	/// </param>
+	template<typename PRIORITY>
+	inline void TaskReceive::SetPriority(const PRIORITY & priority, const bool pushBack)
+	{
+		//リストから登録を解除する
+		this->_Unregister_();
+
+		//順番を変更
+		m_Priority = static_cast<size_t>(priority);
+
+		//リストに再登録する
+		this->_Register_(pushBack);
+	}
+
+	/// <summary>
+	/// <para>─────────</para>
+	/// <para>優先度を取得します。</para>
+	/// <para>─────────</para>
+	/// </summary>
+	template<typename PRIORITY>
+	inline const PRIORITY TaskReceive::priority() const
+	{
+		return static_cast<PRIORITY>(m_Priority);
 	}
 }
