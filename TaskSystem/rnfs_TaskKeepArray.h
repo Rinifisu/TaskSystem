@@ -348,7 +348,7 @@ namespace rnfs
 			m_Data[m_NextID] = p_Task;
 
 			//新規識別番号を登録済み配列に追加
-			m_RegistID.emplace(m_RegistID.begin() + arrayNumber, 1, m_NextID);
+			m_RegistID.emplace(m_RegistID.begin() + arrayNumber, m_NextID);
 
 			//識別番号を次に移動する
 			++m_NextID;
@@ -360,7 +360,7 @@ namespace rnfs
 			m_Data[m_DeleteID.front()] = p_Task;
 
 			//消去済み識別番号を登録済み配列に追加
-			m_RegistID.insert(m_RegistID.begin() + arrayNumber, 1, m_DeleteID.front());
+			m_RegistID.insert(m_RegistID.begin() + arrayNumber, m_DeleteID.front());
 
 			//消去済みではなくなったので、先頭を削除
 			m_DeleteID.pop_front();
