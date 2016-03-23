@@ -32,7 +32,7 @@ namespace rnfs
 
 		std::unordered_map<size_t, TaskKeep<TYPE>>	m_Data;			//タスクキープ配列
 		std::deque<size_t>							m_RegistID;		//登録済みの番号一覧
-		std::deque<size_t>							m_DeleteID;		//消去済みの番号一覧
+		std::deque<size_t>							m_ClearID;		//消去済みの番号一覧
 
 	public:
 		TaskKeepArray();
@@ -263,7 +263,7 @@ namespace rnfs
 	inline void TaskKeepArray<TYPE>::Add_Back(TYPE* p_Task)
 	{
 		//消去済み配列が空であれば
-		if (m_DeleteID.empty())
+		if (m_ClearID.empty())
 		{
 			//新規識別番号の位置にタスクをキープ
 			m_Data[m_NextID] = p_Task;
@@ -278,13 +278,13 @@ namespace rnfs
 		else
 		{
 			//消去済み識別番号の位置にタスクをキープ
-			m_Data[m_DeleteID.front()] = p_Task;
+			m_Data[m_ClearID.front()] = p_Task;
 
 			//消去済み識別番号を登録済み配列に追加
-			m_RegistID.emplace_back(m_DeleteID.front());
+			m_RegistID.emplace_back(m_ClearID.front());
 
 			//消去済みではなくなったので、先頭を削除
-			m_DeleteID.pop_front();
+			m_ClearID.pop_front();
 		}
 	}
 
@@ -300,7 +300,7 @@ namespace rnfs
 	template<class TYPE>
 	inline void TaskKeepArray<TYPE>::Add_Front(TYPE* p_Task)
 	{
-		if (m_DeleteID.empty())
+		if (m_ClearID.empty())
 		{
 			//新規識別番号の位置にタスクをキープ
 			m_Data[m_NextID] = p_Task;
@@ -315,13 +315,13 @@ namespace rnfs
 		else
 		{
 			//消去済み識別番号の位置にタスクをキープ
-			m_Data[m_DeleteID.front()] = p_Task;
+			m_Data[m_ClearID.front()] = p_Task;
 
 			//消去済み識別番号を登録済み配列に追加
-			m_RegistID.emplace_front(m_DeleteID.front());
+			m_RegistID.emplace_front(m_ClearID.front());
 
 			//消去済みではなくなったので、先頭を削除
-			m_DeleteID.pop_front();
+			m_ClearID.pop_front();
 		}
 	}
 
@@ -342,7 +342,7 @@ namespace rnfs
 	inline void TaskKeepArray<TYPE>::Insert(const size_t arrayNumber, TYPE * p_Task)
 	{
 		//消去済み配列が空であれば
-		if (m_DeleteID.empty())
+		if (m_ClearID.empty())
 		{
 			//新規識別番号の位置にタスクをキープ
 			m_Data[m_NextID] = p_Task;
@@ -357,13 +357,13 @@ namespace rnfs
 		else
 		{
 			//消去済み識別番号の位置にタスクをキープ
-			m_Data[m_DeleteID.front()] = p_Task;
+			m_Data[m_ClearID.front()] = p_Task;
 
 			//消去済み識別番号を登録済み配列に追加
-			m_RegistID.insert(m_RegistID.begin() + arrayNumber, m_DeleteID.front());
+			m_RegistID.insert(m_RegistID.begin() + arrayNumber, m_ClearID.front());
 
 			//消去済みではなくなったので、先頭を削除
-			m_DeleteID.pop_front();
+			m_ClearID.pop_front();
 		}
 	}
 
@@ -386,7 +386,7 @@ namespace rnfs
 		m_Data.erase(id);
 
 		//消去済み配列に追加
-		m_DeleteID.emplace_back(id);
+		m_ClearID.emplace_back(id);
 
 		//登録済み配列から消去
 		m_RegistID.erase(m_RegistID.begin() + toArrayNumber(id));
@@ -411,7 +411,7 @@ namespace rnfs
 		m_Data.erase(m_RegistID[arrayNumber]);
 
 		//消去済み配列に追加
-		m_DeleteID.emplace_back(m_RegistID[arrayNumber]);
+		m_ClearID.emplace_back(m_RegistID[arrayNumber]);
 
 		//登録済み配列から消去
 		m_RegistID.erase(m_RegistID.begin() + arrayNumber);
@@ -432,7 +432,7 @@ namespace rnfs
 		m_Data.erase(m_RegistID.back());
 
 		//消去済み配列に追加
-		m_DeleteID.emplace_back(m_RegistID.back());
+		m_ClearID.emplace_back(m_RegistID.back());
 
 		//登録済み配列から消去
 		m_RegistID.erase(m_RegistID.end());
@@ -453,7 +453,7 @@ namespace rnfs
 		m_Data.erase(m_RegistID.front());
 
 		//消去済み配列に追加
-		m_DeleteID.emplace_back(m_RegistID.front());
+		m_ClearID.emplace_back(m_RegistID.front());
 
 		//登録済み配列から消去
 		m_RegistID.erase(m_RegistID.begin());
@@ -474,7 +474,7 @@ namespace rnfs
 		m_RegistID.clear();
 
 		//消去済み配列の全初期化
-		m_DeleteID.clear();
+		m_ClearID.clear();
 
 		//識別番号を先頭の位置へ移動
 		m_NextID = 0;
@@ -503,7 +503,7 @@ namespace rnfs
 		m_Data.erase(id);
 
 		//消去済み配列に追加
-		m_DeleteID.emplace_back(id);
+		m_ClearID.emplace_back(id);
 
 		//登録済み配列から消去
 		m_RegistID.erase(m_RegistID.begin() + toArrayNumber(id));
@@ -532,7 +532,7 @@ namespace rnfs
 		m_Data.erase(m_RegistID[arrayNumber]);
 
 		//消去済み配列に追加
-		m_DeleteID.emplace_back(m_RegistID[arrayNumber]);
+		m_ClearID.emplace_back(m_RegistID[arrayNumber]);
 
 		//登録済み配列から消去
 		m_RegistID.erase(m_RegistID.begin() + arrayNumber);
@@ -551,7 +551,7 @@ namespace rnfs
 		m_Data.erase(m_RegistID.back());
 
 		//消去済み配列に追加
-		m_DeleteID.emplace_back(m_RegistID.back());
+		m_ClearID.emplace_back(m_RegistID.back());
 
 		//登録済み配列から消去
 		m_RegistID.erase(m_RegistID.end());
@@ -570,7 +570,7 @@ namespace rnfs
 		m_Data.erase(m_RegistID.front());
 
 		//消去済み配列に追加
-		m_DeleteID.emplace_back(m_RegistID.front());
+		m_ClearID.emplace_back(m_RegistID.front());
 
 		//登録済み配列から消去
 		m_RegistID.erase(m_RegistID.begin());
@@ -589,7 +589,7 @@ namespace rnfs
 		m_RegistID.clear();
 
 		//消去済み配列の全初期化
-		m_DeleteID.clear();
+		m_ClearID.clear();
 
 		//識別番号を先頭の位置へ移動
 		m_NextID = 0;
@@ -693,7 +693,7 @@ namespace rnfs
 	template<class TYPE>
 	inline const size_t TaskKeepArray<TYPE>::nextID() const
 	{
-		return m_DeleteID.empty() ? m_NextID : m_DeleteID.front();
+		return m_ClearID.empty() ? m_NextID : m_ClearID.front();
 	}
 
 	/// <summary>

@@ -50,8 +50,22 @@ namespace rnfs
 		void _Unregister_();
 
 	public:
+		/// <summary>
+		/// <para>────────</para>
+		/// <para>初期化を行います。</para>
+		/// <para>────────</para>
+		/// </summary>
 		TaskReceive();
+
+		/// <summary>
+		/// <para>────────────</para>
+		/// <para>タスク受信の解除を行います。</para>
+		/// <para>────────────</para>
+		/// </summary>
 		~TaskReceive();
+
+		template<class TARGET, class TASK, class Func = void(Task::*)(Task &)>
+		void Call(TASK* p_Task, const Func & callbackFunction);
 
 		template<class TARGET, class TASK, class Func = void(Task::*)(Task &), typename PRIORITY = size_t>
 		void Register(TASK* p_Task, const Func & callbackFunction = nullptr, const PRIORITY & priority = 0, const bool priorityPushBack = true);
@@ -65,27 +79,17 @@ namespace rnfs
 
 		/// <summary>
 		/// <para>─────────────────────────────</para>
-		/// <para>TaskSend::All::Update 呼び出し時に呼ばれるコール関数を消去します。</para>
-		/// <para>TaskReceive::isCall で false が返されるようになります。</para>
-		/// <para>コールを終了する際に使用します。</para>
+		/// <para>TaskSend::All::Update 呼び出し時にコールが行われるかを切り替えます。</para>
+		/// <para>有効と無効が呼び出す度に反転します。</para>
+		/// <para>一時停止などに利用できます。</para>
 		/// <para>─────────────────────────────</para>
 		/// </summary>
-		void ClearCall();
-
-		/// <summary>
-		/// <para>─────────────────</para>
-		/// <para>コール関数が設定されているか確認します。</para>
-		/// <para>─────────────────</para>
-		/// <para>true  -> コール関数が設定されている</para>
-		/// <para>false -> コール関数が設定されていない</para>
-		/// <para>─────────────────</para>
-		/// </summary>
-		const bool isCall() const;
+		void SetActive();
 
 		/// <summary>
 		/// <para>────────────────────────────</para>
 		/// <para>TaskSend::All::Update 呼び出し時にコールが行われるかを設定します。</para>
-		/// <para>一時停止などに使用できます。</para>
+		/// <para>一時停止などに利用できます。</para>
 		/// <para>────────────────────────────</para>
 		/// </summary>
 		///
@@ -131,6 +135,37 @@ namespace rnfs
 		const std::string & name() const;
 	};
 	
+	/// <summary>
+	/// <para>────────────────────────────────────</para>
+	/// <para>送信側とのやり取りを行います。</para>
+	/// <para>対象のタスクを引数に加えた関数が呼び出されます。</para>
+	/// <para>テンプレート引数を使用します。&lt;対象のタスク名&gt;</para>
+	/// <para>────────────────────────────────────</para>
+	/// <para>呼び出されるものは対象のタスク側で TaskSend を宣言し、登録を行ったものに限られます。</para>
+	/// <para>────────────────────────────────────</para>
+	/// </summary>
+	///
+	/// <param name="p_Task">
+	/// <para>自身のポインタ</para>
+	/// <para>必ず this を入力してください。</para>
+	/// <para>デバッグ用の名前を取得するため、テンプレートになっています。</para>
+	/// </param>
+	///
+	/// <param name="callbackFunction">
+	/// <para>省略可能</para>
+	/// <para>呼ばれるコール関数</para>
+	/// <para>型変換の省略のため、テンプレートになっています。</para>
+	/// </param>
+	template<class TARGET, class TASK, class Func>
+	inline void TaskReceive::Call(TASK * p_Task, const Func & callbackFunction)
+	{
+		//関数の実行
+		for (auto & i : TaskSend::m_Send[typeid(TARGET).name()])
+		{
+			(*p_Task.*(void(Task::*)(Task &))callbackFunction)(i.second.task());
+		}
+	}
+
 	/// <summary>
 	/// <para>────────────────────────────────────────────</para>
 	/// <para>タスク受信の登録を行います。</para>

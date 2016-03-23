@@ -11,6 +11,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #include "rnfs_Task.h"
 
+#include "rnfs_TaskReceive.h"
+
 namespace rnfs
 {
 	/// <summary>
@@ -22,17 +24,30 @@ namespace rnfs
 	/// </summary>
 	class TaskSend final
 	{
-	private:
-		Task*			mp_Task;	//コール対象タスクのポインタ
+		friend class	TaskReceive;	//様々な取得や参照で必要
 
-		std::string		m_Name;		//識別用の名前
-		size_t			m_ID;		//消去用の管理番号
+	private:
+		Task*			mp_Task;		//コール対象タスクのポインタ
+
+		std::string		m_Name;			//識別用の名前
+		size_t			m_ID;			//消去用の管理番号
 
 	private:
 		static std::unordered_map<std::string, TaskKeepArray<Task>>	m_Send; //送信リストのポインタ
 
 	public:
+		/// <summary>
+		/// <para>────────</para>
+		/// <para>初期化を行います。</para>
+		/// <para>────────</para>
+		/// </summary>
 		TaskSend();
+
+		/// <summary>
+		/// <para>────────────</para>
+		/// <para>タスク送信の解除を行います。</para>
+		/// <para>────────────</para>
+		/// </summary>
 		~TaskSend();
 
 		template<class TASK>

@@ -112,15 +112,9 @@ namespace rnfs
 		m_Active = false;
 	}
 
-	void TaskCall::ClearCall()
+	void TaskCall::SetActive()
 	{
-		m_Call = nullptr;
-	}
-
-	const bool TaskCall::isCall() const
-	{
-		//空でないか確認
-		return m_Call;
+		m_Active = !m_Active;
 	}
 
 	void TaskCall::SetActive(const bool active)

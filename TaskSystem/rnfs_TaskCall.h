@@ -65,31 +65,21 @@ namespace rnfs
 		void Unregister();
 
 		template<typename FUNC>
-		void SetCall(const FUNC & callbackFunction);
+		void SetCall(const FUNC & callbackFunction, const bool active = true);
 
 		/// <summary>
-		/// <para>────────────────────────────</para>
-		/// <para>TaskCall::All::Update 呼び出し時に呼ばれるコール関数を消去します。</para>
-		/// <para>TaskCall::isCall で false が返されるようになります。</para>
-		/// <para>コールを終了する際に使用します。</para>
-		/// <para>────────────────────────────</para>
+		/// <para>─────────────────────────────</para>
+		/// <para>TaskCall::All::Update 呼び出し時にコールが行われるかを切り替えます。</para>
+		/// <para>有効と無効が呼び出す度に反転します。</para>
+		/// <para>一時停止などに利用できます。</para>
+		/// <para>─────────────────────────────</para>
 		/// </summary>
-		void ClearCall();
-
-		/// <summary>
-		/// <para>─────────────────</para>
-		/// <para>コール関数が設定されているか確認します。</para>
-		/// <para>─────────────────</para>
-		/// <para>true  -> コール関数が設定されている</para>
-		/// <para>false -> コール関数が設定されていない</para>
-		/// <para>─────────────────</para>
-		/// </summary>
-		const bool isCall() const;
+		void SetActive();
 
 		/// <summary>
 		/// <para>────────────────────────────</para>
 		/// <para>TaskCall::All::Update 呼び出し時にコールが行われるかを設定します。</para>
-		/// <para>一時停止などに使用できます。</para>
+		/// <para>一時停止などに利用できます。</para>
 		/// <para>────────────────────────────</para>
 		/// </summary>
 		///
@@ -291,10 +281,17 @@ namespace rnfs
 	/// <param name="callbackFunction">
 	/// <para>コール関数</para>
 	/// </param>
+	///
+	/// <param name="active">
+	/// <para>コールが行われるか</para>
+	/// <para>true  -> コール有効</para>
+	/// <para>false -> コール無効</para>
+	/// </param>
 	template<typename FUNC>
-	inline void TaskCall::SetCall(const FUNC & callbackFunction)
+	inline void TaskCall::SetCall(const FUNC & callbackFunction, const bool active)
 	{
 		m_Call = static_cast<void(Task::*)()>(callbackFunction);
+		m_Active = active;
 	}
 
 	/// <summary>

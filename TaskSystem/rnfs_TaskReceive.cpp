@@ -109,15 +109,9 @@ namespace rnfs
 		m_Active = false;
 	}
 
-	void TaskReceive::ClearCall()
+	void TaskReceive::SetActive()
 	{
-		m_Call = nullptr;
-	}
-
-	const bool TaskReceive::isCall() const
-	{
-		//空でないか確認
-		return m_Call;
+		m_Active = !m_Active;
 	}
 
 	void TaskReceive::SetActive(const bool active)
