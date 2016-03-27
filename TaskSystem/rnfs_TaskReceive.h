@@ -58,11 +58,16 @@ namespace rnfs
 		TaskReceive();
 
 		/// <summary>
-		/// <para>────────────</para>
-		/// <para>タスク受信の解除を行います。</para>
-		/// <para>────────────</para>
+		/// <para>──────────────</para>
+		/// <para>タスク受信の登録解除を行います。</para>
+		/// <para>──────────────</para>
 		/// </summary>
 		~TaskReceive();
+
+		TaskReceive(const TaskReceive & taskReceive) = delete;
+		TaskReceive(TaskReceive && taskReceive) = delete;
+		void operator =(const TaskReceive & taskReceive) = delete;
+		void operator =(TaskReceive && taskReceive) = delete;
 
 		template<class TARGET, class TASK, class Func = void(Task::*)(Task &)>
 		void Call(TASK* p_Task, const Func & callbackFunction);
@@ -71,9 +76,9 @@ namespace rnfs
 		void Register(TASK* p_Task, const Func & callbackFunction = nullptr, const PRIORITY & priority = 0, const bool priorityPushBack = true);
 
 		/// <summary>
-		/// <para>────────────</para>
-		/// <para>タスク受信の解除を行います。</para>
-		/// <para>────────────</para>
+		/// <para>──────────────</para>
+		/// <para>タスク受信の登録解除を行います。</para>
+		/// <para>──────────────</para>
 		/// </summary>
 		void Unregister();
 

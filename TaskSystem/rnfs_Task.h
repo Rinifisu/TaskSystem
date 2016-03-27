@@ -51,6 +51,11 @@ namespace rnfs
 		//継承クラスのデストラクタが呼ばれる
 		virtual ~Task() = default;
 
+		Task(const Task & task) = delete;
+		Task(Task && task) = delete;
+		void operator =(const Task & task) = delete;
+		void operator =(Task && task) = delete;
+
 		/// <summary>
 		/// <para>───────────────</para>
 		/// <para>消去フラグを立てます。</para>

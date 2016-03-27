@@ -36,9 +36,9 @@ namespace rnfs
 		TaskKeep(TaskKeep<TYPE> && taskKeep) = delete;
 		~TaskKeep();
 
-		void operator = (TYPE* p_Task);
-		void operator = (const TaskKeep<TYPE> & taskKeep);
-		void operator = (TaskKeep<TYPE> && taskKeep) = delete;
+		void operator =(TYPE* p_Task);
+		void operator =(const TaskKeep<TYPE> & taskKeep);
+		void operator =(TaskKeep<TYPE> && taskKeep) = delete;
 
 		void Clear();
 		void Free();
@@ -142,7 +142,7 @@ namespace rnfs
 	/// <para>キープ対象のタスク</para>
 	/// </param>
 	template<class TYPE>
-	inline void TaskKeep<TYPE>::operator = (TYPE* p_Task)
+	inline void TaskKeep<TYPE>::operator =(TYPE* p_Task)
 	{
 		_Reset_(p_Task);
 	}
@@ -158,7 +158,7 @@ namespace rnfs
 	/// <para>キープ対象のタスクをキープしている TaskKeep</para>
 	/// </param>
 	template<class TYPE>
-	inline void TaskKeep<TYPE>::operator = (const TaskKeep<TYPE> & taskKeep)
+	inline void TaskKeep<TYPE>::operator =(const TaskKeep<TYPE> & taskKeep)
 	{
 		_Reset_(taskKeep.mp_Task);
 	}

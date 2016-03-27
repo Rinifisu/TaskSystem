@@ -40,20 +40,35 @@ namespace rnfs
 		void _Unregister_();
 
 	public:
+		/// <summary>
+		/// <para>────────</para>
+		/// <para>初期化を行います。</para>
+		/// <para>────────</para>
+		/// </summary>
 		TaskGet();
 		
 		template<class TASK>
 		TaskGet(TASK* p_Task);
 
+		/// <summary>
+		/// <para>───────────────</para>
+		/// <para>タスクゲットの登録解除を行います。</para>
+		/// <para>───────────────</para>
+		/// </summary>
 		~TaskGet();
+
+		TaskGet(const TaskGet & taskGet) = delete;
+		TaskGet(TaskGet && taskGet) = delete;
+		void operator =(const TaskGet & taskGet) = delete;
+		void operator =(TaskGet && taskGet) = delete;
 
 		template<class TASK>
 		void Register(TASK* p_Task);
 
 		/// <summary>
-		/// <para>─────────────</para>
-		/// <para>タスクゲットの解除を行います。</para>
-		/// <para>─────────────</para>
+		/// <para>───────────────</para>
+		/// <para>タスクゲットの登録解除を行います。</para>
+		/// <para>───────────────</para>
 		/// </summary>
 		void Unregister();
 

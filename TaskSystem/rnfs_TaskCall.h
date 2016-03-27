@@ -47,12 +47,27 @@ namespace rnfs
 		void _Unregister_();
 
 	public:
+		/// <summary>
+		/// <para>────────</para>
+		/// <para>初期化を行います。</para>
+		/// <para>────────</para>
+		/// </summary>
 		TaskCall();
 
 		template<class TASK, typename FUNC = void(Task::*)(), typename PRIORITY = size_t>
 		TaskCall(TASK* p_Task, const FUNC & callbackFunction = nullptr, const unsigned char group = 0, const PRIORITY & priority = 0, const bool priorityPushBack = true);
 
+		/// <summary>
+		/// <para>───────────────</para>
+		/// <para>コールリストの登録解除を行います。</para>
+		/// <para>───────────────</para>
+		/// </summary>
 		~TaskCall();
+
+		TaskCall(const TaskCall & taskCall) = delete;
+		TaskCall(TaskCall && taskCall) = delete;
+		void operator =(const TaskCall & taskCall) = delete;
+		void operator =(TaskCall && taskCall) = delete;
 
 		template<class TASK, typename FUNC = void(Task::*)(), typename PRIORITY = size_t>
 		void Register(TASK* p_Task, const FUNC & callbackFunction = nullptr, const unsigned char group = 0, const PRIORITY & priority = 0, const bool priorityPushBack = true);

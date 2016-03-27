@@ -44,19 +44,24 @@ namespace rnfs
 		TaskSend();
 
 		/// <summary>
-		/// <para>────────────</para>
-		/// <para>タスク送信の解除を行います。</para>
-		/// <para>────────────</para>
+		/// <para>──────────────</para>
+		/// <para>タスク送信の登録解除を行います。</para>
+		/// <para>──────────────</para>
 		/// </summary>
 		~TaskSend();
+
+		TaskSend(const TaskSend & taskSend) = delete;
+		TaskSend(TaskSend && taskSend) = delete;
+		void operator =(const TaskSend & taskSend) = delete;
+		void operator =(TaskSend && taskSend) = delete;
 
 		template<class TASK>
 		void Register(TASK* p_Task);
 
 		/// <summary>
-		/// <para>────────────</para>
-		/// <para>タスク送信の解除を行います。</para>
-		/// <para>────────────</para>
+		/// <para>──────────────</para>
+		/// <para>タスク送信の登録解除を行います。</para>
+		/// <para>──────────────</para>
 		/// </summary>
 		void Unregister();
 
