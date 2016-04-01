@@ -63,6 +63,11 @@ namespace rnfs
 		m_Destroy = true;
 	}
 
+	bool Task::isDestroy() const
+	{
+		return m_Destroy;
+	}
+
 	size_t Task::link() const
 	{
 		return m_Link;

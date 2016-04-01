@@ -28,9 +28,12 @@ public:
 	Ball() : Task()
 		, m_Pos(320.0, 460.0), m_Gravity(0.0)
 
-		, m_Update(this)				//最初は関数を呼び出さずに、後から設定する
+		, m_Update(this, &Ball::Update)	//座標更新を行う
 		, m_Draw(this, &Ball::Draw)		//描画を常に行う
-	{ }
+	{
+		//最初は関数を呼び出さずに、後から有効化する
+		m_Update.SetActive(false);
+	}
 
 private:
 	void Update()
@@ -47,7 +50,7 @@ private:
 			m_Pos.y = 460.0;
 
 			//自動呼び出し関数を削除して、呼ばれないようにする
-			m_Update.ClearCall();
+			m_Update.SetActive(false);
 		}
 	}
 
@@ -62,7 +65,7 @@ public:
 	{
 		//ジャンプ中であれば、何もしない
 		//isCall で自動呼び出し関数を、設定しているか確認できる
-		if (m_Update.isCall()) return;
+		if (m_Update.isActive()) return;
 
 		//重力を上昇状態にする
 		m_Gravity = 10.0;

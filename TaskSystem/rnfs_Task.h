@@ -9,8 +9,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #pragma once
 
-#include "rnfs_TaskKeepArray.h"
-
 namespace rnfs
 {
 	/// <summary>
@@ -51,21 +49,30 @@ namespace rnfs
 		//継承クラスのデストラクタが呼ばれる
 		virtual ~Task() = default;
 
-		Task(const Task & task) = delete;
-		Task(Task && task) = delete;
-		void operator =(const Task & task) = delete;
-		void operator =(Task && task) = delete;
-
 		/// <summary>
 		/// <para>───────────────</para>
 		/// <para>消去フラグを立てます。</para>
 		/// <para>キープ中のタスクは消去できません。</para>
+		/// <para>タスク内からの呼び出し限定です。</para>
 		/// <para>───────────────</para>
 		/// <para>次の Task::All::Update 呼び出し時に</para>
 		/// <para>タスクの消去が行われます。</para>
 		/// <para>───────────────</para>
 		/// </summary>
 		virtual void Destroy() final;
+
+	public:
+		Task(const Task & task) = delete;
+		Task(Task && task) = delete;
+		void operator =(const Task & task) = delete;
+		void operator =(Task && task) = delete;
+
+		/// <summary>
+		/// <para>────────────────</para>
+		/// <para>消去フラグが立ててあるかを確認します。</para>
+		/// <para>────────────────</para>
+		/// </summary>
+		virtual bool isDestroy() const final;
 
 		/// <summary>
 		/// <para>────────────────────</para>
@@ -75,7 +82,6 @@ namespace rnfs
 		/// </summary>
 		virtual size_t link() const final;
 
-	public:
 		/// <summary>
 		/// <para>────────────</para>
 		/// <para>全体の処理を行う空間です。</para>

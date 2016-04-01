@@ -9,6 +9,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #include "rnfs_TaskSend.h"
 
+#include "rnfs_TaskReceive.h"
+
 namespace rnfs
 {
 	std::unordered_map<std::string, TaskKeepArray<Task>> TaskSend::m_Send; //送信リストのポインタ

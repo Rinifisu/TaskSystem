@@ -9,9 +9,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #pragma once
 
-#include <functional> //std::function
+#include <string>
 
-#include "rnfs_TaskSend.h"
+#include "rnfs_Task.h"
 
 namespace rnfs
 {

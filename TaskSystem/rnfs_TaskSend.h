@@ -9,9 +9,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #pragma once
 
-#include "rnfs_Task.h"
-
-#include "rnfs_TaskReceive.h"
+#include "rnfs_TaskKeepArray.h"
 
 namespace rnfs
 {

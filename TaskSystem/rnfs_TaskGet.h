@@ -9,9 +9,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #pragma once
 
-#include <functional>
+#include <functional> //std::function
 
-#include "rnfs_Task.h"
+#include "rnfs_TaskKeepArray.h"
 
 namespace rnfs
 {
@@ -51,9 +51,9 @@ namespace rnfs
 		TaskGet(TASK* p_Task);
 
 		/// <summary>
-		/// <para>───────────────</para>
+		/// <para>──────────────</para>
 		/// <para>タスクゲットの登録解除を行います。</para>
-		/// <para>───────────────</para>
+		/// <para>──────────────</para>
 		/// </summary>
 		~TaskGet();
 
@@ -66,17 +66,17 @@ namespace rnfs
 		void Register(TASK* p_Task);
 
 		/// <summary>
-		/// <para>───────────────</para>
+		/// <para>──────────────</para>
 		/// <para>タスクゲットの登録解除を行います。</para>
-		/// <para>───────────────</para>
+		/// <para>──────────────</para>
 		/// </summary>
 		void Unregister();
 
 		/// <summary>
-		/// <para>─────────────────────────</para>
+		/// <para>────────────────────────</para>
 		/// <para>識別番号を取得します。</para>
 		/// <para>配列の変化に対応できるタスク取得が識別番号で行えます。</para>
-		/// <para>─────────────────────────</para>
+		/// <para>────────────────────────</para>
 		/// </summary>
 		const size_t id();
 
@@ -89,7 +89,7 @@ namespace rnfs
 		{
 		public:
 			template<class TASK>
-			static TASK & task_ID(const size_t id = 0);
+			static TASK & task_ID(const size_t id);
 			template<class TASK>
 			static TASK & task(const size_t arrayNumber = 0);
 
@@ -104,6 +104,13 @@ namespace rnfs
 			static const bool isEmpty();
 			template<class TASK>
 			static const size_t size();
+
+			template<class TASK>
+			static const bool clear(const size_t arrayNumber = 0);
+			template<class TASK>
+			static const bool clear_ID(const size_t id);
+			template<class TASK>
+			static const size_t clear_All();
 		};
 	};
 
@@ -163,10 +170,10 @@ namespace rnfs
 	}
 
 	/// <summary>
-	/// <para>───────────────────────────────</para>
+	/// <para>──────────────────────────────</para>
 	/// <para>TaskGet::Register で登録済みのタスクを、識別番号を使用して取得します。</para>
 	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	/// <para>───────────────────────────────</para>
+	/// <para>──────────────────────────────</para>
 	/// </summary>
 	///
 	/// <param name="id">
@@ -179,10 +186,10 @@ namespace rnfs
 	}
 
 	/// <summary>
-	/// <para>───────────────────────</para>
+	/// <para>─────────────────────</para>
 	/// <para>TaskGet::Register で登録済みのタスクを取得します。</para>
 	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	/// <para>───────────────────────</para>
+	/// <para>─────────────────────</para>
 	/// </summary>
 	///
 	/// <param name="arrayNumber">
@@ -195,10 +202,10 @@ namespace rnfs
 	}
 
 	/// <summary>
-	/// <para>────────────────────────────────────</para>
+	/// <para>───────────────────────────────────</para>
 	/// <para>TaskGet::Register で登録済みのタスクの配列番号を、識別番号を使用して取得します。</para>
 	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	/// <para>────────────────────────────────────</para>
+	/// <para>───────────────────────────────────</para>
 	/// </summary>
 	///
 	/// <param name="id">
@@ -211,10 +218,10 @@ namespace rnfs
 	}
 
 	/// <summary>
-	/// <para>────────────────────────────────────</para>
+	/// <para>───────────────────────────────────</para>
 	/// <para>TaskGet::Register で登録済みのタスクの識別番号を、配列番号を使用して取得します。</para>
 	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	/// <para>────────────────────────────────────</para>
+	/// <para>───────────────────────────────────</para>
 	/// </summary>
 	///
 	/// <param name="arrayNumber">
@@ -228,7 +235,7 @@ namespace rnfs
 
 	/// <summary>
 	/// <para>─────────────────────────────────</para>
-	/// <para>指定した識別番号の TaskGet::Register で登録済みタスクの有無を確認します。</para>
+	/// <para>指定した識別番号の TaskGet::Register で登録済みのタスクの有無を確認します。</para>
 	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
 	/// <para>─────────────────────────────────</para>
 	/// </summary>
@@ -258,10 +265,10 @@ namespace rnfs
 	}
 
 	/// <summary>
-	/// <para>────────────────────────</para>
-	/// <para>TaskGet::Register で登録済みのクラス数を取得します。</para>
+	/// <para>──────────────────────</para>
+	/// <para>TaskGet::Register で登録済みのタスク数を取得します。</para>
 	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	/// <para>────────────────────────</para>
+	/// <para>──────────────────────</para>
 	/// </summary>
 	template<class TASK>
 	inline const size_t TaskGet::All::size()
@@ -270,5 +277,98 @@ namespace rnfs
 		if (m_Data.count(typeid(TASK).name()) <= 0) return 0;
 		//要素数の取得
 		else return m_Data.at(typeid(TASK).name()).size();
+	}
+
+	/// <summary>
+	/// <para>─────────────────────</para>
+	/// <para>TaskGet::Register で登録済みのタスクを消去します。</para>
+	/// <para>キープ中のタスクは消去できません。</para>
+	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	/// <para>─────────────────────</para>
+	/// </summary>
+	///
+	/// <param name="arrayNumber">
+	/// <para>配列番号</para>
+	/// </param>
+	template<class TASK>
+	inline const bool TaskGet::All::clear(const size_t arrayNumber)
+	{
+		//登録済みのタスクが１つも無い場合は何もしない
+		if (m_Data.count(typeid(TASK).name()) <= 0) return false;
+
+		//一時的に参照
+		TaskKeepArray<Task> & taskKeepArray = m_Data.at(typeid(TASK).name());
+		//キープしているタスクがある場合は何もせずに終了
+		if (0 < taskKeepArray.task(arrayNumber).link()) return false;
+
+		//カウントを有効にして消去する
+		taskKeepArray.Safety(arrayNumber, true);
+		taskKeepArray.Clear(arrayNumber);
+
+		return true;
+	}
+
+	/// <summary>
+	/// <para>──────────────────────────────</para>
+	/// <para>指定した識別番号の TaskGet::Register で登録済みのタスクを消去します。</para>
+	/// <para>キープ中のタスクは消去できません。</para>
+	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	/// <para>──────────────────────────────</para>
+	/// </summary>
+	///
+	/// <param name="id">
+	/// <para>配列の識別番号</para>
+	/// </param>
+	template<class TASK>
+	inline const bool TaskGet::All::clear_ID(const size_t id)
+	{
+		//登録済みのタスクが１つも無い場合は何もしない
+		if (m_Data.count(typeid(TASK).name()) <= 0) return false;
+
+		//一時的に参照
+		TaskKeepArray<Task> & taskKeepArray = m_Data.at(typeid(TASK).name());
+		//キープしているタスクがある場合は何もせずに終了
+		if (0 < taskKeepArray.task_ID(id).link()) return false;
+
+		//カウントを有効にして消去する
+		taskKeepArray.Safety_ID(id, true);
+		taskKeepArray.Clear_ID(id);
+
+		return true;
+	}
+
+	/// <summary>
+	/// <para>───────────────────────</para>
+	/// <para>TaskGet::Register で登録済みのタスクを全て消去します。</para>
+	/// <para>キープ中のタスクは消去できません。</para>
+	/// <para>消去に成功したタスク数が返されます。</para>
+	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	/// <para>───────────────────────</para>
+	/// </summary>
+	template<class TASK>
+	inline const size_t TaskGet::All::clear_All()
+	{
+		//登録済みのタスクが１つも無い場合は何もしない
+		if (m_Data.count(typeid(TASK).name()) <= 0) return 0;
+
+		//消去したタスクの数
+		size_t deleteTask = 0;
+		//一時的に参照
+		TaskKeepArray<Task> & taskKeepArray = m_Data.at(typeid(TASK).name());
+
+		for (size_t i = 0; i < taskKeepArray.size();)
+		{
+			//キープしているタスクがある場合は何もせずに次へ
+			if (0 < taskKeepArray.task(i).link()) ++i;
+			else
+			{
+				//カウントを有効にして消去する
+				taskKeepArray.Safety(i, true);
+				taskKeepArray.Clear(i);
+				++deleteTask;
+			}
+		}
+
+		return deleteTask;
 	}
 }
