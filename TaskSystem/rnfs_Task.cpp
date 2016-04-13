@@ -11,8 +11,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 namespace rnfs
 {
-	Task* Task::mp_Begin = nullptr;	//先頭ポインタ
-	Task* Task::mp_End = nullptr;	//末尾ポインタ
+	Task* Task::mp_Begin = nullptr;		//先頭ポインタ
+	Task* Task::mp_End = nullptr;		//末尾ポインタ
+
+	Task* Task::mp_Destroy = nullptr;	//消去対象の先頭ポインタ
 
 	Task* Task::_Unregister_(Task* p_Task)
 	{
@@ -26,7 +28,7 @@ namespace rnfs
 
 		//前に次を代入してつなぎ合わせる
 		if (prev != nullptr) prev->mp_Next = next;
-		//null の場合は末尾タスクがなくなったので、次のタスクを先頭にする
+		//null の場合は先頭タスクがなくなったので、次のタスクを先頭にする
 		else mp_Begin = next;
 
 		//タスクの消去
@@ -37,7 +39,7 @@ namespace rnfs
 	}
 
 	Task::Task()
-		: mp_Prev(nullptr), mp_Next(nullptr), m_Destroy(false), m_Link(0)
+		: mp_Prev(nullptr), mp_Next(nullptr), mp_Target(nullptr), m_Link(0)
 	{
 		//先頭が空の場合は新規タスクを設定
 		if (mp_Begin == nullptr) mp_Begin = this;
@@ -59,13 +61,16 @@ namespace rnfs
 		//キープしているタスクは消去できない
 		if (m_Link != 0) return;
 
-		//消去フラグを有効にする
-		m_Destroy = true;
+		//新規タスクの次に先頭タスクを代入
+		mp_Target = mp_Destroy;
+
+		//先頭に新規タスクを代入
+		mp_Destroy = this;
 	}
 
 	bool Task::isDestroy() const
 	{
-		return m_Destroy;
+		return mp_Target != nullptr || mp_Destroy == this;
 	}
 
 	size_t Task::link() const
@@ -86,20 +91,22 @@ namespace rnfs
 			if (p_Task->m_Link == 0) p_Task = Task::_Unregister_(p_Task);
 			else p_Task = p_Task->mp_Next;
 		}
+
+		//先頭を空にする
+		mp_Destroy = nullptr;
 	}
 
 	void Task::All::Update()
 	{
-		//現在のタスク
-		Task* p_Task = mp_Begin;
-
 		//末尾までループする
-		while (p_Task != nullptr)
+		while (mp_Destroy != nullptr)
 		{
-			//消去フラグが立っている場合はタスクの消去し、次のタスクへ移動
-			if (p_Task->m_Destroy) p_Task = Task::_Unregister_(p_Task);
-			//更新処理
-			else p_Task = p_Task->mp_Next;
+			//消去の前に次のタスクを持つ
+			Task* p_Task = mp_Destroy->mp_Target;
+			//先頭のタスクを消去
+			Task::_Unregister_(mp_Destroy);
+			//先頭を次のタスクにする
+			mp_Destroy = p_Task;
 		}
 	}
 }

@@ -20,19 +20,21 @@ namespace rnfs
 	class Task
 	{
 		template<class TYPE>
-		friend class	TaskKeep;		//キープや消去で必要
+		friend class	TaskKeep;	//キープや消去で必要
 
 	private:
-		Task*			mp_Prev;		//自身の前ポインタ
-		Task*			mp_Next;		//自身の後ポインタ
-
-		bool			m_Destroy;		//消去フラグ
-
-		size_t			m_Link;			//TaskKeep の接続確認
+		Task*			mp_Prev;	//自身の前ポインタ
+		Task*			mp_Next;	//自身の後ポインタ
+		
+		Task*			mp_Target;	//自身の後の消去対象ポインタ
+		
+		size_t			m_Link;		//TaskKeep の接続確認
 
 	private:
-		static Task*	mp_Begin;		//先頭ポインタ
-		static Task*	mp_End;			//末尾ポインタ
+		static Task*	mp_Begin;	//先頭ポインタ
+		static Task*	mp_End;		//末尾ポインタ
+
+		static Task*	mp_Destroy;	//消去対象の先頭ポインタ
 
 	private:
 		//システムから消去　次のポインタが返される

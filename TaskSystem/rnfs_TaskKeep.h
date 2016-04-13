@@ -63,13 +63,13 @@ namespace rnfs
 	{
 		//Task::Destroy が呼び出されたタスクは次の更新で消えてしまうので追加できない
 		//タスククラスのコンストラクタ内で Task::Destroy を呼び出す事によるエラーが多い
-		if (p_Task && p_Task->m_Destroy)
+		if (p_Task && p_Task->isDestroy())
 		{
 			//停止
 			assert(!"TaskKeep -> Task::Destroy を呼び出した後のタスクはキープできません。");
 
-			//安全のため、消去を無効にする
-			p_Task->m_Destroy = false;
+			//安全のため、キープを無効にする
+			mp_Task = nullptr;
 		}
 
 		//タスクが既にキープされている場合は、消去する
@@ -79,7 +79,7 @@ namespace rnfs
 			--mp_Task->m_Link;
 
 			//キープがない場合はタスクを消去
-			if (mp_Task->m_Link == 0) mp_Task->m_Destroy = true;
+			mp_Task->Destroy();
 		}
 
 		//タスクの代入

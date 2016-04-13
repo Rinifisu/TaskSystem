@@ -4,7 +4,7 @@
 /*
 Chapter_3：タスク内からタスクを生成
 
-Fireworks を生成し、消去の際に Spark を30個生成し、花火を作ります。
+Fireworks を生成し、消去の際に Spark を100個生成し、花火を作ります。
 include と Create の2ステップで生成できます。
 乱数を様々な場所に使用している為、コンストラクタが複雑になっています。
 */
@@ -65,8 +65,8 @@ private:
 		//生存時間が0以下
 		if (--m_Time <= 0)
 		{
-			//火花を30個生成（引数で座標と色を引き継ぐ）
-			for (int i = 0; i < 30; ++i) Create<Spark>(m_Pos, m_Color);
+			//火花を100個生成（引数で座標と色を引き継ぐ）
+			Create_Multi<Spark>(100, m_Pos, m_Color);
 			//消去
 			this->Destroy();
 		}

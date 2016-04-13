@@ -40,6 +40,8 @@ namespace rnfs
 		TaskKeepArray(const TaskKeepArray<TYPE> & taskKeepArray) = default;
 		TaskKeepArray(TaskKeepArray<TYPE> && taskKeepArray) = delete;
 
+		TaskKeepArray(const std::deque<TYPE*> & taskPointerArray);
+
 		typename std::unordered_map<size_t, TaskKeep<TYPE>>::iterator begin();
 		typename std::unordered_map<size_t, TaskKeep<TYPE>>::iterator end();
 
@@ -101,6 +103,21 @@ namespace rnfs
 		: m_NextID(0)
 	{
 
+	}
+
+	/// <summary>
+	/// <para>───────────────</para>
+	/// <para>タスクを全てキープし、初期化します。</para>
+	/// <para>───────────────</para>
+	/// </summary>
+	template<class TYPE>
+	inline TaskKeepArray<TYPE>::TaskKeepArray(const std::deque<TYPE*> & taskPointerArray)
+		: m_NextID(0)
+	{
+		for (auto & i : taskPointerArray)
+		{
+			this->Add_Back(i);
+		}
 	}
 
 	/// <summary>
@@ -741,5 +758,27 @@ namespace rnfs
 	inline TaskKeepArray<TYPE>::operator bool() const
 	{
 		return !m_RegistID.empty();
+	}
+
+	/// <summary>
+	/// <para>────────────────────</para>
+	/// <para>第1引数に指定した数のタスクを同時生成します。</para>
+	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	/// <para>────────────────────</para>
+	/// </summary>
+	///
+	/// <param name="size">
+	/// <para>生成するタスクの数</para>
+	/// </param>
+	///
+	/// <param name="args">
+	/// <para>コンストラクタの引数</para>
+	/// </param>
+	template <class TYPE, typename ... ARGS>
+	static std::deque<TYPE*> Create_Multi(const size_t size, ARGS && ... args)
+	{
+		std::deque<TYPE*> taskPointerArray;
+		for (size_t i = 0; i < size; ++i) taskPointerArray.emplace_back(new TYPE(std::forward<ARGS>(args) ...));
+		return taskPointerArray;
 	}
 }
