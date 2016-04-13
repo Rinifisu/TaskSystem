@@ -46,7 +46,7 @@ namespace rnfs
 		else
 		{
 			//新規タスクの前に末尾タスクを代入
-			this->mp_Prev = mp_End;
+			mp_Prev = mp_End;
 
 			//末尾タスクの次に新規タスクを代入
 			mp_End->mp_Next = this;
