@@ -109,7 +109,8 @@ namespace rnfs
 			if (1 < p_Task->m_LifeSpan) --p_Task->m_LifeSpan;
 
 			//タスクを消去し、次のタスクへ移動
-			if (p_Task->m_LifeSpan == 1) p_Task = Task::_Unregister_(p_Task);
+			//キープしているタスクは消去できない
+			if (p_Task->m_LifeSpan == 1 && p_Task->m_Link <= 0) p_Task = Task::_Unregister_(p_Task);
 			else p_Task = p_Task->mp_Next;
 		}
 	}
