@@ -59,17 +59,17 @@ public:
 		, m_Update(this, &Fireworks::Update)
 	{ }
 
+	~Fireworks()
+	{
+		//火花を100個生成（引数で座標と色を引き継ぐ）
+		Create_Multi<Spark>(100, m_Pos, m_Color);
+	}
+
 private:
 	void Update()
 	{
-		//生存時間が0以下
-		if (--m_Time <= 0)
-		{
-			//火花を100個生成（引数で座標と色を引き継ぐ）
-			Create_Multi<Spark>(100, m_Pos, m_Color);
-			//消去
-			this->Destroy();
-		}
+		//生存時間が0以下で消去
+		if (--m_Time <= 0) this->Destroy();
 
 		//移動
 		m_Pos.y -= 5;

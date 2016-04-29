@@ -112,7 +112,7 @@ namespace rnfs
 		m_ID = m_Send[m_Name].nextID();
 
 		//追加
-		m_Send[m_Name].Add_Back(mp_Task);
+		m_Send[m_Name].Keep_Back(mp_Task);
 
 		//カウントを無効にする
 		m_Send[m_Name].Safety_ID(m_ID, false);

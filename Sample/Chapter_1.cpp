@@ -14,22 +14,18 @@ TaskCall を使用する事で、指定した関数を自動で呼び出せま�
 class Locus : public Task
 {
 private:
-	int			m_Time;		//生存時間
 	Vec2		m_Pos;		//座標
 	TaskCall	m_Update;	//更新設定
 
 public:
-	Locus() : Task()
-		, m_Time(60), m_Pos(Mouse::Pos())
-		, m_Update(this, &Locus::Update) //第2引数に指定した関数が自動で呼び出される
+	Locus() : Task(60)						//60フレームで消去
+		, m_Pos(Mouse::Pos())
+		, m_Update(this, &Locus::Update)	//第2引数に指定した関数が自動で呼び出される
 	{ }
 
 private:
 	void Update()
 	{
-		//生存時間が0以下で消去
-		if (--m_Time <= 0) this->Destroy();
-
 		//描画
 		Circle(m_Pos, 5.0).draw();
 	}

@@ -213,22 +213,16 @@ namespace rnfs
 	template<class TYPE>
 	inline void TaskKeep<TYPE>::Safety(const bool safety)
 	{
-		if (m_Safety && !safety)
-		{
-			//無効化
-			m_Safety = false;
+		//同じであれば何もしない
+		if (m_Safety == safety) return;
+		//情報を更新
+		m_Safety = safety;
 
-			//キープカウントを減らす
-			if (mp_Task) --mp_Task->m_Link;
-		}
-		else if (!m_Safety && safety)
-		{
-			//有効化
-			m_Safety = true;
-
-			//キープカウントを増やす
-			if (mp_Task) ++mp_Task->m_Link;
-		}
+		//キープしていなければ終了
+		if (!mp_Task) return;
+		//キープカウントを調整
+		if (m_Safety) ++mp_Task->m_Link;
+		else --mp_Task->m_Link;
 	}
 
 	template<class TYPE>

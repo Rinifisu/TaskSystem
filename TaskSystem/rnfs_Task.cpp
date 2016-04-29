@@ -14,7 +14,22 @@ namespace rnfs
 	Task* Task::mp_Begin = nullptr;		//先頭ポインタ
 	Task* Task::mp_End = nullptr;		//末尾ポインタ
 
-	Task* Task::mp_Destroy = nullptr;	//消去対象の先頭ポインタ
+	void Task::_Register_(Task * p_Task)
+	{
+		//先頭が空の場合は新規タスクを設定
+		if (mp_Begin == nullptr) mp_Begin = p_Task;
+		else
+		{
+			//新規タスクの前に末尾タスクを代入
+			p_Task->mp_Prev = mp_End;
+
+			//末尾タスクの次に新規タスクを代入
+			mp_End->mp_Next = p_Task;
+		}
+
+		//末尾タスクが新規タスクになる
+		mp_End = p_Task;
+	}
 
 	Task* Task::_Unregister_(Task* p_Task)
 	{
@@ -39,38 +54,29 @@ namespace rnfs
 	}
 
 	Task::Task()
-		: mp_Prev(nullptr), mp_Next(nullptr), mp_Target(nullptr), m_Link(0)
+		: mp_Prev(nullptr), mp_Next(nullptr), m_LifeSpan(0), m_Link(0)
 	{
-		//先頭が空の場合は新規タスクを設定
-		if (mp_Begin == nullptr) mp_Begin = this;
-		else
-		{
-			//新規タスクの前に末尾タスクを代入
-			mp_Prev = mp_End;
+		Task::_Register_(this);
+	}
 
-			//末尾タスクの次に新規タスクを代入
-			mp_End->mp_Next = this;
-		}
-
-		//末尾タスクが新規タスクになる
-		mp_End = this;
+	Task::Task(const size_t lifeSpan)
+		: mp_Prev(nullptr), mp_Next(nullptr), m_LifeSpan(lifeSpan + 1), m_Link(0)
+	{
+		Task::_Register_(this);
 	}
 
 	void Task::Destroy()
 	{
 		//キープしているタスクは消去できない
-		if (m_Link != 0) return;
+		if (0 < m_Link) return;
 
-		//新規タスクの次に先頭タスクを代入
-		mp_Target = mp_Destroy;
-
-		//先頭に新規タスクを代入
-		mp_Destroy = this;
+		//生存時間を 2 にする（次のフレームで消去）
+		m_LifeSpan = 2;
 	}
 
 	bool Task::isDestroy() const
 	{
-		return mp_Target != nullptr || mp_Destroy == this;
+		return m_LifeSpan == 2;
 	}
 
 	size_t Task::link() const
@@ -80,33 +86,31 @@ namespace rnfs
 
 	void Task::All::Clear()
 	{
-		//現在のタスク
-		Task* p_Task = mp_Begin;
+		Task* p_Task = mp_Begin; //現在のタスク
 
 		//末尾までループする
 		while (p_Task != nullptr)
 		{
 			//タスクを消去し、次のタスクへ移動
 			//キープしているタスクは消去できない
-			if (p_Task->m_Link == 0) p_Task = Task::_Unregister_(p_Task);
+			if (p_Task->m_Link <= 0) p_Task = Task::_Unregister_(p_Task);
 			else p_Task = p_Task->mp_Next;
 		}
-
-		//先頭を空にする
-		mp_Destroy = nullptr;
 	}
 
 	void Task::All::Update()
 	{
+		Task* p_Task = mp_Begin; //現在のタスク
+
 		//末尾までループする
-		while (mp_Destroy != nullptr)
+		while (p_Task != nullptr)
 		{
-			//消去の前に次のタスクを持つ
-			Task* p_Task = mp_Destroy->mp_Target;
-			//先頭のタスクを消去
-			Task::_Unregister_(mp_Destroy);
-			//先頭を次のタスクにする
-			mp_Destroy = p_Task;
+			//寿命が有効なら減らす
+			if (1 < p_Task->m_LifeSpan) --p_Task->m_LifeSpan;
+
+			//タスクを消去し、次のタスクへ移動
+			if (p_Task->m_LifeSpan == 1) p_Task = Task::_Unregister_(p_Task);
+			else p_Task = p_Task->mp_Next;
 		}
 	}
 }

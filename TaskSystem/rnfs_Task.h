@@ -25,8 +25,8 @@ namespace rnfs
 	private:
 		Task*			mp_Prev;	//自身の前ポインタ
 		Task*			mp_Next;	//自身の後ポインタ
-		
-		Task*			mp_Target;	//自身の後の消去対象ポインタ
+
+		size_t			m_LifeSpan;	//寿命（0:無効　1:消去）
 		
 		size_t			m_Link;		//TaskKeep の接続確認
 
@@ -34,9 +34,9 @@ namespace rnfs
 		static Task*	mp_Begin;	//先頭ポインタ
 		static Task*	mp_End;		//末尾ポインタ
 
-		static Task*	mp_Destroy;	//消去対象の先頭ポインタ
-
 	private:
+		//システムへの登録
+		static void _Register_(Task* p_Task);
 		//システムから消去　次のポインタが返される
 		static Task* _Unregister_(Task* p_Task);
 
@@ -47,6 +47,18 @@ namespace rnfs
 		/// <para>───────────</para>
 		/// </summary>
 		Task();
+
+		/// <summary>
+		/// <para>──────────────────</para>
+		/// <para>システムに登録を行います。</para>
+		/// <para>指定したフレーム数経過で自動消去します。</para>
+		/// <para>──────────────────</para>
+		/// </summary>
+		///
+		/// <param name="lifeSpan">
+		/// <para>自動消去する残りフレーム数</para>
+		/// </param>
+		Task(const size_t lifeSpan);
 
 		//継承クラスのデストラクタが呼ばれる
 		virtual ~Task() = default;
