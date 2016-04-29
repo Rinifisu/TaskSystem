@@ -46,15 +46,14 @@ private:
 class Fireworks : public Task
 {
 private:
-	int			m_Time;		//生存時間
 	Vec2		m_Pos;		//座標
 	Color		m_Color;	//描画色
 
 	TaskCall	m_Update;	//更新設定
 
 public:
-	Fireworks() : Task()
-		, m_Time(Random(30, 90)), m_Pos(Mouse::Pos().x, 480.0)
+	Fireworks() : Task(Random(30, 90))
+		, m_Pos(Mouse::Pos().x, 480.0)
 		, m_Color(RandomColor())
 		, m_Update(this, &Fireworks::Update)
 	{ }
@@ -68,9 +67,6 @@ public:
 private:
 	void Update()
 	{
-		//生存時間が0以下で消去
-		if (--m_Time <= 0) this->Destroy();
-
 		//移動
 		m_Pos.y -= 5;
 
