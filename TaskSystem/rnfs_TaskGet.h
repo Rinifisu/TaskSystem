@@ -94,6 +94,11 @@ namespace rnfs
 			static TASK & task(const size_t arrayNumber = 0);
 
 			template<class TASK>
+			static TASK & back();
+			template<class TASK>
+			static TASK & front();
+
+			template<class TASK>
 			static const size_t toArrayNumber(const size_t id);
 			template<class TASK>
 			static const size_t toID(const size_t arrayNumber);
@@ -104,6 +109,11 @@ namespace rnfs
 			static const bool isEmpty();
 			template<class TASK>
 			static const size_t size();
+
+			template<class TASK>
+			static const size_t backID();
+			template<class TASK>
+			static const size_t frontID();
 
 			template<class TASK>
 			static const bool clear(const size_t arrayNumber = 0);
@@ -202,6 +212,30 @@ namespace rnfs
 	}
 
 	/// <summary>
+	/// <para>───────────────────────</para>
+	/// <para>TaskGet::Register で登録済みの末尾タスクを取得します。</para>
+	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	/// <para>───────────────────────</para>
+	/// </summary>
+	template<class TASK>
+	inline TASK & TaskGet::All::back()
+	{
+		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK).name()).backPointer());
+	}
+
+	/// <summary>
+	/// <para>───────────────────────</para>
+	/// <para>TaskGet::Register で登録済みの先頭タスクを取得します。</para>
+	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	/// <para>───────────────────────</para>
+	/// </summary>
+	template<class TASK>
+	inline TASK & TaskGet::All::front()
+	{
+		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK).name()).frontPointer());
+	}
+
+	/// <summary>
 	/// <para>───────────────────────────────────</para>
 	/// <para>TaskGet::Register で登録済みのタスクの配列番号を、識別番号を使用して取得します。</para>
 	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
@@ -277,6 +311,30 @@ namespace rnfs
 		if (m_Data.count(typeid(TASK).name()) <= 0) return 0;
 		//要素数の取得
 		else return m_Data.at(typeid(TASK).name()).size();
+	}
+
+	/// <summary>
+	/// <para>────────────────────────────</para>
+	/// <para>TaskGet::Register で登録済みの末尾タスクの識別番号を取得します。</para>
+	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	/// <para>────────────────────────────</para>
+	/// </summary>
+	template<class TASK>
+	inline const size_t TaskGet::All::backID()
+	{
+		return m_Data.at(typeid(TASK).name()).backID();
+	}
+
+	/// <summary>
+	/// <para>────────────────────────────</para>
+	/// <para>TaskGet::Register で登録済みの先頭タスクの識別番号を取得します。</para>
+	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	/// <para>────────────────────────────</para>
+	/// </summary>
+	template<class TASK>
+	inline const size_t TaskGet::All::frontID()
+	{
+		return m_Data.at(typeid(TASK).name()).frontID();
 	}
 
 	/// <summary>

@@ -63,6 +63,12 @@ namespace rnfs
 		TYPE* taskPointer_ID(const size_t id);
 		TYPE* taskPointer(const size_t arrayNumber);
 
+		TYPE & back();
+		TYPE & front();
+
+		TYPE* backPointer();
+		TYPE* frontPointer();
+
 		void Keep_Back(TYPE* p_Task);
 		void Keep_Front(TYPE* p_Task);
 		void Keep_Insert(const size_t arrayNumber, TYPE* p_Task);
@@ -99,6 +105,9 @@ namespace rnfs
 		const bool isID(const size_t id) const;
 		const bool isEmpty() const;
 		const size_t size() const;
+
+		const size_t backID() const;
+		const size_t frontID() const;
 
 		operator bool() const;
 	};
@@ -203,7 +212,6 @@ namespace rnfs
 	template<class TYPE>
 	inline TYPE & TaskKeepArray<TYPE>::operator () (const size_t id)
 	{
-		//実体が生成されないように参照する
 		return m_Data[id].task();
 	}
 
@@ -219,7 +227,6 @@ namespace rnfs
 	template<class TYPE>
 	inline TYPE & TaskKeepArray<TYPE>::operator [] (const size_t arrayNumber)
 	{
-		//実体が生成されないように参照する
 		return m_Data[m_RegistID[arrayNumber]].task();
 	}
 
@@ -235,7 +242,6 @@ namespace rnfs
 	template<class TYPE>
 	inline TYPE & TaskKeepArray<TYPE>::task_ID(const size_t id)
 	{
-		//実体が生成されないように参照する
 		return m_Data[id].task();
 	}
 
@@ -251,7 +257,6 @@ namespace rnfs
 	template<class TYPE>
 	inline TYPE & TaskKeepArray<TYPE>::task(const size_t arrayNumber)
 	{
-		//実体が生成されないように参照する
 		return m_Data[m_RegistID[arrayNumber]].task();
 	}
 
@@ -283,6 +288,50 @@ namespace rnfs
 	inline TYPE* TaskKeepArray<TYPE>::taskPointer(const size_t arrayNumber)
 	{
 		return m_Data[m_RegistID[arrayNumber]].taskPointer();
+	}
+
+	/// <summary>
+	/// <para>──────────</para>
+	/// <para>末尾タスクを取得します。</para>
+	/// <para>──────────</para>
+	/// </summary>
+	template<class TYPE>
+	inline TYPE & TaskKeepArray<TYPE>::back()
+	{
+		return m_Data[m_RegistID.back()].task();
+	}
+
+	/// <summary>
+	/// <para>──────────</para>
+	/// <para>先頭タスクを取得します。</para>
+	/// <para>──────────</para>
+	/// </summary>
+	template<class TYPE>
+	inline TYPE & TaskKeepArray<TYPE>::front()
+	{
+		return m_Data[m_RegistID.front()].task();
+	}
+
+	/// <summary>
+	/// <para>─────────────</para>
+	/// <para>末尾タスクポインタを取得します。</para>
+	/// <para>─────────────</para>
+	/// </summary>
+	template<class TYPE>
+	inline TYPE* TaskKeepArray<TYPE>::backPointer()
+	{
+		return m_Data[m_RegistID.back()].taskPointer();
+	}
+
+	/// <summary>
+	/// <para>─────────────</para>
+	/// <para>先頭タスクポインタを取得します。</para>
+	/// <para>─────────────</para>
+	/// </summary>
+	template<class TYPE>
+	inline TYPE* TaskKeepArray<TYPE>::frontPointer()
+	{
+		return m_Data[m_RegistID.front()].taskPointer();
 	}
 
 	/// <summary>
@@ -818,6 +867,28 @@ namespace rnfs
 	inline const size_t TaskKeepArray<TYPE>::size() const
 	{
 		return m_RegistID.size();
+	}
+
+	/// <summary>
+	/// <para>───────────────</para>
+	/// <para>末尾タスクの識別番号を取得します。</para>
+	/// <para>───────────────</para>
+	/// </summary>
+	template<class TYPE>
+	inline const size_t TaskKeepArray<TYPE>::backID() const
+	{
+		return m_RegistID.back();
+	}
+
+	/// <summary>
+	/// <para>───────────────</para>
+	/// <para>先頭タスクの識別番号を取得します。</para>
+	/// <para>───────────────</para>
+	/// </summary>
+	template<class TYPE>
+	inline const size_t TaskKeepArray<TYPE>::frontID() const
+	{
+		return m_RegistID.front();
 	}
 
 	/// <summary>
