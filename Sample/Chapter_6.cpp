@@ -67,7 +67,7 @@ void Main()
 	while (System::Update())
 	{
 		//左クリックでインクの生成
-		if (Input::MouseL.pressed) ink.Add_Back(Create<Ink>());
+		if (Input::MouseL.pressed) ink.Create_Back();
 
 		//右クリックでインクを不規則に動かす
 		if (Input::MouseR.pressed)

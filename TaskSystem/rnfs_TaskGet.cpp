@@ -24,6 +24,11 @@ namespace rnfs
 		if (mp_Task) this->_Unregister_();
 	}
 
+	const bool TaskGet::isRegister() const
+	{
+		return mp_Task != nullptr;
+	}
+
 	void TaskGet::Unregister()
 	{
 		//リストから登録を解除する
@@ -35,7 +40,7 @@ namespace rnfs
 		m_ID = 0;
 	}
 
-	const size_t TaskGet::id()
+	const TaskID TaskGet::id() const
 	{
 		return m_ID;
 	}

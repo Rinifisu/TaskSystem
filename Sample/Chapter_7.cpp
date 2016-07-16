@@ -75,7 +75,7 @@ void Main()
 	while (System::Update())
 	{
 		//リングの生成
-		s_Ring.Add_Back(Create<Ring>());
+		s_Ring.Create_Back();
 
 		//左クリックで上昇
 		if (Input::MouseL.pressed)

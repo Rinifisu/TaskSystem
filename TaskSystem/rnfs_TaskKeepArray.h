@@ -17,6 +17,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 namespace rnfs
 {
 	/// <summary>
+	/// <para>─────────────────</para>
+	/// <para>タスク識別番号</para>
+	/// <para>配列順番に影響のない取得ができます。</para>
+	/// <para>─────────────────</para>
+	/// </summary>
+	using TaskID = size_t;
+
+	/// <summary>
 	/// <para>─────────────────────</para>
 	/// <para>タスクキープ配列</para>
 	/// <para>タスクを配列で持つための専用ポインタ配列です。</para>
@@ -27,11 +35,11 @@ namespace rnfs
 	class TaskKeepArray final
 	{
 	private:
-		size_t										m_NextID;		//次に代入する unordered_map の識別番号
+		TaskID										m_NextID;		//次に代入する unordered_map の識別番号
 
-		std::unordered_map<size_t, TaskKeep<TYPE>>	m_Data;			//タスクキープ配列
-		std::deque<size_t>							m_RegistID;		//登録済みの番号一覧
-		std::deque<size_t>							m_ClearID;		//消去済みの番号一覧
+		std::unordered_map<TaskID, TaskKeep<TYPE>>	m_Data;			//タスクキープ配列
+		std::deque<TaskID>							m_RegistID;		//登録済みの番号一覧
+		std::deque<TaskID>							m_ClearID;		//消去済みの番号一覧
 
 	public:
 		TaskKeepArray();
@@ -45,22 +53,22 @@ namespace rnfs
 		TaskKeepArray(const TaskKeepArray<TYPE> & taskKeepArray) = default;
 		TaskKeepArray(TaskKeepArray<TYPE> && taskKeepArray) = delete;
 
-		typename std::unordered_map<size_t, TaskKeep<TYPE>>::iterator begin();
-		typename std::unordered_map<size_t, TaskKeep<TYPE>>::iterator end();
+		typename std::unordered_map<TaskID, TaskKeep<TYPE>>::iterator begin();
+		typename std::unordered_map<TaskID, TaskKeep<TYPE>>::iterator end();
 
-		typename std::unordered_map<size_t, TaskKeep<TYPE>>::const_iterator begin() const;
-		typename std::unordered_map<size_t, TaskKeep<TYPE>>::const_iterator end() const;
+		typename std::unordered_map<TaskID, TaskKeep<TYPE>>::const_iterator begin() const;
+		typename std::unordered_map<TaskID, TaskKeep<TYPE>>::const_iterator end() const;
 
 		void operator =(const TaskKeepArray<TYPE> & taskKeepArray) = delete;
 		void operator =(TaskKeepArray<TYPE> && taskKeepArray) = delete;
 
-		TYPE & operator () (const size_t id);
+		TYPE & operator () (const TaskID id);
 		TYPE & operator [] (const size_t arrayNumber);
 
-		TYPE & task_ID(const size_t id);
+		TYPE & task_ID(const TaskID id);
 		TYPE & task(const size_t arrayNumber);
 
-		TYPE* taskPointer_ID(const size_t id);
+		TYPE* taskPointer_ID(const TaskID id);
 		TYPE* taskPointer(const size_t arrayNumber);
 
 		TYPE & back();
@@ -80,34 +88,34 @@ namespace rnfs
 		template <typename ... ARGS>
 		void Create_Insert(const size_t arrayNumber, ARGS && ... args);
 
-		void Clear_ID(const size_t id);
+		void Clear_ID(const TaskID id);
 		void Clear(const size_t arrayNumber);
 
 		void Clear_Back();
 		void Clear_Front();
 		void Clear_All();
 
-		void Free_ID(const size_t id);
+		void Free_ID(const TaskID id);
 		void Free(const size_t arrayNumber);
 
 		void Free_Back();
 		void Free_Front();
 		void Free_All();
 
-		void Safety_ID(const size_t id, const bool safety);
+		void Safety_ID(const TaskID id, const bool safety);
 		void Safety(const size_t arrayNumber, const bool safety);
 
-		const size_t toArrayNumber(const size_t id) const;
-		const size_t toID(const size_t arrayNumber) const;
+		const size_t toArrayNumber(const TaskID id) const;
+		const TaskID toID(const size_t arrayNumber) const;
 
-		const size_t nextID() const;
+		const TaskID nextID() const;
 
-		const bool isID(const size_t id) const;
+		const bool isID(const TaskID id) const;
 		const bool isEmpty() const;
 		const size_t size() const;
 
-		const size_t backID() const;
-		const size_t frontID() const;
+		const TaskID backID() const;
+		const TaskID frontID() const;
 
 		operator bool() const;
 	};
@@ -156,7 +164,7 @@ namespace rnfs
 	/// <para>────────────</para>
 	/// </summary>
 	template<class TYPE>
-	inline typename std::unordered_map<size_t, TaskKeep<TYPE>>::iterator TaskKeepArray<TYPE>::begin()
+	inline typename std::unordered_map<TaskID, TaskKeep<TYPE>>::iterator TaskKeepArray<TYPE>::begin()
 	{
 		return m_Data.begin();
 	}
@@ -169,7 +177,7 @@ namespace rnfs
 	/// <para>────────────</para>
 	/// </summary>
 	template<class TYPE>
-	inline typename std::unordered_map<size_t, TaskKeep<TYPE>>::iterator TaskKeepArray<TYPE>::end()
+	inline typename std::unordered_map<TaskID, TaskKeep<TYPE>>::iterator TaskKeepArray<TYPE>::end()
 	{
 		return m_Data.end();
 	}
@@ -182,7 +190,7 @@ namespace rnfs
 	/// <para>────────────</para>
 	/// </summary>
 	template<class TYPE>
-	inline typename std::unordered_map<size_t, TaskKeep<TYPE>>::const_iterator TaskKeepArray<TYPE>::begin() const
+	inline typename std::unordered_map<TaskID, TaskKeep<TYPE>>::const_iterator TaskKeepArray<TYPE>::begin() const
 	{
 		return m_Data.begin();
 	}
@@ -195,7 +203,7 @@ namespace rnfs
 	/// <para>────────────</para>
 	/// </summary>
 	template<class TYPE>
-	inline typename std::unordered_map<size_t, TaskKeep<TYPE>>::const_iterator TaskKeepArray<TYPE>::end() const
+	inline typename std::unordered_map<TaskID, TaskKeep<TYPE>>::const_iterator TaskKeepArray<TYPE>::end() const
 	{
 		return m_Data.end();
 	}
@@ -210,7 +218,7 @@ namespace rnfs
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TYPE>
-	inline TYPE & TaskKeepArray<TYPE>::operator () (const size_t id)
+	inline TYPE & TaskKeepArray<TYPE>::operator () (const TaskID id)
 	{
 		return m_Data[id].task();
 	}
@@ -240,7 +248,7 @@ namespace rnfs
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TYPE>
-	inline TYPE & TaskKeepArray<TYPE>::task_ID(const size_t id)
+	inline TYPE & TaskKeepArray<TYPE>::task_ID(const TaskID id)
 	{
 		return m_Data[id].task();
 	}
@@ -270,7 +278,7 @@ namespace rnfs
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TYPE>
-	inline TYPE* TaskKeepArray<TYPE>::taskPointer_ID(const size_t id)
+	inline TYPE* TaskKeepArray<TYPE>::taskPointer_ID(const TaskID id)
 	{
 		return m_Data[id].taskPointer();
 	}
@@ -513,7 +521,7 @@ namespace rnfs
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TYPE>
-	inline void TaskKeepArray<TYPE>::Clear_ID(const size_t id)
+	inline void TaskKeepArray<TYPE>::Clear_ID(const TaskID id)
 	{
 		//存在しない場合は終了
 		if (m_Data.count(id) <= 0) return;
@@ -627,7 +635,7 @@ namespace rnfs
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TYPE>
-	inline void TaskKeepArray<TYPE>::Free_ID(const size_t id)
+	inline void TaskKeepArray<TYPE>::Free_ID(const TaskID id)
 	{
 		//存在しない場合は終了
 		if (m_Data.count(id) <= 0) return;
@@ -747,7 +755,7 @@ namespace rnfs
 	/// <para>false -> 無効</para>
 	/// </param>
 	template<class TYPE>
-	inline void TaskKeepArray<TYPE>::Safety_ID(const size_t id, const bool safety)
+	inline void TaskKeepArray<TYPE>::Safety_ID(const TaskID id, const bool safety)
 	{
 		//安全保障機能を設定
 		m_Data[id].Safety(safety);
@@ -785,7 +793,7 @@ namespace rnfs
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TYPE>
-	inline const size_t TaskKeepArray<TYPE>::toArrayNumber(const size_t id) const
+	inline const size_t TaskKeepArray<TYPE>::toArrayNumber(const TaskID id) const
 	{
 		//配列番号を調べる
 		size_t count = 0;
@@ -816,7 +824,7 @@ namespace rnfs
 	/// <para>配列番号</para>
 	/// </param>
 	template<class TYPE>
-	inline const size_t TaskKeepArray<TYPE>::toID(const size_t arrayNumber) const
+	inline const TaskID TaskKeepArray<TYPE>::toID(const size_t arrayNumber) const
 	{
 		return m_RegistID[arrayNumber];
 	}
@@ -827,7 +835,7 @@ namespace rnfs
 	/// <para>───────────────────────</para>
 	/// </summary>
 	template<class TYPE>
-	inline const size_t TaskKeepArray<TYPE>::nextID() const
+	inline const TaskID TaskKeepArray<TYPE>::nextID() const
 	{
 		return m_ClearID.empty() ? m_NextID : m_ClearID.front();
 	}
@@ -842,7 +850,7 @@ namespace rnfs
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TYPE>
-	inline const bool TaskKeepArray<TYPE>::isID(const size_t id) const
+	inline const bool TaskKeepArray<TYPE>::isID(const TaskID id) const
 	{
 		return m_Data.count(id) != 0;
 	}
@@ -875,7 +883,7 @@ namespace rnfs
 	/// <para>───────────────</para>
 	/// </summary>
 	template<class TYPE>
-	inline const size_t TaskKeepArray<TYPE>::backID() const
+	inline const TaskID TaskKeepArray<TYPE>::backID() const
 	{
 		return m_RegistID.back();
 	}
@@ -886,7 +894,7 @@ namespace rnfs
 	/// <para>───────────────</para>
 	/// </summary>
 	template<class TYPE>
-	inline const size_t TaskKeepArray<TYPE>::frontID() const
+	inline const TaskID TaskKeepArray<TYPE>::frontID() const
 	{
 		return m_RegistID.front();
 	}

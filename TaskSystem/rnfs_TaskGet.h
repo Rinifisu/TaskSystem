@@ -27,7 +27,7 @@ namespace rnfs
 		Task*			mp_Task;	//タスクのポインタ
 
 		std::string		m_Name;		//識別用の名前
-		size_t			m_ID;		//消去用の管理番号
+		TaskID			m_ID;		//消去用の管理番号
 
 	private:
 		static std::unordered_map<std::string, TaskKeepArray<Task>> m_Data; //登録タスクのキープ
@@ -66,6 +66,13 @@ namespace rnfs
 		void Register(TASK* p_Task);
 
 		/// <summary>
+		/// <para>──────────────────</para>
+		/// <para>タスクゲットの登録が行われるかを確認します。</para>
+		/// <para>──────────────────</para>
+		/// </summary>
+		const bool isRegister() const;
+
+		/// <summary>
 		/// <para>──────────────</para>
 		/// <para>タスクゲットの登録解除を行います。</para>
 		/// <para>──────────────</para>
@@ -78,7 +85,7 @@ namespace rnfs
 		/// <para>配列の変化に対応できるタスク取得が識別番号で行えます。</para>
 		/// <para>────────────────────────</para>
 		/// </summary>
-		const size_t id();
+		const TaskID id() const;
 
 		/// <summary>
 		/// <para>────────────</para>
@@ -89,9 +96,9 @@ namespace rnfs
 		{
 		public:
 			template<class TASK>
-			static TASK & task_ID(const size_t id);
+			static TASK & task_ID(const TaskID id);
 			template<class TASK>
-			static TASK & task(const size_t arrayNumber = 0);
+			static TASK & task(const size_t arrayNumber);
 
 			template<class TASK>
 			static TASK & back();
@@ -99,26 +106,31 @@ namespace rnfs
 			static TASK & front();
 
 			template<class TASK>
-			static const size_t toArrayNumber(const size_t id);
+			static const size_t toArrayNumber(const TaskID id);
 			template<class TASK>
-			static const size_t toID(const size_t arrayNumber);
+			static const TaskID toID(const size_t arrayNumber);
 
 			template<class TASK>
-			static const bool isID(const size_t id);
+			static const bool isID(const TaskID id);
 			template<class TASK>
 			static const bool isEmpty();
 			template<class TASK>
 			static const size_t size();
 
 			template<class TASK>
-			static const size_t backID();
+			static const TaskID backID();
 			template<class TASK>
-			static const size_t frontID();
+			static const TaskID frontID();
 
 			template<class TASK>
-			static const bool clear(const size_t arrayNumber = 0);
+			static const bool clear(const size_t arrayNumber);
 			template<class TASK>
-			static const bool clear_ID(const size_t id);
+			static const bool clear_ID(const TaskID id);
+
+			template<class TASK>
+			static const bool clear_Back();
+			template<class TASK>
+			static const bool clear_Front();
 			template<class TASK>
 			static const size_t clear_All();
 		};
@@ -190,7 +202,7 @@ namespace rnfs
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TASK>
-	inline TASK & TaskGet::All::task_ID(const size_t id)
+	inline TASK & TaskGet::All::task_ID(const TaskID id)
 	{
 		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK).name()).taskPointer_ID(id));
 	}
@@ -246,7 +258,7 @@ namespace rnfs
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TASK>
-	inline const size_t TaskGet::All::toArrayNumber(const size_t id)
+	inline const size_t TaskGet::All::toArrayNumber(const TaskID id)
 	{
 		return m_Data.at(typeid(TASK).name()).toArrayNumber(id);
 	}
@@ -262,7 +274,7 @@ namespace rnfs
 	/// <para>配列番号</para>
 	/// </param>
 	template<class TASK>
-	inline const size_t TaskGet::All::toID(const size_t arrayNumber)
+	inline const TaskID TaskGet::All::toID(const size_t arrayNumber)
 	{
 		return m_Data.at(typeid(TASK).name()).toID(arrayNumber);
 	}
@@ -278,7 +290,7 @@ namespace rnfs
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TASK>
-	inline const bool TaskGet::All::isID(const size_t id)
+	inline const bool TaskGet::All::isID(const TaskID id)
 	{
 		//登録済みのタスクが１つも無い場合は存在しない
 		if (m_Data.count(typeid(TASK).name()) <= 0) return false;
@@ -320,7 +332,7 @@ namespace rnfs
 	/// <para>────────────────────────────</para>
 	/// </summary>
 	template<class TASK>
-	inline const size_t TaskGet::All::backID()
+	inline const TaskID TaskGet::All::backID()
 	{
 		return m_Data.at(typeid(TASK).name()).backID();
 	}
@@ -332,7 +344,7 @@ namespace rnfs
 	/// <para>────────────────────────────</para>
 	/// </summary>
 	template<class TASK>
-	inline const size_t TaskGet::All::frontID()
+	inline const TaskID TaskGet::All::frontID()
 	{
 		return m_Data.at(typeid(TASK).name()).frontID();
 	}
@@ -378,7 +390,7 @@ namespace rnfs
 	/// <para>配列の識別番号</para>
 	/// </param>
 	template<class TASK>
-	inline const bool TaskGet::All::clear_ID(const size_t id)
+	inline const bool TaskGet::All::clear_ID(const TaskID id)
 	{
 		//登録済みのタスクが１つも無い場合は何もしない
 		if (m_Data.count(typeid(TASK).name()) <= 0) return false;
@@ -391,6 +403,56 @@ namespace rnfs
 		//カウントを有効にして消去する
 		taskKeepArray.Safety_ID(id, true);
 		taskKeepArray.Clear_ID(id);
+
+		return true;
+	}
+
+	/// <summary>
+	/// <para>────────────────────────────────</para>
+	/// <para>指定した識別番号の TaskGet::Register で登録済みの末尾タスクを消去します。</para>
+	/// <para>キープ中のタスクは消去できません。</para>
+	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	/// <para>────────────────────────────────</para>
+	/// </summary>
+	template<class TASK>
+	inline const bool TaskGet::All::clear_Back()
+	{
+		//登録済みのタスクが１つも無い場合は何もしない
+		if (m_Data.count(typeid(TASK).name()) <= 0) return false;
+
+		//一時的に参照
+		TaskKeepArray<Task> & taskKeepArray = m_Data.at(typeid(TASK).name());
+		//キープしているタスクがある場合は何もせずに終了
+		if (0 < taskKeepArray.back().link()) return false;
+
+		//カウントを有効にして消去する
+		taskKeepArray.Safety_ID(taskKeepArray.backID(), true);
+		taskKeepArray.Clear_Back();
+
+		return true;
+	}
+
+	/// <summary>
+	/// <para>────────────────────────────────</para>
+	/// <para>指定した識別番号の TaskGet::Register で登録済みの先頭タスクを消去します。</para>
+	/// <para>キープ中のタスクは消去できません。</para>
+	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	/// <para>────────────────────────────────</para>
+	/// </summary>
+	template<class TASK>
+	inline const bool TaskGet::All::clear_Front()
+	{
+		//登録済みのタスクが１つも無い場合は何もしない
+		if (m_Data.count(typeid(TASK).name()) <= 0) return false;
+
+		//一時的に参照
+		TaskKeepArray<Task> & taskKeepArray = m_Data.at(typeid(TASK).name());
+		//キープしているタスクがある場合は何もせずに終了
+		if (0 < taskKeepArray.front().link()) return false;
+
+		//カウントを有効にして消去する
+		taskKeepArray.Safety_ID(taskKeepArray.frontID(), true);
+		taskKeepArray.Clear_Front();
 
 		return true;
 	}

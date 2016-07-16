@@ -28,7 +28,7 @@ namespace rnfs
 		Task*			mp_Task;		//コール対象タスクのポインタ
 
 		std::string		m_Name;			//識別用の名前
-		size_t			m_ID;			//消去用の管理番号
+		TaskID			m_ID;			//消去用の管理番号
 
 	private:
 		static std::unordered_map<std::string, TaskKeepArray<Task>>	m_Send; //送信リストのポインタ
