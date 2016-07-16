@@ -84,10 +84,8 @@ void Main()
 
 	while (System::Update())
 	{
-		//時間を更新
-		nextTime = (nextTime + 1) % 15;
 		//花火を15フレームごとに生成
-		if (nextTime == 0) Create<Fireworks>();
+		if (++nextTime % 15 == 0) Create<Fireworks>();
 
 		TaskCall::All::Update();
 		Task::All::Update();
