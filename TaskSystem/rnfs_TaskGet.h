@@ -15,12 +15,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 namespace rnfs
 {
-	/// <summary>
-	/// <para>─────────────</para>
-	/// <para>タスクゲット</para>
-	/// <para>外部からタスクを呼び出せます。</para>
-	/// <para>─────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>─────────────</para>
+	///<para>タスクゲット</para>
+	///<para>外部からタスクを呼び出せます。</para>
+	///<para>─────────────</para>
+	///</summary>
 	class TaskGet
 	{
 	private:
@@ -34,28 +34,51 @@ namespace rnfs
 
 	private:
 		//ゲットリストへの登録
-		void _Register_();
+		void _Register_()
+		{
+			//追加される位置を取得する
+			m_ID = m_Data[m_Name].nextID();
+
+			//追加
+			m_Data[m_Name].Keep_Back(mp_Task);
+
+			//カウントを無効にする
+			m_Data[m_Name].Safety_ID(m_ID, false);
+		}
 
 		//ゲットリストから消去
-		void _Unregister_();
+		void _Unregister_()
+		{
+			//タスクの解放
+			m_Data[m_Name].Free_ID(m_ID);
+
+			//リストが空になったら、消去する
+			if (m_Data[m_Name].isEmpty()) m_Data.erase(m_Name);
+		}
 
 	public:
-		/// <summary>
-		/// <para>────────</para>
-		/// <para>初期化を行います。</para>
-		/// <para>────────</para>
-		/// </summary>
-		TaskGet();
+		///<summary>
+		///<para>────────</para>
+		///<para>初期化を行います。</para>
+		///<para>────────</para>
+		///</summary>
+		TaskGet() : mp_Task(nullptr), m_Name(""), m_ID(0)
+		{
+
+		}
 		
 		template<class TASK>
 		TaskGet(TASK* p_Task);
 
-		/// <summary>
-		/// <para>──────────────</para>
-		/// <para>タスクゲットの登録解除を行います。</para>
-		/// <para>──────────────</para>
-		/// </summary>
-		~TaskGet();
+		///<summary>
+		///<para>──────────────</para>
+		///<para>タスクゲットの登録解除を行います。</para>
+		///<para>──────────────</para>
+		///</summary>
+		~TaskGet()
+		{
+			if (mp_Task) this->_Unregister_();
+		}
 
 		TaskGet(const TaskGet & taskGet) = delete;
 		TaskGet(TaskGet && taskGet) = delete;
@@ -65,33 +88,48 @@ namespace rnfs
 		template<class TASK>
 		void Register(TASK* p_Task);
 
-		/// <summary>
-		/// <para>──────────────────</para>
-		/// <para>タスクゲットの登録が行われるかを確認します。</para>
-		/// <para>──────────────────</para>
-		/// </summary>
-		const bool isRegister() const;
+		///<summary>
+		///<para>──────────────────</para>
+		///<para>タスクゲットの登録が行われるかを確認します。</para>
+		///<para>──────────────────</para>
+		///</summary>
+		const bool isRegister() const
+		{
+			return mp_Task != nullptr;
+		}
 
-		/// <summary>
-		/// <para>──────────────</para>
-		/// <para>タスクゲットの登録解除を行います。</para>
-		/// <para>──────────────</para>
-		/// </summary>
-		void Unregister();
+		///<summary>
+		///<para>──────────────</para>
+		///<para>タスクゲットの登録解除を行います。</para>
+		///<para>──────────────</para>
+		///</summary>
+		void Unregister()
+		{
+			//リストから登録を解除する
+			if (mp_Task) this->_Unregister_();
 
-		/// <summary>
-		/// <para>────────────────────────</para>
-		/// <para>識別番号を取得します。</para>
-		/// <para>配列の変化に対応できるタスク取得が識別番号で行えます。</para>
-		/// <para>────────────────────────</para>
-		/// </summary>
-		const TaskID id() const;
+			//初期化
+			mp_Task = nullptr;
+			m_Name = "";
+			m_ID = 0;
+		}
 
-		/// <summary>
-		/// <para>────────────</para>
-		/// <para>全体の処理を行う空間です。</para>
-		/// <para>────────────</para>
-		/// </summary>
+		///<summary>
+		///<para>────────────────────────</para>
+		///<para>識別番号を取得します。</para>
+		///<para>配列の変化に対応できるタスク取得が識別番号で行えます。</para>
+		///<para>────────────────────────</para>
+		///</summary>
+		const TaskID id() const
+		{
+			return m_ID;
+		}
+
+		///<summary>
+		///<para>────────────</para>
+		///<para>全体の処理を行う空間です。</para>
+		///<para>────────────</para>
+		///</summary>
 		class All
 		{
 		public:
@@ -136,19 +174,19 @@ namespace rnfs
 		};
 	};
 
-	/// <summary>
-	/// <para>───────────────────────────────</para>
-	/// <para>タスクゲットの登録を行います。</para>
-	/// <para>───────────────────────────────</para>
-	/// <para>登録を行うことで TaskGet::task で指定したタスクが配列形式で呼び出せます。</para>
-	/// <para>───────────────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>───────────────────────────────</para>
+	///<para>タスクゲットの登録を行います。</para>
+	///<para>───────────────────────────────</para>
+	///<para>登録を行うことで TaskGet::task で指定したタスクが配列形式で呼び出せます。</para>
+	///<para>───────────────────────────────</para>
+	///</summary>
 	///
-	/// <param name="p_Task">
-	/// <para>自身のポインタ</para>
-	/// <para>必ず this を入力してください。</para>
-	/// <para>タスク識別用の名前を取得するため、テンプレートになっています。</para>
-	/// </param>
+	///<param name="p_Task">
+	///<para>自身のポインタ</para>
+	///<para>必ず this を入力してください。</para>
+	///<para>タスク識別用の名前を取得するため、テンプレートになっています。</para>
+	///</param>
 	template<class TASK>
 	inline TaskGet::TaskGet(TASK* p_Task)
 	{
@@ -163,20 +201,20 @@ namespace rnfs
 		this->_Register_();
 	}
 
-	/// <summary>
-	/// <para>───────────────────────────────</para>
-	/// <para>タスクゲットの登録を行います。</para>
-	/// <para>テンプレート引数を使用することで、継承元クラスに登録可能になります。</para>
-	/// <para>───────────────────────────────</para>
-	/// <para>登録を行うことで TaskGet::task で指定したタスクが配列形式で呼び出せます。</para>
-	/// <para>───────────────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>───────────────────────────────</para>
+	///<para>タスクゲットの登録を行います。</para>
+	///<para>テンプレート引数を使用することで、継承元クラスに登録可能になります。</para>
+	///<para>───────────────────────────────</para>
+	///<para>登録を行うことで TaskGet::task で指定したタスクが配列形式で呼び出せます。</para>
+	///<para>───────────────────────────────</para>
+	///</summary>
 	///
-	/// <param name="p_Task">
-	/// <para>自身のポインタ</para>
-	/// <para>必ず this を入力してください。</para>
-	/// <para>タスク識別用の名前を取得するため、テンプレートになっています。</para>
-	/// </param>
+	///<param name="p_Task">
+	///<para>自身のポインタ</para>
+	///<para>必ず this を入力してください。</para>
+	///<para>タスク識別用の名前を取得するため、テンプレートになっています。</para>
+	///</param>
 	template<class TASK>
 	inline void TaskGet::Register(TASK* p_Task)
 	{
@@ -191,104 +229,104 @@ namespace rnfs
 		this->_Register_();
 	}
 
-	/// <summary>
-	/// <para>──────────────────────────────</para>
-	/// <para>TaskGet::Register で登録済みのタスクを、識別番号を使用して取得します。</para>
-	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	/// <para>──────────────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>──────────────────────────────</para>
+	///<para>TaskGet::Register で登録済みのタスクを、識別番号を使用して取得します。</para>
+	///<para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	///<para>──────────────────────────────</para>
+	///</summary>
 	///
-	/// <param name="id">
-	/// <para>配列の識別番号</para>
-	/// </param>
+	///<param name="id">
+	///<para>配列の識別番号</para>
+	///</param>
 	template<class TASK>
 	inline TASK & TaskGet::All::task_ID(const TaskID id)
 	{
 		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK).name()).taskPointer_ID(id));
 	}
 
-	/// <summary>
-	/// <para>─────────────────────</para>
-	/// <para>TaskGet::Register で登録済みのタスクを取得します。</para>
-	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	/// <para>─────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>─────────────────────</para>
+	///<para>TaskGet::Register で登録済みのタスクを取得します。</para>
+	///<para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	///<para>─────────────────────</para>
+	///</summary>
 	///
-	/// <param name="arrayNumber">
-	/// <para>配列番号</para>
-	/// </param>
+	///<param name="arrayNumber">
+	///<para>配列番号</para>
+	///</param>
 	template<class TASK>
 	inline TASK & TaskGet::All::task(const size_t arrayNumber)
 	{
 		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK).name()).taskPointer(arrayNumber));
 	}
 
-	/// <summary>
-	/// <para>───────────────────────</para>
-	/// <para>TaskGet::Register で登録済みの末尾タスクを取得します。</para>
-	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	/// <para>───────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>───────────────────────</para>
+	///<para>TaskGet::Register で登録済みの末尾タスクを取得します。</para>
+	///<para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	///<para>───────────────────────</para>
+	///</summary>
 	template<class TASK>
 	inline TASK & TaskGet::All::back()
 	{
 		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK).name()).backPointer());
 	}
 
-	/// <summary>
-	/// <para>───────────────────────</para>
-	/// <para>TaskGet::Register で登録済みの先頭タスクを取得します。</para>
-	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	/// <para>───────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>───────────────────────</para>
+	///<para>TaskGet::Register で登録済みの先頭タスクを取得します。</para>
+	///<para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	///<para>───────────────────────</para>
+	///</summary>
 	template<class TASK>
 	inline TASK & TaskGet::All::front()
 	{
 		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK).name()).frontPointer());
 	}
 
-	/// <summary>
-	/// <para>───────────────────────────────────</para>
-	/// <para>TaskGet::Register で登録済みのタスクの配列番号を、識別番号を使用して取得します。</para>
-	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	/// <para>───────────────────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>───────────────────────────────────</para>
+	///<para>TaskGet::Register で登録済みのタスクの配列番号を、識別番号を使用して取得します。</para>
+	///<para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	///<para>───────────────────────────────────</para>
+	///</summary>
 	///
-	/// <param name="id">
-	/// <para>配列の識別番号</para>
-	/// </param>
+	///<param name="id">
+	///<para>配列の識別番号</para>
+	///</param>
 	template<class TASK>
 	inline const size_t TaskGet::All::toArrayNumber(const TaskID id)
 	{
 		return m_Data.at(typeid(TASK).name()).toArrayNumber(id);
 	}
 
-	/// <summary>
-	/// <para>───────────────────────────────────</para>
-	/// <para>TaskGet::Register で登録済みのタスクの識別番号を、配列番号を使用して取得します。</para>
-	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	/// <para>───────────────────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>───────────────────────────────────</para>
+	///<para>TaskGet::Register で登録済みのタスクの識別番号を、配列番号を使用して取得します。</para>
+	///<para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	///<para>───────────────────────────────────</para>
+	///</summary>
 	///
-	/// <param name="arrayNumber">
-	/// <para>配列番号</para>
-	/// </param>
+	///<param name="arrayNumber">
+	///<para>配列番号</para>
+	///</param>
 	template<class TASK>
 	inline const TaskID TaskGet::All::toID(const size_t arrayNumber)
 	{
 		return m_Data.at(typeid(TASK).name()).toID(arrayNumber);
 	}
 
-	/// <summary>
-	/// <para>─────────────────────────────────</para>
-	/// <para>指定した識別番号の TaskGet::Register で登録済みのタスクの有無を確認します。</para>
-	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	/// <para>─────────────────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>─────────────────────────────────</para>
+	///<para>指定した識別番号の TaskGet::Register で登録済みのタスクの有無を確認します。</para>
+	///<para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	///<para>─────────────────────────────────</para>
+	///</summary>
 	///
-	/// <param name="id">
-	/// <para>配列の識別番号</para>
-	/// </param>
+	///<param name="id">
+	///<para>配列の識別番号</para>
+	///</param>
 	template<class TASK>
 	inline const bool TaskGet::All::isID(const TaskID id)
 	{
@@ -298,24 +336,24 @@ namespace rnfs
 		return m_Data.at(typeid(TASK).name()).isID(id);
 	}
 
-	/// <summary>
-	/// <para>──────────────────────────────</para>
-	/// <para>TaskGet::Register で登録が全く行われていない状態であるかを取得します。</para>
-	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	/// <para>──────────────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>──────────────────────────────</para>
+	///<para>TaskGet::Register で登録が全く行われていない状態であるかを取得します。</para>
+	///<para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	///<para>──────────────────────────────</para>
+	///</summary>
 	template<class TASK>
 	inline const bool TaskGet::All::isEmpty()
 	{
 		return m_Data.count(typeid(TASK).name()) <= 0;
 	}
 
-	/// <summary>
-	/// <para>──────────────────────</para>
-	/// <para>TaskGet::Register で登録済みのタスク数を取得します。</para>
-	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	/// <para>──────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>──────────────────────</para>
+	///<para>TaskGet::Register で登録済みのタスク数を取得します。</para>
+	///<para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	///<para>──────────────────────</para>
+	///</summary>
 	template<class TASK>
 	inline const size_t TaskGet::All::size()
 	{
@@ -325,41 +363,41 @@ namespace rnfs
 		else return m_Data.at(typeid(TASK).name()).size();
 	}
 
-	/// <summary>
-	/// <para>────────────────────────────</para>
-	/// <para>TaskGet::Register で登録済みの末尾タスクの識別番号を取得します。</para>
-	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	/// <para>────────────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>────────────────────────────</para>
+	///<para>TaskGet::Register で登録済みの末尾タスクの識別番号を取得します。</para>
+	///<para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	///<para>────────────────────────────</para>
+	///</summary>
 	template<class TASK>
 	inline const TaskID TaskGet::All::backID()
 	{
 		return m_Data.at(typeid(TASK).name()).backID();
 	}
 
-	/// <summary>
-	/// <para>────────────────────────────</para>
-	/// <para>TaskGet::Register で登録済みの先頭タスクの識別番号を取得します。</para>
-	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	/// <para>────────────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>────────────────────────────</para>
+	///<para>TaskGet::Register で登録済みの先頭タスクの識別番号を取得します。</para>
+	///<para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	///<para>────────────────────────────</para>
+	///</summary>
 	template<class TASK>
 	inline const TaskID TaskGet::All::frontID()
 	{
 		return m_Data.at(typeid(TASK).name()).frontID();
 	}
 
-	/// <summary>
-	/// <para>─────────────────────</para>
-	/// <para>TaskGet::Register で登録済みのタスクを消去します。</para>
-	/// <para>キープ中のタスクは消去できません。</para>
-	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	/// <para>─────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>─────────────────────</para>
+	///<para>TaskGet::Register で登録済みのタスクを消去します。</para>
+	///<para>キープ中のタスクは消去できません。</para>
+	///<para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	///<para>─────────────────────</para>
+	///</summary>
 	///
-	/// <param name="arrayNumber">
-	/// <para>配列番号</para>
-	/// </param>
+	///<param name="arrayNumber">
+	///<para>配列番号</para>
+	///</param>
 	template<class TASK>
 	inline const bool TaskGet::All::clear(const size_t arrayNumber)
 	{
@@ -378,17 +416,17 @@ namespace rnfs
 		return true;
 	}
 
-	/// <summary>
-	/// <para>──────────────────────────────</para>
-	/// <para>指定した識別番号の TaskGet::Register で登録済みのタスクを消去します。</para>
-	/// <para>キープ中のタスクは消去できません。</para>
-	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	/// <para>──────────────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>──────────────────────────────</para>
+	///<para>指定した識別番号の TaskGet::Register で登録済みのタスクを消去します。</para>
+	///<para>キープ中のタスクは消去できません。</para>
+	///<para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	///<para>──────────────────────────────</para>
+	///</summary>
 	///
-	/// <param name="id">
-	/// <para>配列の識別番号</para>
-	/// </param>
+	///<param name="id">
+	///<para>配列の識別番号</para>
+	///</param>
 	template<class TASK>
 	inline const bool TaskGet::All::clear_ID(const TaskID id)
 	{
@@ -407,13 +445,13 @@ namespace rnfs
 		return true;
 	}
 
-	/// <summary>
-	/// <para>────────────────────────────────</para>
-	/// <para>指定した識別番号の TaskGet::Register で登録済みの末尾タスクを消去します。</para>
-	/// <para>キープ中のタスクは消去できません。</para>
-	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	/// <para>────────────────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>────────────────────────────────</para>
+	///<para>指定した識別番号の TaskGet::Register で登録済みの末尾タスクを消去します。</para>
+	///<para>キープ中のタスクは消去できません。</para>
+	///<para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	///<para>────────────────────────────────</para>
+	///</summary>
 	template<class TASK>
 	inline const bool TaskGet::All::clear_Back()
 	{
@@ -432,13 +470,13 @@ namespace rnfs
 		return true;
 	}
 
-	/// <summary>
-	/// <para>────────────────────────────────</para>
-	/// <para>指定した識別番号の TaskGet::Register で登録済みの先頭タスクを消去します。</para>
-	/// <para>キープ中のタスクは消去できません。</para>
-	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	/// <para>────────────────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>────────────────────────────────</para>
+	///<para>指定した識別番号の TaskGet::Register で登録済みの先頭タスクを消去します。</para>
+	///<para>キープ中のタスクは消去できません。</para>
+	///<para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	///<para>────────────────────────────────</para>
+	///</summary>
 	template<class TASK>
 	inline const bool TaskGet::All::clear_Front()
 	{
@@ -457,14 +495,14 @@ namespace rnfs
 		return true;
 	}
 
-	/// <summary>
-	/// <para>───────────────────────</para>
-	/// <para>TaskGet::Register で登録済みのタスクを全て消去します。</para>
-	/// <para>キープ中のタスクは消去できません。</para>
-	/// <para>消去に成功したタスク数が返されます。</para>
-	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	/// <para>───────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>───────────────────────</para>
+	///<para>TaskGet::Register で登録済みのタスクを全て消去します。</para>
+	///<para>キープ中のタスクは消去できません。</para>
+	///<para>消去に成功したタスク数が返されます。</para>
+	///<para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	///<para>───────────────────────</para>
+	///</summary>
 	template<class TASK>
 	inline const size_t TaskGet::All::clear_All()
 	{

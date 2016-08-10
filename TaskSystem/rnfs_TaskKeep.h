@@ -15,12 +15,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 namespace rnfs
 {
-	/// <summary>
-	/// <para>───────────────</para>
-	/// <para>タスクキープ</para>
-	/// <para>タスクを持つための専用ポインタです。</para>
-	/// <para>───────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>───────────────</para>
+	///<para>タスクキープ</para>
+	///<para>タスクを持つための専用ポインタです。</para>
+	///<para>───────────────</para>
+	///</summary>
 	template<class TYPE = Task>
 	class TaskKeep final
 	{
@@ -89,12 +89,12 @@ namespace rnfs
 		if (mp_Task && m_Safety) ++mp_Task->m_Link;
 	}
 
-	/// <summary>
-	/// <para>─────────────────────</para>
-	/// <para>初期化します。</para>
-	/// <para>コピーコンストラクタは TaskKeep の仕様上できません。</para>
-	/// <para>─────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>─────────────────────</para>
+	///<para>初期化します。</para>
+	///<para>コピーコンストラクタは TaskKeep の仕様上できません。</para>
+	///<para>─────────────────────</para>
+	///</summary>
 	template<class TYPE>
 	inline TaskKeep<TYPE>::TaskKeep()
 		: mp_Task(nullptr), m_Safety(true)
@@ -102,16 +102,16 @@ namespace rnfs
 
 	}
 
-	/// <summary>
-	/// <para>──────────────────────</para>
-	/// <para>タスクをキープします。</para>
-	/// <para>既にキープ中であるタスクは消去、または解放されます。</para>
-	/// <para>──────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>──────────────────────</para>
+	///<para>タスクをキープします。</para>
+	///<para>既にキープ中であるタスクは消去、または解放されます。</para>
+	///<para>──────────────────────</para>
+	///</summary>
 	///
-	/// <param name="p_Task">
-	/// <para>キープ対象のタスク</para>
-	/// </param>
+	///<param name="p_Task">
+	///<para>キープ対象のタスク</para>
+	///</param>
 	template<class TYPE>
 	inline TaskKeep<TYPE>::TaskKeep(TYPE* p_Task)
 		: mp_Task(nullptr), m_Safety(true)
@@ -133,55 +133,55 @@ namespace rnfs
 		_Reset_(nullptr);
 	}
 
-	/// <summary>
-	/// <para>──────────────────────</para>
-	/// <para>タスクをキープします。</para>
-	/// <para>既にキープ中であるタスクは消去、または解放されます。</para>
-	/// <para>──────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>──────────────────────</para>
+	///<para>タスクをキープします。</para>
+	///<para>既にキープ中であるタスクは消去、または解放されます。</para>
+	///<para>──────────────────────</para>
+	///</summary>
 	///
-	/// <param name="p_Task">
-	/// <para>キープ対象のタスク</para>
-	/// </param>
+	///<param name="p_Task">
+	///<para>キープ対象のタスク</para>
+	///</param>
 	template<class TYPE>
 	inline void TaskKeep<TYPE>::operator =(TYPE* p_Task)
 	{
 		_Reset_(p_Task);
 	}
 
-	/// <summary>
-	/// <para>──────────────────────</para>
-	/// <para>タスクをキープします。</para>
-	/// <para>既にキープ中であるタスクは消去、または解放されます。</para>
-	/// <para>──────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>──────────────────────</para>
+	///<para>タスクをキープします。</para>
+	///<para>既にキープ中であるタスクは消去、または解放されます。</para>
+	///<para>──────────────────────</para>
+	///</summary>
 	///
-	/// <param name="taskKeep">
-	/// <para>キープ対象のタスクをキープしている TaskKeep</para>
-	/// </param>
+	///<param name="taskKeep">
+	///<para>キープ対象のタスクをキープしている TaskKeep</para>
+	///</param>
 	template<class TYPE>
 	inline void TaskKeep<TYPE>::operator =(const TaskKeep<TYPE> & taskKeep)
 	{
 		_Reset_(taskKeep.mp_Task);
 	}
 
-	/// <summary>
-	/// <para>─────────────</para>
-	/// <para>タスクを消去、または解放します。</para>
-	/// <para>─────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>─────────────</para>
+	///<para>タスクを消去、または解放します。</para>
+	///<para>─────────────</para>
+	///</summary>
 	template<class TYPE>
 	inline void TaskKeep<TYPE>::Clear()
 	{
 		_Reset_(nullptr);
 	}
 
-	/// <summary>
-	/// <para>──────────────────────────────────</para>
-	/// <para>タスクを消去せずに解放します。</para>
-	/// <para>タスクは消去されないので、自身で Task::Destroy を呼び出して消去する必要があります。</para>
-	/// <para>──────────────────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>──────────────────────────────────</para>
+	///<para>タスクを消去せずに解放します。</para>
+	///<para>タスクは消去されないので、自身で Task::Destroy を呼び出して消去する必要があります。</para>
+	///<para>──────────────────────────────────</para>
+	///</summary>
 	template<class TYPE>
 	inline void TaskKeep<TYPE>::Free()
 	{
@@ -195,21 +195,21 @@ namespace rnfs
 		mp_Task = nullptr;
 	}
 
-	/// <summary>
-	/// <para>──────────────────────────────────────────────</para>
-	/// <para>タスクの消去防止機能であるキープカウントの有効無効を切り替えます。</para>
-	/// <para>初期状態では自動で有効になっています。</para>
-	/// <para>無効状態で Task::Destroy を行うとキープしているにも関わらず、消去が可能になります。</para>
-	/// <para>また、無効にした TaskKeep では、タスクの消去ができなくなるため、注意が必要になります。</para>
-	/// <para>Task::Destroy の説明にある「TaskKeep のタスクは消去できません。」を無効にする場合は、ここで false を設定します。</para>
-	/// <para>──────────────────────────────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>──────────────────────────────────────────────</para>
+	///<para>タスクの消去防止機能であるキープカウントの有効無効を切り替えます。</para>
+	///<para>初期状態では自動で有効になっています。</para>
+	///<para>無効状態で Task::Destroy を行うとキープしているにも関わらず、消去が可能になります。</para>
+	///<para>また、無効にした TaskKeep では、タスクの消去ができなくなるため、注意が必要になります。</para>
+	///<para>Task::Destroy の説明にある「TaskKeep のタスクは消去できません。」を無効にする場合は、ここで false を設定します。</para>
+	///<para>──────────────────────────────────────────────</para>
+	///</summary>
 	///
-	/// <param name="safety">
-	/// <para>安全保障機能の有効無効切り替え</para>
-	/// <para>true  -> 有効</para>
-	/// <para>false -> 無効</para>
-	/// </param>
+	///<param name="safety">
+	///<para>安全保障機能の有効無効切り替え</para>
+	///<para>true  -> 有効</para>
+	///<para>false -> 無効</para>
+	///</param>
 	template<class TYPE>
 	inline void TaskKeep<TYPE>::Safety(const bool safety)
 	{
@@ -231,44 +231,44 @@ namespace rnfs
 		return mp_Task;
 	}
 
-	/// <summary>
-	/// <para>────────</para>
-	/// <para>タスクを取得します。</para>
-	/// <para>────────</para>
-	/// </summary>
+	///<summary>
+	///<para>────────</para>
+	///<para>タスクを取得します。</para>
+	///<para>────────</para>
+	///</summary>
 	template<class TYPE>
 	inline TYPE* TaskKeep<TYPE>::operator -> () const
 	{
 		return mp_Task;
 	}
 
-	/// <summary>
-	/// <para>────────</para>
-	/// <para>タスクを取得します。</para>
-	/// <para>────────</para>
-	/// </summary>
+	///<summary>
+	///<para>────────</para>
+	///<para>タスクを取得します。</para>
+	///<para>────────</para>
+	///</summary>
 	template<class TYPE>
 	inline TYPE & TaskKeep<TYPE>::task() const
 	{
 		return *mp_Task;
 	}
 
-	/// <summary>
-	/// <para>───────────</para>
-	/// <para>タスクポインタを取得します。</para>
-	/// <para>───────────</para>
-	/// </summary>
+	///<summary>
+	///<para>───────────</para>
+	///<para>タスクポインタを取得します。</para>
+	///<para>───────────</para>
+	///</summary>
 	template<class TYPE>
 	inline TYPE* TaskKeep<TYPE>::taskPointer() const
 	{
 		return mp_Task;
 	}
 
-	/// <summary>
-	/// <para>────────────</para>
-	/// <para>タスクが存在するかを返します。</para>
-	/// <para>────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>────────────</para>
+	///<para>タスクが存在するかを返します。</para>
+	///<para>────────────</para>
+	///</summary>
 	template<class TYPE>
 	inline TaskKeep<TYPE>::operator bool() const
 	{

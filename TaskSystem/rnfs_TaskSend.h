@@ -10,16 +10,17 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #pragma once
 
 #include "rnfs_TaskKeepArray.h"
+#include "rnfs_TaskReceive.h"
 
 namespace rnfs
 {
-	/// <summary>
-	/// <para>───────────────────</para>
-	/// <para>タスク送信</para>
-	/// <para>タスク同士のやり取りを行えます。</para>
-	/// <para>送信を許可する側のクラスです。</para>
-	/// <para>───────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>───────────────────</para>
+	///<para>タスク送信</para>
+	///<para>タスク同士のやり取りを行えます。</para>
+	///<para>送信を許可する側のクラスです。</para>
+	///<para>───────────────────</para>
+	///</summary>
 	class TaskSend final
 	{
 		friend class	TaskReceive;	//様々な取得や参照で必要
@@ -34,19 +35,25 @@ namespace rnfs
 		static std::unordered_map<std::string, TaskKeepArray<Task>>	m_Send; //送信リストのポインタ
 
 	public:
-		/// <summary>
-		/// <para>────────</para>
-		/// <para>初期化を行います。</para>
-		/// <para>────────</para>
-		/// </summary>
-		TaskSend();
+		///<summary>
+		///<para>────────</para>
+		///<para>初期化を行います。</para>
+		///<para>────────</para>
+		///</summary>
+		TaskSend() : mp_Task(nullptr), m_Name(""), m_ID(0)
+		{
 
-		/// <summary>
-		/// <para>──────────────</para>
-		/// <para>タスク送信の登録解除を行います。</para>
-		/// <para>──────────────</para>
-		/// </summary>
-		~TaskSend();
+		}
+
+		///<summary>
+		///<para>──────────────</para>
+		///<para>タスク送信の登録解除を行います。</para>
+		///<para>──────────────</para>
+		///</summary>
+		~TaskSend()
+		{
+			this->Unregister();
+		}
 
 		TaskSend(const TaskSend & taskSend) = delete;
 		TaskSend(TaskSend && taskSend) = delete;
@@ -56,42 +63,78 @@ namespace rnfs
 		template<class TASK>
 		void Register(TASK* p_Task);
 
-		/// <summary>
-		/// <para>──────────────</para>
-		/// <para>タスク送信の登録解除を行います。</para>
-		/// <para>──────────────</para>
-		/// </summary>
-		void Unregister();
+		///<summary>
+		///<para>──────────────</para>
+		///<para>タスク送信の登録解除を行います。</para>
+		///<para>──────────────</para>
+		///</summary>
+		void Unregister()
+		{
+			//リストから登録を解除する
+			if (mp_Task)
+			{
+				//タスクの解放
+				m_Send[m_Name].Free_ID(m_ID);
 
-		/// <summary>
-		/// <para>────────────</para>
-		/// <para>全体の処理を行う空間です。</para>
-		/// <para>────────────</para>
-		/// </summary>
+				//リストが空になったら、消去する
+				if (m_Send[m_Name].isEmpty()) m_Send.erase(m_Name);
+			}
+
+			//初期化
+			mp_Task = nullptr;
+			m_Name = "";
+			m_ID = 0;
+		}
+
+		///<summary>
+		///<para>────────────</para>
+		///<para>全体の処理を行う空間です。</para>
+		///<para>────────────</para>
+		///</summary>
 		class All
 		{
 		public:
-			/// <summary>
-			/// <para>────────────</para>
-			/// <para>関数呼び出しを開始します。</para>
-			/// <para>────────────</para>
-			/// </summary>
-			static void Update();
+			///<summary>
+			///<para>────────────</para>
+			///<para>関数呼び出しを開始します。</para>
+			///<para>────────────</para>
+			///</summary>
+			static void Update()
+			{
+				TaskReceive* p_Receive = TaskReceive::mp_Begin; //現在のリストポインタ
+
+				//末尾までループする
+				while (p_Receive != nullptr)
+				{
+					//コールが有効であり、コールが設定されていたら
+					if (p_Receive->m_Active && p_Receive->m_Call)
+					{
+						//関数の実行
+						for (auto & i : m_Send[p_Receive->m_Check])
+						{
+							(*p_Receive->mp_Task.*p_Receive->m_Call)(i.second.task());
+						}
+					}
+
+					//次のリストへ移動
+					p_Receive = p_Receive->mp_Next;
+				}
+			}
 		};
 	};
 
-	/// <summary>
-	/// <para>─────────────────────────────────────────────</para>
-	/// <para>タスク送信の登録を行います。</para>
-	/// <para>登録を行うことで TaskSend::All::Update 呼び出し時に TaskReceive で指定されたタスクの関数に送信されます。</para>
-	/// <para>─────────────────────────────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>─────────────────────────────────────────────</para>
+	///<para>タスク送信の登録を行います。</para>
+	///<para>登録を行うことで TaskSend::All::Update 呼び出し時に TaskReceive で指定されたタスクの関数に送信されます。</para>
+	///<para>─────────────────────────────────────────────</para>
+	///</summary>
 	///
-	/// <param name="p_Task">
-	/// <para>自身のポインタ</para>
-	/// <para>必ず this を入力してください。</para>
-	/// <para>タスク識別用の名前を取得するため、テンプレートになっています。</para>
-	/// </param>
+	///<param name="p_Task">
+	///<para>自身のポインタ</para>
+	///<para>必ず this を入力してください。</para>
+	///<para>タスク識別用の名前を取得するため、テンプレートになっています。</para>
+	///</param>
 	template<class TASK>
 	inline void TaskSend::Register(TASK* p_Task)
 	{

@@ -16,21 +16,21 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 namespace rnfs
 {
-	/// <summary>
-	/// <para>─────────────────</para>
-	/// <para>タスク識別番号</para>
-	/// <para>配列順番に影響のない取得ができます。</para>
-	/// <para>─────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>─────────────────</para>
+	///<para>タスク識別番号</para>
+	///<para>配列順番に影響のない取得ができます。</para>
+	///<para>─────────────────</para>
+	///</summary>
 	using TaskID = size_t;
 
-	/// <summary>
-	/// <para>─────────────────────</para>
-	/// <para>タスクキープ配列</para>
-	/// <para>タスクを配列で持つための専用ポインタ配列です。</para>
-	/// <para>ソート機能が無い代わりに、識別番号を使用します。</para>
-	/// <para>─────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>─────────────────────</para>
+	///<para>タスクキープ配列</para>
+	///<para>タスクを配列で持つための専用ポインタ配列です。</para>
+	///<para>ソート機能が無い代わりに、識別番号を使用します。</para>
+	///<para>─────────────────────</para>
+	///</summary>
 	template<class TYPE = Task>
 	class TaskKeepArray final
 	{
@@ -120,11 +120,11 @@ namespace rnfs
 		operator bool() const;
 	};
 
-	/// <summary>
-	/// <para>─────</para>
-	/// <para>コンストラクタ</para>
-	/// <para>─────</para>
-	/// </summary>
+	///<summary>
+	///<para>─────</para>
+	///<para>コンストラクタ</para>
+	///<para>─────</para>
+	///</summary>
 	template<class TYPE>
 	inline TaskKeepArray<TYPE>::TaskKeepArray()
 		: m_NextID(0)
@@ -132,11 +132,11 @@ namespace rnfs
 
 	}
 
-	/// <summary>
-	/// <para>────────────────</para>
-	/// <para>タスクを個数分生成し、初期化します。</para>
-	/// <para>────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>────────────────</para>
+	///<para>タスクを個数分生成し、初期化します。</para>
+	///<para>────────────────</para>
+	///</summary>
 	template<class TYPE>
 	template<typename ...ARGS>
 	inline TaskKeepArray<TYPE>::TaskKeepArray(const size_t size, ARGS && ...args)
@@ -144,11 +144,11 @@ namespace rnfs
 		for (size_t i = 0; i < size; ++i) this->Keep_Back(new TYPE(std::forward<ARGS>(args) ...));
 	}
 
-	/// <summary>
-	/// <para>───────────────</para>
-	/// <para>タスクを全てキープし、初期化します。</para>
-	/// <para>───────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>───────────────</para>
+	///<para>タスクを全てキープし、初期化します。</para>
+	///<para>───────────────</para>
+	///</summary>
 	template<class TYPE>
 	inline TaskKeepArray<TYPE>::TaskKeepArray(const std::deque<TYPE*> & taskPointerArray)
 		: m_NextID(0)
@@ -156,201 +156,201 @@ namespace rnfs
 		for (auto & i : taskPointerArray) this->Add_Back(i);
 	}
 
-	/// <summary>
-	/// <para>────────────</para>
-	/// <para>先頭のイテレータを返します。</para>
-	/// <para>first -> 識別番号</para>
-	/// <para>second -> タスクキープ</para>
-	/// <para>────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>────────────</para>
+	///<para>先頭のイテレータを返します。</para>
+	///<para>first -> 識別番号</para>
+	///<para>second -> タスクキープ</para>
+	///<para>────────────</para>
+	///</summary>
 	template<class TYPE>
 	inline typename std::unordered_map<TaskID, TaskKeep<TYPE>>::iterator TaskKeepArray<TYPE>::begin()
 	{
 		return m_Data.begin();
 	}
 
-	/// <summary>
-	/// <para>────────────</para>
-	/// <para>末尾のイテレータを返します。</para>
-	/// <para>first -> 識別番号</para>
-	/// <para>second -> タスクキープ</para>
-	/// <para>────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>────────────</para>
+	///<para>末尾のイテレータを返します。</para>
+	///<para>first -> 識別番号</para>
+	///<para>second -> タスクキープ</para>
+	///<para>────────────</para>
+	///</summary>
 	template<class TYPE>
 	inline typename std::unordered_map<TaskID, TaskKeep<TYPE>>::iterator TaskKeepArray<TYPE>::end()
 	{
 		return m_Data.end();
 	}
 
-	/// <summary>
-	/// <para>────────────</para>
-	/// <para>先頭のイテレータを返します。</para>
-	/// <para>first -> 識別番号</para>
-	/// <para>second -> タスクキープ</para>
-	/// <para>────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>────────────</para>
+	///<para>先頭のイテレータを返します。</para>
+	///<para>first -> 識別番号</para>
+	///<para>second -> タスクキープ</para>
+	///<para>────────────</para>
+	///</summary>
 	template<class TYPE>
 	inline typename std::unordered_map<TaskID, TaskKeep<TYPE>>::const_iterator TaskKeepArray<TYPE>::begin() const
 	{
 		return m_Data.begin();
 	}
 
-	/// <summary>
-	/// <para>────────────</para>
-	/// <para>末尾のイテレータを返します。</para>
-	/// <para>first -> 識別番号</para>
-	/// <para>second -> タスクキープ</para>
-	/// <para>────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>────────────</para>
+	///<para>末尾のイテレータを返します。</para>
+	///<para>first -> 識別番号</para>
+	///<para>second -> タスクキープ</para>
+	///<para>────────────</para>
+	///</summary>
 	template<class TYPE>
 	inline typename std::unordered_map<TaskID, TaskKeep<TYPE>>::const_iterator TaskKeepArray<TYPE>::end() const
 	{
 		return m_Data.end();
 	}
 
-	/// <summary>
-	/// <para>─────────────────</para>
-	/// <para>識別番号を使用して、タスクを取得します。</para>
-	/// <para>─────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>─────────────────</para>
+	///<para>識別番号を使用して、タスクを取得します。</para>
+	///<para>─────────────────</para>
+	///</summary>
 	///
-	/// <param name="id">
-	/// <para>配列の識別番号</para>
-	/// </param>
+	///<param name="id">
+	///<para>配列の識別番号</para>
+	///</param>
 	template<class TYPE>
 	inline TYPE & TaskKeepArray<TYPE>::operator () (const TaskID id)
 	{
 		return m_Data[id].task();
 	}
 
-	/// <summary>
-	/// <para>────────</para>
-	/// <para>タスクを取得します。</para>
-	/// <para>────────</para>
-	/// </summary>
+	///<summary>
+	///<para>────────</para>
+	///<para>タスクを取得します。</para>
+	///<para>────────</para>
+	///</summary>
 	///
-	/// <param name="arrayNumber">
-	/// <para>配列番号</para>
-	/// </param>
+	///<param name="arrayNumber">
+	///<para>配列番号</para>
+	///</param>
 	template<class TYPE>
 	inline TYPE & TaskKeepArray<TYPE>::operator [] (const size_t arrayNumber)
 	{
 		return m_Data[m_RegistID[arrayNumber]].task();
 	}
 
-	/// <summary>
-	/// <para>─────────────────</para>
-	/// <para>識別番号を使用して、タスクを取得します。</para>
-	/// <para>─────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>─────────────────</para>
+	///<para>識別番号を使用して、タスクを取得します。</para>
+	///<para>─────────────────</para>
+	///</summary>
 	///
-	/// <param name="id">
-	/// <para>配列の識別番号</para>
-	/// </param>
+	///<param name="id">
+	///<para>配列の識別番号</para>
+	///</param>
 	template<class TYPE>
 	inline TYPE & TaskKeepArray<TYPE>::task_ID(const TaskID id)
 	{
 		return m_Data[id].task();
 	}
 
-	/// <summary>
-	/// <para>────────</para>
-	/// <para>タスクを取得します。</para>
-	/// <para>────────</para>
-	/// </summary>
+	///<summary>
+	///<para>────────</para>
+	///<para>タスクを取得します。</para>
+	///<para>────────</para>
+	///</summary>
 	///
-	/// <param name="arrayNumber">
-	/// <para>配列番号</para>
-	/// </param>
+	///<param name="arrayNumber">
+	///<para>配列番号</para>
+	///</param>
 	template<class TYPE>
 	inline TYPE & TaskKeepArray<TYPE>::task(const size_t arrayNumber)
 	{
 		return m_Data[m_RegistID[arrayNumber]].task();
 	}
 
-	/// <summary>
-	/// <para>────────────────────</para>
-	/// <para>識別番号を使用して、タスクポインタを取得します。</para>
-	/// <para>────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>────────────────────</para>
+	///<para>識別番号を使用して、タスクポインタを取得します。</para>
+	///<para>────────────────────</para>
+	///</summary>
 	///
-	/// <param name="id">
-	/// <para>配列の識別番号</para>
-	/// </param>
+	///<param name="id">
+	///<para>配列の識別番号</para>
+	///</param>
 	template<class TYPE>
 	inline TYPE* TaskKeepArray<TYPE>::taskPointer_ID(const TaskID id)
 	{
 		return m_Data[id].taskPointer();
 	}
 
-	/// <summary>
-	/// <para>───────────</para>
-	/// <para>タスクポインタを取得します。</para>
-	/// <para>───────────</para>
-	/// </summary>
+	///<summary>
+	///<para>───────────</para>
+	///<para>タスクポインタを取得します。</para>
+	///<para>───────────</para>
+	///</summary>
 	///
-	/// <param name="arrayNumber">
-	/// <para>配列番号</para>
-	/// </param>
+	///<param name="arrayNumber">
+	///<para>配列番号</para>
+	///</param>
 	template<class TYPE>
 	inline TYPE* TaskKeepArray<TYPE>::taskPointer(const size_t arrayNumber)
 	{
 		return m_Data[m_RegistID[arrayNumber]].taskPointer();
 	}
 
-	/// <summary>
-	/// <para>──────────</para>
-	/// <para>末尾タスクを取得します。</para>
-	/// <para>──────────</para>
-	/// </summary>
+	///<summary>
+	///<para>──────────</para>
+	///<para>末尾タスクを取得します。</para>
+	///<para>──────────</para>
+	///</summary>
 	template<class TYPE>
 	inline TYPE & TaskKeepArray<TYPE>::back()
 	{
 		return m_Data[m_RegistID.back()].task();
 	}
 
-	/// <summary>
-	/// <para>──────────</para>
-	/// <para>先頭タスクを取得します。</para>
-	/// <para>──────────</para>
-	/// </summary>
+	///<summary>
+	///<para>──────────</para>
+	///<para>先頭タスクを取得します。</para>
+	///<para>──────────</para>
+	///</summary>
 	template<class TYPE>
 	inline TYPE & TaskKeepArray<TYPE>::front()
 	{
 		return m_Data[m_RegistID.front()].task();
 	}
 
-	/// <summary>
-	/// <para>─────────────</para>
-	/// <para>末尾タスクポインタを取得します。</para>
-	/// <para>─────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>─────────────</para>
+	///<para>末尾タスクポインタを取得します。</para>
+	///<para>─────────────</para>
+	///</summary>
 	template<class TYPE>
 	inline TYPE* TaskKeepArray<TYPE>::backPointer()
 	{
 		return m_Data[m_RegistID.back()].taskPointer();
 	}
 
-	/// <summary>
-	/// <para>─────────────</para>
-	/// <para>先頭タスクポインタを取得します。</para>
-	/// <para>─────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>─────────────</para>
+	///<para>先頭タスクポインタを取得します。</para>
+	///<para>─────────────</para>
+	///</summary>
 	template<class TYPE>
 	inline TYPE* TaskKeepArray<TYPE>::frontPointer()
 	{
 		return m_Data[m_RegistID.front()].taskPointer();
 	}
 
-	/// <summary>
-	/// <para>─────────────────</para>
-	/// <para>タスクをキープし、配列の末尾に追加します。</para>
-	/// <para>─────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>─────────────────</para>
+	///<para>タスクをキープし、配列の末尾に追加します。</para>
+	///<para>─────────────────</para>
+	///</summary>
 	///
-	/// <param name="p_Task">
-	/// <para>キープ対象のタスク</para>
-	/// </param>
+	///<param name="p_Task">
+	///<para>キープ対象のタスク</para>
+	///</param>
 	template<class TYPE>
 	inline void TaskKeepArray<TYPE>::Keep_Back(TYPE* p_Task)
 	{
@@ -380,15 +380,15 @@ namespace rnfs
 		}
 	}
 
-	/// <summary>
-	/// <para>──────────────────</para>
-	/// <para>タスクをキープし、配列の先頭に追加します。</para>
-	/// <para>──────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>──────────────────</para>
+	///<para>タスクをキープし、配列の先頭に追加します。</para>
+	///<para>──────────────────</para>
+	///</summary>
 	///
-	/// <param name="p_Task">
-	/// <para>キープ対象のタスク</para>
-	/// </param>
+	///<param name="p_Task">
+	///<para>キープ対象のタスク</para>
+	///</param>
 	template<class TYPE>
 	inline void TaskKeepArray<TYPE>::Keep_Front(TYPE* p_Task)
 	{
@@ -417,19 +417,19 @@ namespace rnfs
 		}
 	}
 
-	/// <summary>
-	/// <para>─────────────────</para>
-	/// <para>タスクをキープし、配列の間に追加します。</para>
-	/// <para>─────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>─────────────────</para>
+	///<para>タスクをキープし、配列の間に追加します。</para>
+	///<para>─────────────────</para>
+	///</summary>
 	///
-	/// <param name="arrayNumber">
-	/// <para>追加する配列番号位置</para>
-	/// </param>
+	///<param name="arrayNumber">
+	///<para>追加する配列番号位置</para>
+	///</param>
 	///
-	/// <param name="p_Task">
-	/// <para>キープ対象のタスク</para>
-	/// </param>
+	///<param name="p_Task">
+	///<para>キープ対象のタスク</para>
+	///</param>
 	template<class TYPE>
 	inline void TaskKeepArray<TYPE>::Keep_Insert(const size_t arrayNumber, TYPE * p_Task)
 	{
@@ -459,15 +459,15 @@ namespace rnfs
 		}
 	}
 
-	/// <summary>
-	/// <para>─────────────────</para>
-	/// <para>タスクを生成し、配列の末尾に追加します。</para>
-	/// <para>─────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>─────────────────</para>
+	///<para>タスクを生成し、配列の末尾に追加します。</para>
+	///<para>─────────────────</para>
+	///</summary>
 	///
-	/// <param name="args">
-	/// <para>コンストラクタの引数</para>
-	/// </param>
+	///<param name="args">
+	///<para>コンストラクタの引数</para>
+	///</param>
 	template<class TYPE>
 	template<typename ... ARGS>
 	inline void TaskKeepArray<TYPE>::Create_Back(ARGS && ... args)
@@ -475,15 +475,15 @@ namespace rnfs
 		this->Keep_Back(new TYPE(std::forward<ARGS>(args) ...));
 	}
 
-	/// <summary>
-	/// <para>─────────────────</para>
-	/// <para>タスクを生成し、配列の先頭に追加します。</para>
-	/// <para>─────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>─────────────────</para>
+	///<para>タスクを生成し、配列の先頭に追加します。</para>
+	///<para>─────────────────</para>
+	///</summary>
 	///
-	/// <param name="args">
-	/// <para>コンストラクタの引数</para>
-	/// </param>
+	///<param name="args">
+	///<para>コンストラクタの引数</para>
+	///</param>
 	template<class TYPE>
 	template<typename ... ARGS>
 	inline void TaskKeepArray<TYPE>::Create_Front(ARGS && ... args)
@@ -491,19 +491,19 @@ namespace rnfs
 		this->Keep_Front(new TYPE(std::forward<ARGS>(args) ...));
 	}
 
-	/// <summary>
-	/// <para>────────────────</para>
-	/// <para>タスクを生成し、配列の間に追加します。</para>
-	/// <para>────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>────────────────</para>
+	///<para>タスクを生成し、配列の間に追加します。</para>
+	///<para>────────────────</para>
+	///</summary>
 	///
-	/// <param name="arrayNumber">
-	/// <para>追加する配列番号位置</para>
-	/// </param>
+	///<param name="arrayNumber">
+	///<para>追加する配列番号位置</para>
+	///</param>
 	///
-	/// <param name="args">
-	/// <para>コンストラクタの引数</para>
-	/// </param>
+	///<param name="args">
+	///<para>コンストラクタの引数</para>
+	///</param>
 	template<class TYPE>
 	template<typename ... ARGS>
 	inline void TaskKeepArray<TYPE>::Create_Insert(const size_t arrayNumber, ARGS && ... args)
@@ -511,15 +511,15 @@ namespace rnfs
 		this->Keep_Insert(new TYPE(std::forward<ARGS>(args) ...));
 	}
 
-	/// <summary>
-	/// <para>───────────────────</para>
-	/// <para>識別番号を使用して、タスクキープを消去します。</para>
-	/// <para>───────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>───────────────────</para>
+	///<para>識別番号を使用して、タスクキープを消去します。</para>
+	///<para>───────────────────</para>
+	///</summary>
 	///
-	/// <param name="id">
-	/// <para>配列の識別番号</para>
-	/// </param>
+	///<param name="id">
+	///<para>配列の識別番号</para>
+	///</param>
 	template<class TYPE>
 	inline void TaskKeepArray<TYPE>::Clear_ID(const TaskID id)
 	{
@@ -536,15 +536,15 @@ namespace rnfs
 		m_RegistID.erase(m_RegistID.begin() + toArrayNumber(id));
 	}
 
-	/// <summary>
-	/// <para>───────────</para>
-	/// <para>タスクキープを消去します。</para>
-	/// <para>───────────</para>
-	/// </summary>
+	///<summary>
+	///<para>───────────</para>
+	///<para>タスクキープを消去します。</para>
+	///<para>───────────</para>
+	///</summary>
 	///
-	/// <param name="arrayNumber">
-	/// <para>配列番号</para>
-	/// </param>
+	///<param name="arrayNumber">
+	///<para>配列番号</para>
+	///</param>
 	template<class TYPE>
 	inline void TaskKeepArray<TYPE>::Clear(const size_t arrayNumber)
 	{
@@ -561,11 +561,11 @@ namespace rnfs
 		m_RegistID.erase(m_RegistID.begin() + arrayNumber);
 	}
 
-	/// <summary>
-	/// <para>──────────────────</para>
-	/// <para>配列の末尾にあるタスクキープを消去します。</para>
-	/// <para>──────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>──────────────────</para>
+	///<para>配列の末尾にあるタスクキープを消去します。</para>
+	///<para>──────────────────</para>
+	///</summary>
 	template<class TYPE>
 	inline void TaskKeepArray<TYPE>::Clear_Back()
 	{
@@ -582,11 +582,11 @@ namespace rnfs
 		m_RegistID.erase(m_RegistID.end());
 	}
 
-	/// <summary>
-	/// <para>──────────────────</para>
-	/// <para>配列の先頭にあるタスクキープを消去します。</para>
-	/// <para>──────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>──────────────────</para>
+	///<para>配列の先頭にあるタスクキープを消去します。</para>
+	///<para>──────────────────</para>
+	///</summary>
 	template<class TYPE>
 	inline void TaskKeepArray<TYPE>::Clear_Front()
 	{
@@ -603,11 +603,11 @@ namespace rnfs
 		m_RegistID.erase(m_RegistID.begin());
 	}
 
-	/// <summary>
-	/// <para>────────────</para>
-	/// <para>タスクキープを全消去します。</para>
-	/// <para>────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>────────────</para>
+	///<para>タスクキープを全消去します。</para>
+	///<para>────────────</para>
+	///</summary>
 	template<class TYPE>
 	inline void TaskKeepArray<TYPE>::Clear_All()
 	{
@@ -624,16 +624,16 @@ namespace rnfs
 		m_NextID = 0;
 	}
 
-	/// <summary>
-	/// <para>───────────────────────────────────</para>
-	/// <para>識別番号を使用して、タスクキープ配列からタスクを解放します。</para>
-	/// <para>タスクは消去されないので、自身で Task::Destroy を呼び出して消去する必要があります。</para>
-	/// <para>───────────────────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>───────────────────────────────────</para>
+	///<para>識別番号を使用して、タスクキープ配列からタスクを解放します。</para>
+	///<para>タスクは消去されないので、自身で Task::Destroy を呼び出して消去する必要があります。</para>
+	///<para>───────────────────────────────────</para>
+	///</summary>
 	///
-	/// <param name="id">
-	/// <para>配列の識別番号</para>
-	/// </param>
+	///<param name="id">
+	///<para>配列の識別番号</para>
+	///</param>
 	template<class TYPE>
 	inline void TaskKeepArray<TYPE>::Free_ID(const TaskID id)
 	{
@@ -653,16 +653,16 @@ namespace rnfs
 		m_RegistID.erase(m_RegistID.begin() + toArrayNumber(id));
 	}
 
-	/// <summary>
-	/// <para>───────────────────────────────────</para>
-	/// <para>タスクキープ配列から解放します。</para>
-	/// <para>タスクは消去されないので、自身で Task::Destroy を呼び出して消去する必要があります。</para>
-	/// <para>───────────────────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>───────────────────────────────────</para>
+	///<para>タスクキープ配列から解放します。</para>
+	///<para>タスクは消去されないので、自身で Task::Destroy を呼び出して消去する必要があります。</para>
+	///<para>───────────────────────────────────</para>
+	///</summary>
 	///
-	/// <param name="arrayNumber">
-	/// <para>配列番号</para>
-	/// </param>
+	///<param name="arrayNumber">
+	///<para>配列番号</para>
+	///</param>
 	template<class TYPE>
 	inline void TaskKeepArray<TYPE>::Free(const size_t arrayNumber)
 	{
@@ -739,21 +739,21 @@ namespace rnfs
 		m_NextID = 0;
 	}
 
-	/// <summary>
-	/// <para>───────────────────────────────</para>
-	/// <para>識別番号を使用して、タスクキープの安全保障機能の有効無効を設定します。</para>
-	/// <para>───────────────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>───────────────────────────────</para>
+	///<para>識別番号を使用して、タスクキープの安全保障機能の有効無効を設定します。</para>
+	///<para>───────────────────────────────</para>
+	///</summary>
 	///
-	/// <param name="id">
-	/// <para>配列の識別番号</para>
-	/// </param>
+	///<param name="id">
+	///<para>配列の識別番号</para>
+	///</param>
 	///
-	/// <param name="safety">
-	/// <para>安全保障機能の有効無効切り替え</para>
-	/// <para>true  -> 有効</para>
-	/// <para>false -> 無効</para>
-	/// </param>
+	///<param name="safety">
+	///<para>安全保障機能の有効無効切り替え</para>
+	///<para>true  -> 有効</para>
+	///<para>false -> 無効</para>
+	///</param>
 	template<class TYPE>
 	inline void TaskKeepArray<TYPE>::Safety_ID(const TaskID id, const bool safety)
 	{
@@ -761,21 +761,21 @@ namespace rnfs
 		m_Data[id].Safety(safety);
 	}
 
-	/// <summary>
-	/// <para>──────────────────────</para>
-	/// <para>タスクキープの安全保障機能の有効無効を設定します。</para>
-	/// <para>──────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>──────────────────────</para>
+	///<para>タスクキープの安全保障機能の有効無効を設定します。</para>
+	///<para>──────────────────────</para>
+	///</summary>
 	///
-	/// <param name="arrayNumber">
-	/// <para>配列番号</para>
-	/// </param>
+	///<param name="arrayNumber">
+	///<para>配列番号</para>
+	///</param>
 	///
-	/// <param name="safety">
-	/// <para>安全保障機能の有効無効切り替え</para>
-	/// <para>true  -> 有効</para>
-	/// <para>false -> 無効</para>
-	/// </param>
+	///<param name="safety">
+	///<para>安全保障機能の有効無効切り替え</para>
+	///<para>true  -> 有効</para>
+	///<para>false -> 無効</para>
+	///</param>
 	template<class TYPE>
 	inline void TaskKeepArray<TYPE>::Safety(const size_t arrayNumber, const bool safety)
 	{
@@ -783,15 +783,15 @@ namespace rnfs
 		m_Data[m_RegistID[arrayNumber]].Safety(safety);
 	}
 
-	/// <summary>
-	/// <para>───────────────────</para>
-	/// <para>識別番号を使用して、配列番号を取得します。</para>
-	/// <para>───────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>───────────────────</para>
+	///<para>識別番号を使用して、配列番号を取得します。</para>
+	///<para>───────────────────</para>
+	///</summary>
 	///
-	/// <param name="id">
-	/// <para>配列の識別番号</para>
-	/// </param>
+	///<param name="id">
+	///<para>配列の識別番号</para>
+	///</param>
 	template<class TYPE>
 	inline const size_t TaskKeepArray<TYPE>::toArrayNumber(const TaskID id) const
 	{
@@ -814,116 +814,116 @@ namespace rnfs
 		return 0;
 	}
 
-	/// <summary>
-	/// <para>──────────</para>
-	/// <para>識別番号を取得します。</para>
-	/// <para>──────────</para>
-	/// </summary>
+	///<summary>
+	///<para>──────────</para>
+	///<para>識別番号を取得します。</para>
+	///<para>──────────</para>
+	///</summary>
 	///
-	/// <param name="arrayNumber">
-	/// <para>配列番号</para>
-	/// </param>
+	///<param name="arrayNumber">
+	///<para>配列番号</para>
+	///</param>
 	template<class TYPE>
 	inline const TaskID TaskKeepArray<TYPE>::toID(const size_t arrayNumber) const
 	{
 		return m_RegistID[arrayNumber];
 	}
 
-	/// <summary>
-	/// <para>───────────────────────</para>
-	/// <para>タスク追加で次に割り当てられる識別番号を取得します。</para>
-	/// <para>───────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>───────────────────────</para>
+	///<para>タスク追加で次に割り当てられる識別番号を取得します。</para>
+	///<para>───────────────────────</para>
+	///</summary>
 	template<class TYPE>
 	inline const TaskID TaskKeepArray<TYPE>::nextID() const
 	{
 		return m_ClearID.empty() ? m_NextID : m_ClearID.front();
 	}
 
-	/// <summary>
-	/// <para>────────────────────</para>
-	/// <para>指定した識別番号のタスクの有無を確認します。</para>
-	/// <para>────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>────────────────────</para>
+	///<para>指定した識別番号のタスクの有無を確認します。</para>
+	///<para>────────────────────</para>
+	///</summary>
 	///
-	/// <param name="id">
-	/// <para>配列の識別番号</para>
-	/// </param>
+	///<param name="id">
+	///<para>配列の識別番号</para>
+	///</param>
 	template<class TYPE>
 	inline const bool TaskKeepArray<TYPE>::isID(const TaskID id) const
 	{
 		return m_Data.count(id) != 0;
 	}
 
-	/// <summary>
-	/// <para>─────────────</para>
-	/// <para>空の状態であるかを取得します。</para>
-	/// <para>─────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>─────────────</para>
+	///<para>空の状態であるかを取得します。</para>
+	///<para>─────────────</para>
+	///</summary>
 	template<class TYPE>
 	inline const bool TaskKeepArray<TYPE>::isEmpty() const
 	{
 		return m_RegistID.empty();
 	}
 
-	/// <summary>
-	/// <para>─────────</para>
-	/// <para>要素数を取得します。</para>
-	/// <para>─────────</para>
-	/// </summary>
+	///<summary>
+	///<para>─────────</para>
+	///<para>要素数を取得します。</para>
+	///<para>─────────</para>
+	///</summary>
 	template<class TYPE>
 	inline const size_t TaskKeepArray<TYPE>::size() const
 	{
 		return m_RegistID.size();
 	}
 
-	/// <summary>
-	/// <para>───────────────</para>
-	/// <para>末尾タスクの識別番号を取得します。</para>
-	/// <para>───────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>───────────────</para>
+	///<para>末尾タスクの識別番号を取得します。</para>
+	///<para>───────────────</para>
+	///</summary>
 	template<class TYPE>
 	inline const TaskID TaskKeepArray<TYPE>::backID() const
 	{
 		return m_RegistID.back();
 	}
 
-	/// <summary>
-	/// <para>───────────────</para>
-	/// <para>先頭タスクの識別番号を取得します。</para>
-	/// <para>───────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>───────────────</para>
+	///<para>先頭タスクの識別番号を取得します。</para>
+	///<para>───────────────</para>
+	///</summary>
 	template<class TYPE>
 	inline const TaskID TaskKeepArray<TYPE>::frontID() const
 	{
 		return m_RegistID.front();
 	}
 
-	/// <summary>
-	/// <para>────────────</para>
-	/// <para>タスクが存在するかを返します。</para>
-	/// <para>────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>────────────</para>
+	///<para>タスクが存在するかを返します。</para>
+	///<para>────────────</para>
+	///</summary>
 	template<class TYPE>
 	inline TaskKeepArray<TYPE>::operator bool() const
 	{
 		return !m_RegistID.empty();
 	}
 
-	/// <summary>
-	/// <para>────────────────────</para>
-	/// <para>第1引数に指定した数のタスクを同時生成します。</para>
-	/// <para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	/// <para>────────────────────</para>
-	/// </summary>
+	///<summary>
+	///<para>────────────────────</para>
+	///<para>第1引数に指定した数のタスクを同時生成します。</para>
+	///<para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
+	///<para>────────────────────</para>
+	///</summary>
 	///
-	/// <param name="size">
-	/// <para>生成するタスクの数</para>
-	/// </param>
+	///<param name="size">
+	///<para>生成するタスクの数</para>
+	///</param>
 	///
-	/// <param name="args">
-	/// <para>コンストラクタの引数</para>
-	/// </param>
+	///<param name="args">
+	///<para>コンストラクタの引数</para>
+	///</param>
 	template <class TYPE, typename ... ARGS>
 	static std::deque<TYPE*> Create_Multi(const size_t size, ARGS && ... args)
 	{

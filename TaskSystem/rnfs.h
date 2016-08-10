@@ -1,4 +1,4 @@
-/*
+﻿/*
 The MIT License (MIT)
 Copyright © 2015-2016 Rinifisu
 http://rinifisu.blog.jp/
@@ -11,7 +11,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #include "rnfs_TaskCall.h"
 #include "rnfs_TaskGet.h"
-#include "rnfs_TaskReceive.h"
 #include "rnfs_TaskSend.h"
 
-using namespace rnfs;
+#ifndef NO_RNFS_USING
+	using namespace rnfs;
+#endif
