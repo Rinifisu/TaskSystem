@@ -7,10 +7,20 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "rnfs_Task.h"
+#include "rnfs_TaskCall.h"
+#include "rnfs_TaskGet.h"
+#include "rnfs_TaskSend.h"
 
 namespace rnfs
 {
-	Task* Task::mp_Begin = nullptr;		//先頭ポインタ
-	Task* Task::mp_End = nullptr;		//末尾ポインタ
+	Task* Task::mp_Begin = nullptr;
+	Task* Task::mp_End = nullptr;
+
+	std::unordered_map<unsigned char, TaskCall*> TaskCall::m_Begin;
+
+	std::unordered_map<std::string, TaskKeepArray<Task>> TaskGet::m_Data;
+
+	TaskReceive* TaskReceive::mp_Begin = nullptr;
+
+	std::unordered_map<std::string, TaskKeepArray<Task>> TaskSend::m_Send;
 }
