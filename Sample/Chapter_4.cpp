@@ -58,7 +58,7 @@ private:
 void Main()
 {
 	//画面の中央にユーフォーを生成
-	Create<UFO>(Vec2(320.0, 240.0), 8.0);
+	Create<UFO>(Window::Center(), 8.0);
 
 	while (System::Update())
 	{

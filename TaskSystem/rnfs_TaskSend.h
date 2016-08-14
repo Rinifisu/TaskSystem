@@ -23,16 +23,16 @@ namespace rnfs
 	///</summary>
 	class TaskSend final
 	{
-		friend class	TaskReceive;	//様々な取得や参照で必要
+		friend class		TaskReceive;	//様々な取得や参照で必要
 
 	private:
-		Task*			mp_Task;		//コール対象タスクのポインタ
+		Task*				mp_Task;		//コール対象タスクのポインタ
 
-		std::string		m_Name;			//識別用の名前
-		TaskID			m_ID;			//消去用の管理番号
+		std::type_index		m_Type;			//識別用の情報
+		TaskID				m_ID;			//消去用の管理番号
 
 	private:
-		static std::unordered_map<std::string, TaskKeepArray<Task>>	m_Send; //送信リストのポインタ
+		static std::unordered_map<std::type_index, TaskKeepArray<Task>>	m_Send; //送信リストのポインタ
 
 	public:
 		///<summary>
@@ -40,7 +40,7 @@ namespace rnfs
 		///<para>初期化を行います。</para>
 		///<para>────────</para>
 		///</summary>
-		TaskSend() : mp_Task(nullptr), m_Name(""), m_ID(0)
+		TaskSend() : mp_Task(nullptr), m_Type(typeid(nullptr)), m_ID(0)
 		{
 
 		}
@@ -57,8 +57,8 @@ namespace rnfs
 
 		TaskSend(const TaskSend & taskSend) = delete;
 		TaskSend(TaskSend && taskSend) = delete;
-		void operator =(const TaskSend & taskSend) = delete;
-		void operator =(TaskSend && taskSend) = delete;
+		void operator = (const TaskSend & taskSend) = delete;
+		void operator = (TaskSend && taskSend) = delete;
 
 		template<class TASK>
 		void Register(TASK* p_Task);
@@ -74,15 +74,15 @@ namespace rnfs
 			if (mp_Task)
 			{
 				//タスクの解放
-				m_Send[m_Name].Free_ID(m_ID);
+				m_Send[m_Type].Free_ID(m_ID);
 
 				//リストが空になったら、消去する
-				if (m_Send[m_Name].isEmpty()) m_Send.erase(m_Name);
+				if (m_Send[m_Type].isEmpty()) m_Send.erase(m_Type);
 			}
 
 			//初期化
 			mp_Task = nullptr;
-			m_Name = "";
+			m_Type = typeid(nullptr);
 			m_ID = 0;
 		}
 
@@ -110,7 +110,7 @@ namespace rnfs
 					if (p_Receive->m_Active && p_Receive->m_Call)
 					{
 						//関数の実行
-						for (auto & i : m_Send[p_Receive->m_Check])
+						for (auto & i : m_Send[p_Receive->m_Type])
 						{
 							(*p_Receive->mp_Task.*p_Receive->m_Call)(i.second.task());
 						}
@@ -142,22 +142,22 @@ namespace rnfs
 		if (mp_Task)
 		{
 			//タスクの解放
-			m_Send[m_Name].Free_ID(m_ID);
+			m_Send[m_Type].Free_ID(m_ID);
 
 			//リストが空になったら、消去する
-			if (m_Send[m_Name].isEmpty()) m_Send.erase(m_Name);
+			if (m_Send[m_Type].isEmpty()) m_Send.erase(m_Type);
 		}
 
 		mp_Task = p_Task;
-		m_Name = typeid(TASK).name();
+		m_Type = typeid(TASK);
 		
 		//追加される位置を取得する
-		m_ID = m_Send[m_Name].nextID();
+		m_ID = m_Send[m_Type].nextID();
 
 		//追加
-		m_Send[m_Name].Keep_Back(mp_Task);
+		m_Send[m_Type].Keep_Back(mp_Task);
 
 		//カウントを無効にする
-		m_Send[m_Name].Safety_ID(m_ID, false);
+		m_Send[m_Type].Safety_ID(m_ID, false);
 	}
 }

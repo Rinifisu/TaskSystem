@@ -9,7 +9,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #pragma once
 
-#include <functional> //std::function
+#include <functional>	//std::function
+#include <typeindex>	//std::type_index
 
 #include "rnfs_TaskKeepArray.h"
 
@@ -24,36 +25,36 @@ namespace rnfs
 	class TaskGet
 	{
 	private:
-		Task*			mp_Task;	//タスクのポインタ
+		Task*				mp_Task;	//タスクのポインタ
 
-		std::string		m_Name;		//識別用の名前
-		TaskID			m_ID;		//消去用の管理番号
+		std::type_index		m_Type;		//識別用の情報
+		TaskID				m_ID;		//消去用の管理番号
 
 	private:
-		static std::unordered_map<std::string, TaskKeepArray<Task>> m_Data; //登録タスクのキープ
+		static std::unordered_map<std::type_index, TaskKeepArray<Task>> m_Data; //登録タスクのキープ
 
 	private:
 		//ゲットリストへの登録
 		void _Register_()
 		{
 			//追加される位置を取得する
-			m_ID = m_Data[m_Name].nextID();
+			m_ID = m_Data[m_Type].nextID();
 
 			//追加
-			m_Data[m_Name].Keep_Back(mp_Task);
+			m_Data[m_Type].Keep_Back(mp_Task);
 
 			//カウントを無効にする
-			m_Data[m_Name].Safety_ID(m_ID, false);
+			m_Data[m_Type].Safety_ID(m_ID, false);
 		}
 
 		//ゲットリストから消去
 		void _Unregister_()
 		{
 			//タスクの解放
-			m_Data[m_Name].Free_ID(m_ID);
+			m_Data[m_Type].Free_ID(m_ID);
 
 			//リストが空になったら、消去する
-			if (m_Data[m_Name].isEmpty()) m_Data.erase(m_Name);
+			if (m_Data[m_Type].isEmpty()) m_Data.erase(m_Type);
 		}
 
 	public:
@@ -62,7 +63,8 @@ namespace rnfs
 		///<para>初期化を行います。</para>
 		///<para>────────</para>
 		///</summary>
-		TaskGet() : mp_Task(nullptr), m_Name(""), m_ID(0)
+		TaskGet()
+			: mp_Task(nullptr), m_Type(typeid(nullptr)), m_ID(0)
 		{
 
 		}
@@ -110,7 +112,7 @@ namespace rnfs
 
 			//初期化
 			mp_Task = nullptr;
-			m_Name = "";
+			m_Type = typeid(nullptr);
 			m_ID = 0;
 		}
 
@@ -189,15 +191,8 @@ namespace rnfs
 	///</param>
 	template<class TASK>
 	inline TaskGet::TaskGet(TASK* p_Task)
+		: mp_Task(p_Task), m_Type(typeid(TASK)), m_ID(0)
 	{
-		//登録されていたら登録解除する
-		if (mp_Task) this->_Unregister_();
-
-		//初期化
-		mp_Task = p_Task;
-		m_Name = typeid(TASK).name();
-
-		//登録
 		this->_Register_();
 	}
 
@@ -223,7 +218,7 @@ namespace rnfs
 
 		//初期化
 		mp_Task = p_Task;
-		m_Name = typeid(TASK).name();
+		m_Type = typeid(TASK);
 
 		//登録
 		this->_Register_();
@@ -242,7 +237,7 @@ namespace rnfs
 	template<class TASK>
 	inline TASK & TaskGet::All::task_ID(const TaskID id)
 	{
-		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK).name()).taskPointer_ID(id));
+		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK)).taskPointer_ID(id));
 	}
 
 	///<summary>
@@ -258,7 +253,7 @@ namespace rnfs
 	template<class TASK>
 	inline TASK & TaskGet::All::task(const size_t arrayNumber)
 	{
-		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK).name()).taskPointer(arrayNumber));
+		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK)).taskPointer(arrayNumber));
 	}
 
 	///<summary>
@@ -270,7 +265,7 @@ namespace rnfs
 	template<class TASK>
 	inline TASK & TaskGet::All::back()
 	{
-		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK).name()).backPointer());
+		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK)).backPointer());
 	}
 
 	///<summary>
@@ -282,7 +277,7 @@ namespace rnfs
 	template<class TASK>
 	inline TASK & TaskGet::All::front()
 	{
-		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK).name()).frontPointer());
+		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK)).frontPointer());
 	}
 
 	///<summary>
@@ -298,7 +293,7 @@ namespace rnfs
 	template<class TASK>
 	inline const size_t TaskGet::All::toArrayNumber(const TaskID id)
 	{
-		return m_Data.at(typeid(TASK).name()).toArrayNumber(id);
+		return m_Data.at(typeid(TASK)).toArrayNumber(id);
 	}
 
 	///<summary>
@@ -314,7 +309,7 @@ namespace rnfs
 	template<class TASK>
 	inline const TaskID TaskGet::All::toID(const size_t arrayNumber)
 	{
-		return m_Data.at(typeid(TASK).name()).toID(arrayNumber);
+		return m_Data.at(typeid(TASK)).toID(arrayNumber);
 	}
 
 	///<summary>
@@ -331,9 +326,9 @@ namespace rnfs
 	inline const bool TaskGet::All::isID(const TaskID id)
 	{
 		//登録済みのタスクが１つも無い場合は存在しない
-		if (m_Data.count(typeid(TASK).name()) <= 0) return false;
+		if (m_Data.count(typeid(TASK)) <= 0) return false;
 		//要素数の取得
-		return m_Data.at(typeid(TASK).name()).isID(id);
+		return m_Data.at(typeid(TASK)).isID(id);
 	}
 
 	///<summary>
@@ -345,7 +340,7 @@ namespace rnfs
 	template<class TASK>
 	inline const bool TaskGet::All::isEmpty()
 	{
-		return m_Data.count(typeid(TASK).name()) <= 0;
+		return m_Data.count(typeid(TASK)) <= 0;
 	}
 
 	///<summary>
@@ -358,9 +353,9 @@ namespace rnfs
 	inline const size_t TaskGet::All::size()
 	{
 		//登録済みのタスクが１つも無い場合は０を返す
-		if (m_Data.count(typeid(TASK).name()) <= 0) return 0;
+		if (m_Data.count(typeid(TASK)) <= 0) return 0;
 		//要素数の取得
-		else return m_Data.at(typeid(TASK).name()).size();
+		else return m_Data.at(typeid(TASK)).size();
 	}
 
 	///<summary>
@@ -372,7 +367,7 @@ namespace rnfs
 	template<class TASK>
 	inline const TaskID TaskGet::All::backID()
 	{
-		return m_Data.at(typeid(TASK).name()).backID();
+		return m_Data.at(typeid(TASK)).backID();
 	}
 
 	///<summary>
@@ -384,7 +379,7 @@ namespace rnfs
 	template<class TASK>
 	inline const TaskID TaskGet::All::frontID()
 	{
-		return m_Data.at(typeid(TASK).name()).frontID();
+		return m_Data.at(typeid(TASK)).frontID();
 	}
 
 	///<summary>
@@ -402,10 +397,10 @@ namespace rnfs
 	inline const bool TaskGet::All::clear(const size_t arrayNumber)
 	{
 		//登録済みのタスクが１つも無い場合は何もしない
-		if (m_Data.count(typeid(TASK).name()) <= 0) return false;
+		if (m_Data.count(typeid(TASK)) <= 0) return false;
 
 		//一時的に参照
-		TaskKeepArray<Task> & taskKeepArray = m_Data.at(typeid(TASK).name());
+		TaskKeepArray<Task> & taskKeepArray = m_Data.at(typeid(TASK));
 		//キープしているタスクがある場合は何もせずに終了
 		if (0 < taskKeepArray.task(arrayNumber).link()) return false;
 
@@ -431,10 +426,10 @@ namespace rnfs
 	inline const bool TaskGet::All::clear_ID(const TaskID id)
 	{
 		//登録済みのタスクが１つも無い場合は何もしない
-		if (m_Data.count(typeid(TASK).name()) <= 0) return false;
+		if (m_Data.count(typeid(TASK)) <= 0) return false;
 
 		//一時的に参照
-		TaskKeepArray<Task> & taskKeepArray = m_Data.at(typeid(TASK).name());
+		TaskKeepArray<Task> & taskKeepArray = m_Data.at(typeid(TASK));
 		//キープしているタスクがある場合は何もせずに終了
 		if (0 < taskKeepArray.task_ID(id).link()) return false;
 
@@ -456,10 +451,10 @@ namespace rnfs
 	inline const bool TaskGet::All::clear_Back()
 	{
 		//登録済みのタスクが１つも無い場合は何もしない
-		if (m_Data.count(typeid(TASK).name()) <= 0) return false;
+		if (m_Data.count(typeid(TASK)) <= 0) return false;
 
 		//一時的に参照
-		TaskKeepArray<Task> & taskKeepArray = m_Data.at(typeid(TASK).name());
+		TaskKeepArray<Task> & taskKeepArray = m_Data.at(typeid(TASK));
 		//キープしているタスクがある場合は何もせずに終了
 		if (0 < taskKeepArray.back().link()) return false;
 
@@ -481,10 +476,10 @@ namespace rnfs
 	inline const bool TaskGet::All::clear_Front()
 	{
 		//登録済みのタスクが１つも無い場合は何もしない
-		if (m_Data.count(typeid(TASK).name()) <= 0) return false;
+		if (m_Data.count(typeid(TASK)) <= 0) return false;
 
 		//一時的に参照
-		TaskKeepArray<Task> & taskKeepArray = m_Data.at(typeid(TASK).name());
+		TaskKeepArray<Task> & taskKeepArray = m_Data.at(typeid(TASK));
 		//キープしているタスクがある場合は何もせずに終了
 		if (0 < taskKeepArray.front().link()) return false;
 
@@ -507,12 +502,12 @@ namespace rnfs
 	inline const size_t TaskGet::All::clear_All()
 	{
 		//登録済みのタスクが１つも無い場合は何もしない
-		if (m_Data.count(typeid(TASK).name()) <= 0) return 0;
+		if (m_Data.count(typeid(TASK)) <= 0) return 0;
 
 		//消去したタスクの数
 		size_t deleteTask = 0;
 		//一時的に参照
-		TaskKeepArray<Task> & taskKeepArray = m_Data.at(typeid(TASK).name());
+		TaskKeepArray<Task> & taskKeepArray = m_Data.at(typeid(TASK));
 
 		for (size_t i = 0; i < taskKeepArray.size();)
 		{

@@ -38,9 +38,12 @@ namespace rnfs
 		TaskKeep(TaskKeep<TYPE> && taskKeep) = delete;
 		~TaskKeep();
 
-		void operator =(TYPE* p_Task);
-		void operator =(const TaskKeep<TYPE> & taskKeep);
-		void operator =(TaskKeep<TYPE> && taskKeep) = delete;
+		void operator = (TYPE* p_Task);
+		void operator = (const TaskKeep<TYPE> & taskKeep);
+		void operator = (TaskKeep<TYPE> && taskKeep) = delete;
+
+		template <typename ... ARGS>
+		void Create(ARGS && ... args);
 
 		void Clear();
 		void Free();
@@ -119,6 +122,16 @@ namespace rnfs
 		_Reset_(p_Task);
 	}
 
+	///<summary>
+	///<para>──────────────────────</para>
+	///<para>タスクをキープします。</para>
+	///<para>既にキープ中であるタスクは消去、または解放されます。</para>
+	///<para>──────────────────────</para>
+	///</summary>
+	///
+	///<param name="taskKeep">
+	///<para>キープ対象のタスクをキープしている TaskKeep</para>
+	///</param>
 	template<class TYPE>
 	inline TaskKeep<TYPE>::TaskKeep(const TaskKeep<TYPE> & taskKeep)
 		: mp_Task(nullptr), m_Safety(taskKeep.m_Safety)
@@ -163,6 +176,23 @@ namespace rnfs
 	inline void TaskKeep<TYPE>::operator =(const TaskKeep<TYPE> & taskKeep)
 	{
 		_Reset_(taskKeep.mp_Task);
+	}
+
+	///<summary>
+	///<para>──────────────────────</para>
+	///<para>タスクを生成し、キープします。</para>
+	///<para>既にキープ中であるタスクは消去、または解放されます。</para>
+	///<para>──────────────────────</para>
+	///</summary>
+	///
+	///<param name="args">
+	///<para>コンストラクタの引数</para>
+	///</param>
+	template<class TYPE>
+	template<typename ... ARGS>
+	inline void TaskKeep<TYPE>::Create(ARGS && ... args)
+	{
+		_Reset_(new TYPE(std::forward<ARGS>(args) ...));
 	}
 
 	///<summary>

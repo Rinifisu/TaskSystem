@@ -127,8 +127,8 @@ namespace rnfs
 	public:
 		Task(const Task & task) = delete;
 		Task(Task && task) = delete;
-		void operator =(const Task & task) = delete;
-		void operator =(Task && task) = delete;
+		void operator = (const Task & task) = delete;
+		void operator = (Task && task) = delete;
 
 		///<summary>
 		///<para>────────────────</para>

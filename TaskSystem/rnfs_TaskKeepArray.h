@@ -48,9 +48,7 @@ namespace rnfs
 		template <typename ... ARGS>
 		TaskKeepArray(const size_t size, ARGS && ... args);
 
-		TaskKeepArray(const std::deque<TYPE*> & taskPointerArray);
-
-		TaskKeepArray(const TaskKeepArray<TYPE> & taskKeepArray) = default;
+		TaskKeepArray(const TaskKeepArray<TYPE> & taskKeepArray);
 		TaskKeepArray(TaskKeepArray<TYPE> && taskKeepArray) = delete;
 
 		typename std::unordered_map<TaskID, TaskKeep<TYPE>>::iterator begin();
@@ -59,8 +57,8 @@ namespace rnfs
 		typename std::unordered_map<TaskID, TaskKeep<TYPE>>::const_iterator begin() const;
 		typename std::unordered_map<TaskID, TaskKeep<TYPE>>::const_iterator end() const;
 
-		void operator =(const TaskKeepArray<TYPE> & taskKeepArray) = delete;
-		void operator =(TaskKeepArray<TYPE> && taskKeepArray) = delete;
+		void operator = (const TaskKeepArray<TYPE> & taskKeepArray);
+		void operator = (TaskKeepArray<TYPE> && taskKeepArray) = delete;
 
 		TYPE & operator () (const TaskID id);
 		TYPE & operator [] (const size_t arrayNumber);
@@ -87,6 +85,13 @@ namespace rnfs
 		void Create_Front(ARGS && ... args);
 		template <typename ... ARGS>
 		void Create_Insert(const size_t arrayNumber, ARGS && ... args);
+
+		template <typename ... ARGS>
+		void Creates_Back(const size_t size, ARGS && ... args);
+		template <typename ... ARGS>
+		void Creates_Front(const size_t size, ARGS && ... args);
+		template <typename ... ARGS>
+		void Creates_Insert(const size_t arrayNumber, const size_t size, ARGS && ... args);
 
 		void Clear_ID(const TaskID id);
 		void Clear(const size_t arrayNumber);
@@ -137,9 +142,17 @@ namespace rnfs
 	///<para>タスクを個数分生成し、初期化します。</para>
 	///<para>────────────────</para>
 	///</summary>
+	///
+	///<param name="size">
+	///<para>生成するタスクの数</para>
+	///</param>
+	///
+	///<param name="args">
+	///<para>コンストラクタの引数</para>
+	///</param>
 	template<class TYPE>
-	template<typename ...ARGS>
-	inline TaskKeepArray<TYPE>::TaskKeepArray(const size_t size, ARGS && ...args)
+	template<typename ... ARGS>
+	inline TaskKeepArray<TYPE>::TaskKeepArray(const size_t size, ARGS && ... args)
 	{
 		for (size_t i = 0; i < size; ++i) this->Keep_Back(new TYPE(std::forward<ARGS>(args) ...));
 	}
@@ -149,11 +162,15 @@ namespace rnfs
 	///<para>タスクを全てキープし、初期化します。</para>
 	///<para>───────────────</para>
 	///</summary>
+	///
+	///<param name="taskKeepArray">
+	///<para>キープ対象のタスクをキープしている TaskKeepArray</para>
+	///</param>
 	template<class TYPE>
-	inline TaskKeepArray<TYPE>::TaskKeepArray(const std::deque<TYPE*> & taskPointerArray)
-		: m_NextID(0)
+	inline TaskKeepArray<TYPE>::TaskKeepArray(const TaskKeepArray<TYPE> & taskKeepArray)
 	{
-		for (auto & i : taskPointerArray) this->Add_Back(i);
+		//全てのタスクキープを取り出し、キープする
+		for (auto & i : taskKeepArray) this->Keep_Back(i.second.taskPointer());
 	}
 
 	///<summary>
@@ -206,6 +223,26 @@ namespace rnfs
 	inline typename std::unordered_map<TaskID, TaskKeep<TYPE>>::const_iterator TaskKeepArray<TYPE>::end() const
 	{
 		return m_Data.end();
+	}
+
+	///<summary>
+	///<para>──────────────────────</para>
+	///<para>タスクを全てキープし、初期化します。</para>
+	///<para>既にキープ中であるタスクは消去、または解放されます。</para>
+	///<para>──────────────────────</para>
+	///</summary>
+	///
+	///<param name="taskKeep">
+	///<para>キープ対象のタスクをキープしている TaskKeepArray</para>
+	///</param>
+	template<class TYPE>
+	inline void TaskKeepArray<TYPE>::operator = (const TaskKeepArray<TYPE> & taskKeepArray)
+	{
+		//タスクキープを全消去
+		this->Clear_All();
+
+		//全てのタスクキープを取り出し、キープする
+		for (auto & i : taskKeepArray) this->Keep_Back(i.second.taskPointer());
 	}
 
 	///<summary>
@@ -509,6 +546,70 @@ namespace rnfs
 	inline void TaskKeepArray<TYPE>::Create_Insert(const size_t arrayNumber, ARGS && ... args)
 	{
 		this->Keep_Insert(new TYPE(std::forward<ARGS>(args) ...));
+	}
+
+	///<summary>
+	///<para>────────────────────</para>
+	///<para>タスクを個数分生成し、配列の末尾に追加します。</para>
+	///<para>────────────────────</para>
+	///</summary>
+	///
+	///<param name="size">
+	///<para>生成するタスクの数</para>
+	///</param>
+	///
+	///<param name="args">
+	///<para>コンストラクタの引数</para>
+	///</param>
+	template<class TYPE>
+	template<typename ... ARGS>
+	inline void TaskKeepArray<TYPE>::Creates_Back(const size_t size, ARGS && ... args)
+	{
+		for (size_t i = 0; i < size; ++i) this->Keep_Back(new TYPE(std::forward<ARGS>(args) ...));
+	}
+
+	///<summary>
+	///<para>────────────────────</para>
+	///<para>タスクを個数分生成し、配列の先頭に追加します。</para>
+	///<para>────────────────────</para>
+	///</summary>
+	///
+	///<param name="size">
+	///<para>生成するタスクの数</para>
+	///</param>
+	///
+	///<param name="args">
+	///<para>コンストラクタの引数</para>
+	///</param>
+	template<class TYPE>
+	template<typename ... ARGS>
+	inline void TaskKeepArray<TYPE>::Creates_Front(const size_t size, ARGS && ... args)
+	{
+		for (size_t i = 0; i < size; ++i) this->Keep_Front(new TYPE(std::forward<ARGS>(args) ...));
+	}
+
+	///<summary>
+	///<para>───────────────────</para>
+	///<para>タスクを個数分生成し、配列の間に追加します。</para>
+	///<para>───────────────────</para>
+	///</summary>
+	///
+	///<param name="arrayNumber">
+	///<para>追加する配列番号位置</para>
+	///</param>
+	///
+	///<param name="size">
+	///<para>生成するタスクの数</para>
+	///</param>
+	///
+	///<param name="args">
+	///<para>コンストラクタの引数</para>
+	///</param>
+	template<class TYPE>
+	template<typename ... ARGS>
+	inline void TaskKeepArray<TYPE>::Creates_Insert(const size_t arrayNumber, const size_t size, ARGS && ... args)
+	{
+		for (size_t i = 0; i < size; ++i) this->Keep_Insert(new TYPE(std::forward<ARGS>(args) ...));
 	}
 
 	///<summary>
@@ -925,10 +1026,8 @@ namespace rnfs
 	///<para>コンストラクタの引数</para>
 	///</param>
 	template <class TYPE, typename ... ARGS>
-	static std::deque<TYPE*> Create_Multi(const size_t size, ARGS && ... args)
+	static void Creates(const size_t size, ARGS && ... args)
 	{
-		std::deque<TYPE*> taskPointerArray;
-		for (size_t i = 0; i < size; ++i) taskPointerArray.emplace_back(new TYPE(std::forward<ARGS>(args) ...));
-		return taskPointerArray;
+		for (size_t i = 0; i < size; ++i) new TYPE(std::forward<ARGS>(args) ...);
 	}
 }

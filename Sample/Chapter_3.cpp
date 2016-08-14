@@ -61,7 +61,7 @@ public:
 	~Fireworks()
 	{
 		//火花を100個生成（引数で座標と色を引き継ぐ）
-		Create_Multi<Spark>(100, m_Pos, m_Color);
+		Creates<Spark>(100, m_Pos, m_Color);
 	}
 
 private:

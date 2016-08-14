@@ -34,7 +34,7 @@ namespace rnfs
 		size_t				m_Priority;			//自身のコール優先順位
 
 		std::string			m_Name;				//自身の名前（デバッグ等で使用）
-		std::string			m_Check;			//対象の名前（コール時に使用）
+		std::type_index		m_Type;				//対象の情報（コール時に使用）
 
 		void(Task::*		m_Call)(Task &);	//コール関数
 		bool				m_Active;			//コールが行われるか
@@ -119,7 +119,7 @@ namespace rnfs
 		///</summary>
 		TaskReceive()
 			: mp_Task(nullptr), mp_Prev(nullptr), mp_Next(nullptr)
-			, m_Priority(0), m_Name(""), m_Check("")
+			, m_Priority(0), m_Name(""), m_Type(typeid(nullptr))
 			, m_Active(false)
 		{
 
@@ -138,8 +138,8 @@ namespace rnfs
 
 		TaskReceive(const TaskReceive & taskReceive) = delete;
 		TaskReceive(TaskReceive && taskReceive) = delete;
-		void operator =(const TaskReceive & taskReceive) = delete;
-		void operator =(TaskReceive && taskReceive) = delete;
+		void operator = (const TaskReceive & taskReceive) = delete;
+		void operator = (TaskReceive && taskReceive) = delete;
 
 		template<class TARGET, class TASK, class Func = void(Task::*)(Task &)>
 		void Call(TASK* p_Task, const Func & callbackFunction);
@@ -163,7 +163,7 @@ namespace rnfs
 			mp_Next = nullptr;
 			m_Priority = 0;
 			m_Name = "";
-			m_Check = "";
+			m_Type = typeid(nullptr);
 			m_Call = nullptr;
 			m_Active = false;
 		}
@@ -240,7 +240,7 @@ namespace rnfs
 			return m_Name;
 		}
 	};
-	
+
 	///<summary>
 	///<para>────────────────────────────────────</para>
 	///<para>送信側とのやり取りを行います。</para>
@@ -316,7 +316,7 @@ namespace rnfs
 		mp_Task = p_Task;
 		m_Priority = static_cast<size_t>(priority);
 		m_Name = typeid(TASK).name();
-		m_Check = typeid(TARGET).name();
+		m_Type = typeid(TARGET);
 		m_Call = (void(Task::*)(Task &))callbackFunction;
 		m_Active = true;
 

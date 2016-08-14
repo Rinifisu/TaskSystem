@@ -18,9 +18,9 @@ namespace rnfs
 
 	std::unordered_map<unsigned char, TaskCall*> TaskCall::m_Begin;
 
-	std::unordered_map<std::string, TaskKeepArray<Task>> TaskGet::m_Data;
+	std::unordered_map<std::type_index, TaskKeepArray<Task>> TaskGet::m_Data;
 
 	TaskReceive* TaskReceive::mp_Begin = nullptr;
 
-	std::unordered_map<std::string, TaskKeepArray<Task>> TaskSend::m_Send;
+	std::unordered_map<std::type_index, TaskKeepArray<Task>> TaskSend::m_Send;
 }
