@@ -1,7 +1,7 @@
 ﻿/*
 The MIT License (MIT)
 Copyright © 2015-2016 Rinifisu
-http://rinifisu.blog.jp/
+https://twitter.com/Rinifisu
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -45,7 +45,7 @@ namespace rnfs
 		TaskKeepArray();
 		~TaskKeepArray() = default;
 
-		template <typename ... ARGS>
+		template<typename ... ARGS>
 		TaskKeepArray(const size_t size, ARGS && ... args);
 
 		TaskKeepArray(const TaskKeepArray<TYPE> & taskKeepArray);
@@ -57,8 +57,8 @@ namespace rnfs
 		typename std::unordered_map<TaskID, TaskKeep<TYPE>>::const_iterator begin() const;
 		typename std::unordered_map<TaskID, TaskKeep<TYPE>>::const_iterator end() const;
 
-		void operator = (const TaskKeepArray<TYPE> & taskKeepArray);
-		void operator = (TaskKeepArray<TYPE> && taskKeepArray) = delete;
+		void operator =(const TaskKeepArray<TYPE> & taskKeepArray);
+		void operator =(TaskKeepArray<TYPE> && taskKeepArray) = delete;
 
 		TYPE & operator () (const TaskID id);
 		TYPE & operator [] (const size_t arrayNumber);
@@ -79,18 +79,18 @@ namespace rnfs
 		void Keep_Front(TYPE* p_Task);
 		void Keep_Insert(const size_t arrayNumber, TYPE* p_Task);
 
-		template <typename ... ARGS>
+		template<typename ... ARGS>
 		void Create_Back(ARGS && ... args);
-		template <typename ... ARGS>
+		template<typename ... ARGS>
 		void Create_Front(ARGS && ... args);
-		template <typename ... ARGS>
+		template<typename ... ARGS>
 		void Create_Insert(const size_t arrayNumber, ARGS && ... args);
 
-		template <typename ... ARGS>
+		template<typename ... ARGS>
 		void Creates_Back(const size_t size, ARGS && ... args);
-		template <typename ... ARGS>
+		template<typename ... ARGS>
 		void Creates_Front(const size_t size, ARGS && ... args);
-		template <typename ... ARGS>
+		template<typename ... ARGS>
 		void Creates_Insert(const size_t arrayNumber, const size_t size, ARGS && ... args);
 
 		void Clear_ID(const TaskID id);
@@ -236,7 +236,7 @@ namespace rnfs
 	///<para>キープ対象のタスクをキープしている TaskKeepArray</para>
 	///</param>
 	template<class TYPE>
-	inline void TaskKeepArray<TYPE>::operator = (const TaskKeepArray<TYPE> & taskKeepArray)
+	inline void TaskKeepArray<TYPE>::operator =(const TaskKeepArray<TYPE> & taskKeepArray)
 	{
 		//タスクキープを全消去
 		this->Clear_All();
@@ -1025,8 +1025,8 @@ namespace rnfs
 	///<param name="args">
 	///<para>コンストラクタの引数</para>
 	///</param>
-	template <class TYPE, typename ... ARGS>
-	static void Creates(const size_t size, ARGS && ... args)
+	template<class TYPE, typename ... ARGS>
+	static void creates(const size_t size, ARGS && ... args)
 	{
 		for (size_t i = 0; i < size; ++i) new TYPE(std::forward<ARGS>(args) ...);
 	}

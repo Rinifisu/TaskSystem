@@ -60,7 +60,7 @@ void Main()
 	while (System::Update())
 	{
 		//左クリックで風船を生成
-		if (Input::MouseL.clicked) Create<Balloon>();
+		if (Input::MouseL.clicked) create<Balloon>();
 
 		TaskCall::All::Update();
 		Task::All::Update();

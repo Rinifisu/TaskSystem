@@ -1,7 +1,7 @@
 ﻿/*
 The MIT License (MIT)
 Copyright © 2015-2016 Rinifisu
-http://rinifisu.blog.jp/
+https://twitter.com/Rinifisu
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -14,6 +14,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 namespace rnfs
 {
+	template<class TYPE = std::unordered_map<std::type_index, TaskKeepArray<Task>>>
+	class _TaskSend_
+	{
+	protected:
+		static TYPE	m_Send; //送信リストのポインタ
+	};
+
+	template<class TYPE>
+	TYPE _TaskSend_<TYPE>::m_Send;
+
 	///<summary>
 	///<para>───────────────────</para>
 	///<para>タスク送信</para>
@@ -21,7 +31,7 @@ namespace rnfs
 	///<para>送信を許可する側のクラスです。</para>
 	///<para>───────────────────</para>
 	///</summary>
-	class TaskSend final
+	class TaskSend final : public _TaskSend_<>
 	{
 		friend class		TaskReceive;	//様々な取得や参照で必要
 
@@ -30,9 +40,6 @@ namespace rnfs
 
 		std::type_index		m_Type;			//識別用の情報
 		TaskID				m_ID;			//消去用の管理番号
-
-	private:
-		static std::unordered_map<std::type_index, TaskKeepArray<Task>>	m_Send; //送信リストのポインタ
 
 	public:
 		///<summary>
@@ -57,8 +64,8 @@ namespace rnfs
 
 		TaskSend(const TaskSend & taskSend) = delete;
 		TaskSend(TaskSend && taskSend) = delete;
-		void operator = (const TaskSend & taskSend) = delete;
-		void operator = (TaskSend && taskSend) = delete;
+		void operator =(const TaskSend & taskSend) = delete;
+		void operator =(TaskSend && taskSend) = delete;
 
 		template<class TASK>
 		void Register(TASK* p_Task);

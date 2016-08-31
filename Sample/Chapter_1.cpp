@@ -38,7 +38,7 @@ void Main()
 	while (System::Update())
 	{
 		//軌跡を生成
-		Create<Locus>();
+		create<Locus>();
 
 		//TaskCall で設定した関数を呼び出す
 		TaskCall::All::Update();

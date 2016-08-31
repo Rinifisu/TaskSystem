@@ -80,7 +80,7 @@ public:
 void Main()
 {
 	//ボールを生成し、TaskKeep でタスクを持つ
-	TaskKeep<Ball> ball = Create<Ball>();
+	TaskKeep<Ball> ball = create<Ball>();
 
 	while (System::Update())
 	{

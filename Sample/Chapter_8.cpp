@@ -70,7 +70,7 @@ void Main()
 	while (System::Update())
 	{
 		//リングの生成
-		Create<Ring>();
+		create<Ring>();
 
 		//左クリックで上昇
 		if (Input::MouseL.pressed)

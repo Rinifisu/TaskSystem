@@ -1,7 +1,7 @@
 ﻿/*
 The MIT License (MIT)
 Copyright © 2015-2016 Rinifisu
-http://rinifisu.blog.jp/
+https://twitter.com/Rinifisu
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -15,6 +15,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 namespace rnfs
 {
+	template<class TYPE = TaskReceive*>
+	class _TaskReceive_
+	{
+	protected:
+		static TYPE	mp_Begin; //受信リストの先頭ポインタ
+	};
+
+	template<class TYPE>
+	TYPE _TaskReceive_<TYPE>::mp_Begin = nullptr;
+
 	///<summary>
 	///<para>─────────────</para>
 	///<para>タスク受信</para>
@@ -22,7 +32,7 @@ namespace rnfs
 	///<para>受信を設定する側のクラスです。</para>
 	///<para>─────────────</para>
 	///</summary>
-	class TaskReceive final
+	class TaskReceive final : public _TaskReceive_<>
 	{
 		friend class		TaskSend;			//様々な取得や参照で必要
 
@@ -33,14 +43,10 @@ namespace rnfs
 		TaskReceive*		mp_Next;			//自身の後のポインタ
 		size_t				m_Priority;			//自身のコール優先順位
 
-		std::string			m_Name;				//自身の名前（デバッグ等で使用）
-		std::type_index		m_Type;				//対象の情報（コール時に使用）
+		std::type_index		m_Type;				//対象の情報
 
 		void(Task::*		m_Call)(Task &);	//コール関数
 		bool				m_Active;			//コールが行われるか
-
-	private:
-		static TaskReceive*	mp_Begin;			//受信リストの先頭ポインタ
 
 	private:
 		//受信側の登録
@@ -119,7 +125,7 @@ namespace rnfs
 		///</summary>
 		TaskReceive()
 			: mp_Task(nullptr), mp_Prev(nullptr), mp_Next(nullptr)
-			, m_Priority(0), m_Name(""), m_Type(typeid(nullptr))
+			, m_Priority(0), m_Type(typeid(nullptr))
 			, m_Active(false)
 		{
 
@@ -138,14 +144,14 @@ namespace rnfs
 
 		TaskReceive(const TaskReceive & taskReceive) = delete;
 		TaskReceive(TaskReceive && taskReceive) = delete;
-		void operator = (const TaskReceive & taskReceive) = delete;
-		void operator = (TaskReceive && taskReceive) = delete;
+		void operator =(const TaskReceive & taskReceive) = delete;
+		void operator =(TaskReceive && taskReceive) = delete;
 
-		template<class TARGET, class TASK, class Func = void(Task::*)(Task &)>
-		void Call(TASK* p_Task, const Func & callbackFunction);
+		template<class TARGET, class Func = void(Task::*)(Task &)>
+		void Call(Task* p_Task, const Func & callbackFunction);
 
-		template<class TARGET, class TASK, class Func = void(Task::*)(Task &), typename PRIORITY = size_t>
-		void Register(TASK* p_Task, const Func & callbackFunction = nullptr, const PRIORITY & priority = 0, const bool priorityPushBack = true);
+		template<class TARGET, class Func = void(Task::*)(Task &), typename PRIORITY = size_t>
+		void Register(Task* p_Task, const Func & callbackFunction = nullptr, const PRIORITY & priority = 0, const bool priorityPushBack = true);
 
 		///<summary>
 		///<para>──────────────</para>
@@ -162,7 +168,6 @@ namespace rnfs
 			mp_Prev = nullptr;
 			mp_Next = nullptr;
 			m_Priority = 0;
-			m_Name = "";
 			m_Type = typeid(nullptr);
 			m_Call = nullptr;
 			m_Active = false;
@@ -215,30 +220,6 @@ namespace rnfs
 
 		template<typename PRIORITY = size_t>
 		const PRIORITY priority() const;
-
-		///<summary>
-		///<para>─────────────</para>
-		///<para>デバッグ用の名前を変更します。</para>
-		///<para>─────────────</para>
-		///</summary>
-		///
-		///<param name="name">
-		///<para>デバッグ用の名前</para>
-		///</param>
-		void SetName(const std::string & name)
-		{
-			m_Name = name;
-		}
-
-		///<summary>
-		///<para>─────────────</para>
-		///<para>デバッグ用の名前を取得します。</para>
-		///<para>─────────────</para>
-		///</summary>
-		const std::string & name() const
-		{
-			return m_Name;
-		}
 	};
 
 	///<summary>
@@ -254,7 +235,6 @@ namespace rnfs
 	///<param name="p_Task">
 	///<para>自身のポインタ</para>
 	///<para>必ず this を入力してください。</para>
-	///<para>デバッグ用の名前を取得するため、テンプレートになっています。</para>
 	///</param>
 	///
 	///<param name="callbackFunction">
@@ -262,8 +242,8 @@ namespace rnfs
 	///<para>呼ばれるコール関数</para>
 	///<para>型変換の省略のため、テンプレートになっています。</para>
 	///</param>
-	template<class TARGET, class TASK, class Func>
-	inline void TaskReceive::Call(TASK * p_Task, const Func & callbackFunction)
+	template<class TARGET, class Func>
+	inline void TaskReceive::Call(Task* p_Task, const Func & callbackFunction)
 	{
 		//関数の実行
 		for (auto & i : TaskSend::m_Send[typeid(TARGET).name()])
@@ -285,7 +265,6 @@ namespace rnfs
 	///<param name="p_Task">
 	///<para>自身のポインタ</para>
 	///<para>必ず this を入力してください。</para>
-	///<para>デバッグ用の名前を取得するため、テンプレートになっています。</para>
 	///</param>
 	///
 	///<param name="callbackFunction">
@@ -306,8 +285,8 @@ namespace rnfs
 	///<para>true  -> コールの集まりの末尾に設定</para>
 	///<para>false -> コールの集まりの先頭に設定</para>
 	///</param>
-	template<class TARGET, class TASK, class Func, typename PRIORITY>
-	inline void TaskReceive::Register(TASK * p_Task, const Func & callbackFunction, const PRIORITY & priority, const bool priorityPushBack)
+	template<class TARGET, class Func, typename PRIORITY>
+	inline void TaskReceive::Register(Task* p_Task, const Func & callbackFunction, const PRIORITY & priority, const bool priorityPushBack)
 	{
 		//コールが登録されていたら登録解除する
 		if (mp_Task) this->_Unregister_();
@@ -315,7 +294,6 @@ namespace rnfs
 		//初期化
 		mp_Task = p_Task;
 		m_Priority = static_cast<size_t>(priority);
-		m_Name = typeid(TASK).name();
 		m_Type = typeid(TARGET);
 		m_Call = (void(Task::*)(Task &))callbackFunction;
 		m_Active = true;

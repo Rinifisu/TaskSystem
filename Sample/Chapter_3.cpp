@@ -61,7 +61,7 @@ public:
 	~Fireworks()
 	{
 		//火花を100個生成（引数で座標と色を引き継ぐ）
-		Creates<Spark>(100, m_Pos, m_Color);
+		creates<Spark>(100, m_Pos, m_Color);
 	}
 
 private:
@@ -85,7 +85,7 @@ void Main()
 	while (System::Update())
 	{
 		//花火を15フレームごとに生成
-		if (++nextTime % 15 == 0) Create<Fireworks>();
+		if (++nextTime % 15 == 0) create<Fireworks>();
 
 		TaskCall::All::Update();
 		Task::All::Update();

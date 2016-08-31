@@ -120,12 +120,12 @@ public:
 void Main()
 {
 	//プレイヤーの生成
-	Create<Player>();
+	create<Player>();
 
 	while (System::Update())
 	{
 		//右クリックでエネミーを生成
-		if (Input::MouseR.pressed) Create<Enemy>();
+		if (Input::MouseR.pressed) create<Enemy>();
 
 		//TaskSend と TaskReceive で設定した関数を呼び出す
 		TaskSend::All::Update();

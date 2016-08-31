@@ -1,7 +1,7 @@
 ﻿/*
 The MIT License (MIT)
 Copyright © 2015-2016 Rinifisu
-http://rinifisu.blog.jp/
+https://twitter.com/Rinifisu
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -11,13 +11,26 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 namespace rnfs
 {
+	template<class TYPE = Task*>
+	class _Task_
+	{
+	protected:
+		static TYPE mp_Begin;	//先頭ポインタ
+		static TYPE mp_End;		//末尾ポインタ
+	};
+
+	template<class TYPE>
+	TYPE _Task_<TYPE>::mp_Begin = nullptr;
+	template<class TYPE> 
+	TYPE _Task_<TYPE>::mp_End = nullptr;
+
 	///<summary>
 	///<para>─────────────────</para>
 	///<para>タスク</para>
 	///<para>オブジェクトを自動管理することができます。</para>
 	///<para>─────────────────</para>
 	///</summary>
-	class Task
+	class Task : public _Task_<>
 	{
 		template<class TYPE>
 		friend class	TaskKeep;	//キープや消去で必要
@@ -29,10 +42,6 @@ namespace rnfs
 		size_t			m_LifeSpan;	//寿命（0:無効　1:消去）
 		
 		size_t			m_Link;		//TaskKeep の接続確認
-
-	private:
-		static Task*	mp_Begin;	//先頭ポインタ
-		static Task*	mp_End;		//末尾ポインタ
 
 	private:
 		//システムへの登録
@@ -127,8 +136,8 @@ namespace rnfs
 	public:
 		Task(const Task & task) = delete;
 		Task(Task && task) = delete;
-		void operator = (const Task & task) = delete;
-		void operator = (Task && task) = delete;
+		void operator =(const Task & task) = delete;
+		void operator =(Task && task) = delete;
 
 		///<summary>
 		///<para>────────────────</para>
@@ -217,8 +226,8 @@ namespace rnfs
 	///<param name="args">
 	///<para>コンストラクタの引数</para>
 	///</param>
-	template <class TYPE, typename ... ARGS>
-	static TYPE* Create(ARGS && ... args)
+	template<class TYPE, typename ... ARGS>
+	static TYPE* create(ARGS && ... args)
 	{
 		return new TYPE(std::forward<ARGS>(args) ...);
 	}
