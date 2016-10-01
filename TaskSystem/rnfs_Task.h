@@ -39,7 +39,7 @@ namespace rnfs
 		Task*			mp_Prev;	//自身の前ポインタ
 		Task*			mp_Next;	//自身の後ポインタ
 
-		size_t			m_LifeSpan;	//寿命（0:無効　1:消去）
+		size_t			m_LifeSpan;	//時間消去（0:無効　1:消去　2以上:時間）
 		
 		size_t			m_Link;		//TaskKeep の接続確認
 
@@ -200,13 +200,23 @@ namespace rnfs
 				//末尾までループする
 				while (p_Task != nullptr)
 				{
-					//寿命が有効なら減らす
-					if (1 < p_Task->m_LifeSpan) --p_Task->m_LifeSpan;
+					//時間消去が有効であれば
+					if (1 < p_Task->m_LifeSpan)
+					{
+						//残り時間を減らす
+						--p_Task->m_LifeSpan;
 
-					//タスクを消去し、次のタスクへ移動
-					//キープしているタスクは消去できない
-					if (p_Task->m_LifeSpan == 1 && p_Task->m_Link <= 0) p_Task = Task::_Unregister_(p_Task);
-					else p_Task = p_Task->mp_Next;
+						//消去する時間に到達したら
+						if (p_Task->m_LifeSpan <= 1)
+						{
+							//タスクを消去し、次のタスクへ移動
+							p_Task = Task::_Unregister_(p_Task);
+							continue;
+						}
+					}
+
+					//次のタスクへ移動
+					p_Task = p_Task->mp_Next;
 				}
 			}
 		};
