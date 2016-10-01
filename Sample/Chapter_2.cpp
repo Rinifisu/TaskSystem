@@ -1,5 +1,5 @@
 ﻿#include <Siv3D.hpp>
-#include "TaskSystem/rnfs.h"
+#include <rnfs.h>
 
 /*
 Chapter_2：更新関数を切り替える
@@ -60,7 +60,7 @@ void Main()
 	while (System::Update())
 	{
 		//左クリックで風船を生成
-		if (Input::MouseL.clicked) create<Balloon>();
+		if (Input::MouseL.clicked) Create<Balloon>();
 
 		TaskCall::All::Update();
 		Task::All::Update();

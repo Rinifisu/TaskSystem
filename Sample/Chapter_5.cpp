@@ -1,5 +1,5 @@
 ﻿#include <Siv3D.hpp>
-#include "TaskSystem/rnfs.h"
+#include <rnfs.h>
 
 /*
 Chapter_5：タスクキープ ＆ 呼び出し関数分別
@@ -80,7 +80,7 @@ public:
 void Main()
 {
 	//ボールを生成し、TaskKeep でタスクを持つ
-	TaskKeep<Ball> ball = create<Ball>();
+	TaskKeep<Ball> ball = Create<Ball>();
 
 	while (System::Update())
 	{

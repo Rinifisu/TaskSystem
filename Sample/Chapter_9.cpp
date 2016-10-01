@@ -1,5 +1,5 @@
 ﻿#include <Siv3D.hpp>
-#include "TaskSystem/rnfs.h"
+#include <rnfs.h>
 
 /*
 Chapter_9：タスク内で当たり判定処理 ＆ 優先順位
@@ -120,12 +120,12 @@ public:
 void Main()
 {
 	//プレイヤーの生成
-	create<Player>();
+	Create<Player>();
 
 	while (System::Update())
 	{
 		//右クリックでエネミーを生成
-		if (Input::MouseR.pressed) create<Enemy>();
+		if (Input::MouseR.pressed) Create<Enemy>();
 
 		//TaskSend と TaskReceive で設定した関数を呼び出す
 		TaskSend::All::Update();

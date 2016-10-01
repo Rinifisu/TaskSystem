@@ -1,5 +1,5 @@
 ﻿#include <Siv3D.hpp>
-#include "TaskSystem/rnfs.h"
+#include <rnfs.h>
 
 /*
 Chapter_4：再帰的タスク生成
@@ -38,9 +38,9 @@ private:
 			m_Radius -= 2.0;
 
 			//半径が0.0以下の場合は、新規生成
-			if (m_Radius <= 0.0) create<UFO>(Vec2(320.0, 240.0), 8.0);
+			if (m_Radius <= 0.0) Create<UFO>(Vec2(320.0, 240.0), 8.0);
 			//そうでない場合は、座標と半径を引き継いで生成
-			else create<UFO>(m_Pos, m_Radius);
+			else Create<UFO>(m_Pos, m_Radius);
 
 			//消去
 			this->Destroy();
@@ -58,7 +58,7 @@ private:
 void Main()
 {
 	//画面の中央にユーフォーを生成
-	create<UFO>(Window::Center(), 8.0);
+	Create<UFO>(Window::Center(), 8.0);
 
 	while (System::Update())
 	{

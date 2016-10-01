@@ -1,5 +1,5 @@
 ﻿#include <Siv3D.hpp>
-#include "TaskSystem/rnfs.h"
+#include <rnfs.h>
 
 /*
 Chapter_3：タスク内からタスクを生成
@@ -61,7 +61,7 @@ public:
 	~Fireworks()
 	{
 		//火花を100個生成（引数で座標と色を引き継ぐ）
-		creates<Spark>(100, m_Pos, m_Color);
+		Creates<Spark>(100, m_Pos, m_Color);
 	}
 
 private:
@@ -85,7 +85,7 @@ void Main()
 	while (System::Update())
 	{
 		//花火を15フレームごとに生成
-		if (++nextTime % 15 == 0) create<Fireworks>();
+		if (++nextTime % 15 == 0) Create<Fireworks>();
 
 		TaskCall::All::Update();
 		Task::All::Update();

@@ -227,7 +227,7 @@ namespace rnfs
 	///<para>コンストラクタの引数</para>
 	///</param>
 	template<class TYPE, typename ... ARGS>
-	static TYPE* create(ARGS && ... args)
+	static TYPE* Create(ARGS && ... args)
 	{
 		return new TYPE(std::forward<ARGS>(args) ...);
 	}

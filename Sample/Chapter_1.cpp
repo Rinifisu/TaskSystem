@@ -1,5 +1,5 @@
 ﻿#include <Siv3D.hpp>
-#include "TaskSystem/rnfs.h"
+#include <rnfs.h>
 
 /*
 Chapter_1：タスクの生成と消去
@@ -38,7 +38,7 @@ void Main()
 	while (System::Update())
 	{
 		//軌跡を生成
-		create<Locus>();
+		Create<Locus>();
 
 		//TaskCall で設定した関数を呼び出す
 		TaskCall::All::Update();

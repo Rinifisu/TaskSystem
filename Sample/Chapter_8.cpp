@@ -1,5 +1,5 @@
 ﻿#include <Siv3D.hpp>
-#include "TaskSystem/rnfs.h"
+#include <rnfs.h>
 
 /*
 Chapter_8：TaskKeepArray 要らずの TaskGet
@@ -70,7 +70,7 @@ void Main()
 	while (System::Update())
 	{
 		//リングの生成
-		create<Ring>();
+		Create<Ring>();
 
 		//左クリックで上昇
 		if (Input::MouseL.pressed)
