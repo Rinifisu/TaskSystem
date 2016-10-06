@@ -293,7 +293,7 @@ namespace rnfs
 			///<param name="group">
 			///<para>グループ番号</para>
 			///</param>
-			static void Update(const unsigned char group = 0)
+			static inline void Update(const unsigned char group = 0)
 			{
 				TaskCall* p_TaskCall = m_Begin[group]; //現在のリストポインタ
 
@@ -351,7 +351,9 @@ namespace rnfs
 	///</param>
 	template<typename FUNC, typename PRIORITY>
 	inline TaskCall::TaskCall(Task* p_Task, const FUNC & callbackFunction, const unsigned char group, const PRIORITY & priority, const bool priorityPushBack)
-		: mp_Task(p_Task), m_Priority(static_cast<size_t>(priority)), m_Tag(), m_Group(group), m_Call(static_cast<void(Task::*)()>(callbackFunction)), m_Active(true)
+		: mp_Task(p_Task), m_Priority(static_cast<size_t>(priority)), m_Tag()
+		, m_Group(group), m_Call(static_cast<void(Task::*)()>(callbackFunction))
+		, m_Active(true)
 	{
 		//登録
 		this->_Register_(priorityPushBack);

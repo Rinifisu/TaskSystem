@@ -46,11 +46,11 @@ namespace rnfs
 			//追加される位置を取得する
 			m_ID = m_Data[m_Type].nextID();
 
+			//カウントを無効にする(assert を回避する為、追加の前に実行)
+			m_Data[m_Type].Safety_ID(m_ID, false);
+
 			//追加
 			m_Data[m_Type].Keep_Back(mp_Task);
-
-			//カウントを無効にする
-			m_Data[m_Type].Safety_ID(m_ID, false);
 		}
 
 		//ゲットリストから消去
@@ -142,43 +142,43 @@ namespace rnfs
 		{
 		public:
 			template<class TASK>
-			static TASK & task_ID(const TaskID id);
+			static inline TASK & task_ID(const TaskID id);
 			template<class TASK>
-			static TASK & task(const size_t arrayNumber);
+			static inline TASK & task(const size_t arrayNumber);
 
 			template<class TASK>
-			static TASK & back();
+			static inline TASK & back();
 			template<class TASK>
-			static TASK & front();
+			static inline TASK & front();
 
 			template<class TASK>
-			static const size_t toArrayNumber(const TaskID id);
+			static inline const size_t toArrayNumber(const TaskID id);
 			template<class TASK>
-			static const TaskID toID(const size_t arrayNumber);
+			static inline const TaskID toID(const size_t arrayNumber);
 
 			template<class TASK>
-			static const bool isID(const TaskID id);
+			static inline const bool isID(const TaskID id);
 			template<class TASK>
-			static const bool isEmpty();
+			static inline const bool isEmpty();
 			template<class TASK>
-			static const size_t size();
+			static inline const size_t size();
 
 			template<class TASK>
-			static const TaskID backID();
+			static inline const TaskID backID();
 			template<class TASK>
-			static const TaskID frontID();
+			static inline const TaskID frontID();
 
 			template<class TASK>
-			static const bool clear(const size_t arrayNumber);
+			static inline const bool clear(const size_t arrayNumber);
 			template<class TASK>
-			static const bool clear_ID(const TaskID id);
+			static inline const bool clear_ID(const TaskID id);
 
 			template<class TASK>
-			static const bool clear_Back();
+			static inline const bool clear_Back();
 			template<class TASK>
-			static const bool clear_Front();
+			static inline const bool clear_Front();
 			template<class TASK>
-			static const size_t clear_All();
+			static inline const size_t clear_All();
 		};
 	};
 

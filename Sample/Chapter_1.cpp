@@ -18,9 +18,9 @@ private:
 	TaskCall	m_Update;	//更新設定
 
 public:
-	Locus() : Task(60)						//60フレームで消去
+	Locus() : Task(TaskDestroyMode::Count, 60)	//60フレームで消去
 		, m_Pos(Mouse::Pos())
-		, m_Update(this, &Locus::Update)	//第2引数に指定した関数が自動で呼び出される
+		, m_Update(this, &Locus::Update)		//第2引数に指定した関数が自動で呼び出される
 	{ }
 
 private:

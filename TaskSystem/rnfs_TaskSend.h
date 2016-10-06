@@ -106,7 +106,7 @@ namespace rnfs
 			///<para>関数呼び出しを開始します。</para>
 			///<para>────────────</para>
 			///</summary>
-			static void Update()
+			static inline void Update()
 			{
 				TaskReceive* p_Receive = TaskReceive::mp_Begin; //現在のリストポインタ
 
@@ -161,10 +161,10 @@ namespace rnfs
 		//追加される位置を取得する
 		m_ID = m_Send[m_Type].nextID();
 
+		//カウントを無効にする(assert を回避する為、追加の前に実行)
+		m_Send[m_Type].Safety_ID(m_ID, false);
+
 		//追加
 		m_Send[m_Type].Keep_Back(mp_Task);
-
-		//カウントを無効にする
-		m_Send[m_Type].Safety_ID(m_ID, false);
 	}
 }

@@ -52,7 +52,7 @@ private:
 	TaskCall	m_Update;	//更新設定
 
 public:
-	Fireworks() : Task(Random(30, 90))
+	Fireworks() : Task(TaskDestroyMode::Count, Random(30, 90))
 		, m_Pos(Mouse::Pos().x, 480.0)
 		, m_Color(RandomColor())
 		, m_Update(this, &Fireworks::Update)

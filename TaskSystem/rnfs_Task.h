@@ -9,8 +9,39 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #pragma once
 
+#include <cassert>		//assert
+#include <Windows.h>	//LARGE_INTEGER
+
 namespace rnfs
 {
+	//時間を計測するクラス
+	class _TaskTime_
+	{
+	private:
+		LARGE_INTEGER m_Buf;			//開始時のカウント時間
+		mutable LARGE_INTEGER m_Pos;	//現在のカウント時間
+		LARGE_INTEGER m_Freq;			//カウント周波数
+
+	public:
+		_TaskTime_()
+		{
+			//システムの１秒間のカウント数（周波数）を取得
+			QueryPerformanceFrequency(&m_Freq);
+
+			//現在のカウント数を取得
+			QueryPerformanceCounter(&m_Buf);
+		}
+
+		float get() const
+		{
+			//動作中なら現在のカウント数を取得
+			QueryPerformanceCounter(&m_Pos);
+
+			//全ての時間と差分を合わせたカウント数を、1秒間のカウント数で割って、現在の時間に変換する
+			return static_cast<float>(m_Pos.QuadPart - m_Buf.QuadPart) / static_cast<float>(m_Freq.QuadPart);
+		}
+	};
+
 	template<class TYPE = Task*>
 	class _Task_
 	{
@@ -21,8 +52,16 @@ namespace rnfs
 
 	template<class TYPE>
 	TYPE _Task_<TYPE>::mp_Begin = nullptr;
-	template<class TYPE> 
+	template<class TYPE>
 	TYPE _Task_<TYPE>::mp_End = nullptr;
+
+	enum class TaskDestroyMode
+	{
+		None,		//Task::Destroy を呼び出して消去
+		Destroy,	//Task::All::Update が呼び出された時に消去
+		Count,		//経過したフレーム数(Task::Update が呼び出された回数)で消去
+		Time,		//経過した時間で消去
+	};
 
 	///<summary>
 	///<para>─────────────────</para>
@@ -39,13 +78,16 @@ namespace rnfs
 		Task*			mp_Prev;	//自身の前ポインタ
 		Task*			mp_Next;	//自身の後ポインタ
 
-		size_t			m_LifeSpan;	//時間消去（0:無効　1:消去　2以上:時間）
-		
+		TaskDestroyMode	m_Mode;		//消去手段
+		size_t			m_Count;	//Task::Update が呼び出された回数
+		_TaskTime_		m_Time;		//経過した時間
+		float			m_Target;	//目標数
+
 		size_t			m_Link;		//TaskKeep の接続確認
 
 	private:
 		//システムへの登録
-		static void _Register_(Task* p_Task)
+		static inline void _Register_(Task* p_Task)
 		{
 			//先頭が空の場合は新規タスクを設定
 			if (mp_Begin == nullptr) mp_Begin = p_Task;
@@ -63,7 +105,7 @@ namespace rnfs
 		}
 
 		//システムから消去　次のポインタが返される
-		static Task* _Unregister_(Task* p_Task)
+		static inline Task* _Unregister_(Task* p_Task)
 		{
 			Task* next = p_Task->mp_Next; //自身の次
 			Task* prev = p_Task->mp_Prev; //自身の前
@@ -91,25 +133,13 @@ namespace rnfs
 		///<para>システムに登録を行います。</para>
 		///<para>───────────</para>
 		///</summary>
-		Task() : mp_Prev(nullptr), mp_Next(nullptr), m_LifeSpan(0), m_Link(0)
+		Task() : mp_Prev(nullptr), mp_Next(nullptr), m_Mode(TaskDestroyMode::None), m_Count(0), m_Target(0.0f), m_Link(0)
 		{
 			Task::_Register_(this);
 		}
 
-		///<summary>
-		///<para>──────────────────</para>
-		///<para>システムに登録を行います。</para>
-		///<para>指定したフレーム数経過で自動消去します。</para>
-		///<para>──────────────────</para>
-		///</summary>
-		///
-		///<param name="lifeSpan">
-		///<para>自動消去する残りフレーム数</para>
-		///</param>
-		Task(const size_t lifeSpan) : mp_Prev(nullptr), mp_Next(nullptr), m_LifeSpan(lifeSpan + 1), m_Link(0)
-		{
-			Task::_Register_(this);
-		}
+		template<typename TYPE = float>
+		Task(const TaskDestroyMode & mode, const TYPE & target = 0.0f);
 
 		//継承クラスのデストラクタが呼ばれる
 		virtual ~Task() = default;
@@ -129,8 +159,8 @@ namespace rnfs
 			//キープしているタスクは消去できない
 			if (0 < m_Link) return;
 
-			//生存時間を 2 にする（次のフレームで消去）
-			m_LifeSpan = 2;
+			//次の更新で消滅するように設定
+			m_Mode = TaskDestroyMode::Destroy;
 		}
 
 	public:
@@ -146,7 +176,27 @@ namespace rnfs
 		///</summary>
 		virtual bool isDestroy() const final
 		{
-			return m_LifeSpan == 2;
+			return m_Mode == TaskDestroyMode::Destroy;
+		}
+
+		///<summary>
+		///<para>─────────────────────────────────────</para>
+		///<para>タスクが生成されてから経過したフレーム数(Task::Update が呼び出された回数)を取得します。</para>
+		///<para>─────────────────────────────────────</para>
+		///</summary>
+		virtual size_t count() const final
+		{
+			return m_Count;
+		}
+
+		///<summary>
+		///<para>─────────────────────</para>
+		///<para>タスクが生成されてから経過した時間を取得します。</para>
+		///<para>─────────────────────</para>
+		///</summary>
+		virtual float time() const final
+		{
+			return m_Time.get();
 		}
 
 		///<summary>
@@ -174,7 +224,7 @@ namespace rnfs
 			///<para>キープ中のタスクは消去されません。</para>
 			///<para>────────────────</para>
 			///</summary>
-			static void Clear()
+			static inline void Clear()
 			{
 				Task* p_Task = mp_Begin; //現在のタスク
 
@@ -193,34 +243,83 @@ namespace rnfs
 			///<para>消去フラグ有効のタスクを全て消去します。</para>
 			///<para>─────────────────</para>
 			///</summary>
-			static void Update()
+			static inline void Update()
 			{
 				Task* p_Task = mp_Begin; //現在のタスク
 
 				//末尾までループする
 				while (p_Task != nullptr)
 				{
-					//時間消去が有効であれば
-					if (1 < p_Task->m_LifeSpan)
-					{
-						//残り時間を減らす
-						--p_Task->m_LifeSpan;
+					//呼び出された回数を加算
+					++p_Task->m_Count;
 
-						//消去する時間に到達したら
-						if (p_Task->m_LifeSpan <= 1)
-						{
-							//タスクを消去し、次のタスクへ移動
-							p_Task = Task::_Unregister_(p_Task);
-							continue;
-						}
+					//次のタスクを事前取得
+					Task* p_next = p_Task->mp_Next;
+
+					//タスクの消去
+					switch (p_Task->m_Mode)
+					{
+					case TaskDestroyMode::None:
+						//無し
+						break;
+
+					case TaskDestroyMode::Destroy:
+						//Task::All::Update が呼び出された時に消去
+						Task::_Unregister_(p_Task);
+						break;
+
+					case TaskDestroyMode::Count:
+						//経過したフレーム数(Task::Update が呼び出された回数)で消去
+						if (static_cast<size_t>(p_Task->m_Target) <= p_Task->m_Count) Task::_Unregister_(p_Task);
+						break;
+
+					case TaskDestroyMode::Time:
+						//経過した時間で消去
+						if (p_Task->m_Target <= p_Task->m_Time.get()) Task::_Unregister_(p_Task);
+						break;
+
+					default:
+						assert(!"Task -> TaskDestroyMode の設定が不正です。");
+						break;
 					}
 
 					//次のタスクへ移動
-					p_Task = p_Task->mp_Next;
+					p_Task = p_next;
 				}
 			}
 		};
 	};
+
+	///<summary>
+	///<para>──────────────────</para>
+	///<para>システムに登録を行います。</para>
+	///<para>タスクの消去方法を設定することができます。</para>
+	///<para>──────────────────</para>
+	///</summary>
+	///
+	///<param name="mode">
+	///<para>タスクの消去方法</para>
+	///</param>
+	///
+	///<param name="target">
+	///<para>─────────────────────────────</para>
+	///<para>手前の引数(mode)で設定した消去方法により、変化します。</para>
+	///<para>─────────────────────────────</para>
+	///<para>TaskDestroyMode::Count</para>
+	///<para>消去フレーム数(消去呼び出し回数)</para>
+	///<para>─────────────────────────────</para>
+	///<para>TaskDestroyMode::Time</para>
+	///<para>消去時間(秒)</para>
+	///<para>─────────────────────────────</para>
+	///<para>型変換の省略とデフォルト引数の設定のため、テンプレートになっています。</para>
+	///<para>─────────────────────────────</para>
+	///</param>
+	template<typename TYPE>
+	inline Task::Task(const TaskDestroyMode & mode, const TYPE & target)
+		: mp_Prev(nullptr), mp_Next(nullptr), m_Mode(mode), m_Count(0), m_Target(static_cast<float>(target)), m_Link(0)
+	{
+		Task::_Register_(this);
+	}
 
 	///<summary>
 	///<para>───────────────────────────────────────────────────────</para>
@@ -237,7 +336,7 @@ namespace rnfs
 	///<para>コンストラクタの引数</para>
 	///</param>
 	template<class TYPE, typename ... ARGS>
-	static TYPE* Create(ARGS && ... args)
+	static inline TYPE* Create(ARGS && ... args)
 	{
 		return new TYPE(std::forward<ARGS>(args) ...);
 	}

@@ -9,8 +9,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #pragma once
 
-#include <cassert> //assert
-
 #include "rnfs_Task.h"
 
 namespace rnfs
@@ -64,15 +62,10 @@ namespace rnfs
 	template<class TYPE>
 	inline void TaskKeep<TYPE>::_Reset_(TYPE* p_Task)
 	{
-		if (p_Task)
-		{
-			//Task::Destroy が呼び出されたタスクは次の更新で消えてしまうので追加できない
-			//タスククラスのコンストラクタ内で Task::Destroy を呼び出す事によるエラーが多い
-			assert(!p_Task->isDestroy() || !"TaskKeep -> Task::Destroy を呼び出した後のタスクはキープできません。");
-
-			//自動消去設定を行ったタスクはキープしているにも関わらず消えてしまうので追加できない
-			assert(p_Task->m_LifeSpan == 0 || !"TaskKeep -> 時間消去設定を行ったタスクはキープできません。");
-		}
+		//消去予定のタスクは次の更新で消えてしまうので追加できない
+		//タスククラスのコンストラクタ内で Task::Destroy を呼び出す事によるエラーが多い
+		//自動消去設定を行ったタスクはキープしているにも関わらず消えてしまうので追加できない
+		assert(!p_Task || (p_Task->m_Mode == TaskDestroyMode::None || !m_Safety) || !"TaskKeep -> 消去予定のタスクはキープできません。");
 
 		//タスクが既にキープされている場合は、消去する
 		if (mp_Task && m_Safety)
