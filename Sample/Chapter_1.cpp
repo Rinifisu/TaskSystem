@@ -5,7 +5,7 @@
 Chapter_1：タスクの生成と消去
 
 タスク実装に最低限必要な機能を作り、生成から消去までを行います。
-マウスカーソルの位置から円を生成し、60フレーム後に消えるようにします。
+マウスカーソルの位置から円を生成し、1秒後に消えるようにします。
 TaskCall を使用する事で、指定した関数を自動で呼び出せます。
 */
 
@@ -18,7 +18,7 @@ private:
 	TaskCall	m_Update;	//更新設定
 
 public:
-	Locus() : Task(TaskDestroyMode::Count, 60)	//60フレームで消去
+	Locus() : Task(TaskDestroyMode::Time, 1.0)	//1秒経過で消去
 		, m_Pos(Mouse::Pos())
 		, m_Update(this, &Locus::Update)		//第2引数に指定した関数が自動で呼び出される
 	{ }
@@ -42,7 +42,7 @@ void Main()
 
 		//TaskCall で設定した関数を呼び出す
 		TaskCall::All::Update();
-		//Destroy を呼び出したタスクを消去
+		//役目を終えたタスクを消去
 		Task::All::Update();
 	}
 

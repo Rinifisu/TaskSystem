@@ -18,26 +18,26 @@ namespace rnfs
 	class _TaskTime_
 	{
 	private:
-		LARGE_INTEGER m_Buf;			//開始時のカウント時間
-		mutable LARGE_INTEGER m_Pos;	//現在のカウント時間
-		LARGE_INTEGER m_Freq;			//カウント周波数
+		LARGE_INTEGER			m_Buf;		//開始時のカウント時間
+		mutable LARGE_INTEGER	m_Pos;		//現在のカウント時間
+		LARGE_INTEGER			m_Freq;		//周波数
 
 	public:
 		_TaskTime_()
 		{
-			//システムの１秒間のカウント数（周波数）を取得
+			//システムの1秒間の周波数を取得
 			QueryPerformanceFrequency(&m_Freq);
 
-			//現在のカウント数を取得
+			//カウント数を取得
 			QueryPerformanceCounter(&m_Buf);
 		}
 
 		float get() const
 		{
-			//動作中なら現在のカウント数を取得
+			//カウント数を取得
 			QueryPerformanceCounter(&m_Pos);
 
-			//全ての時間と差分を合わせたカウント数を、1秒間のカウント数で割って、現在の時間に変換する
+			//差分カウント数を、1秒間のカウント数で割って、現在の時間に変換する
 			return static_cast<float>(m_Pos.QuadPart - m_Buf.QuadPart) / static_cast<float>(m_Freq.QuadPart);
 		}
 	};
@@ -57,10 +57,10 @@ namespace rnfs
 
 	enum class TaskDestroyMode
 	{
-		None,		//Task::Destroy を呼び出して消去
-		Destroy,	//Task::All::Update が呼び出された時に消去
-		Count,		//経過したフレーム数(Task::Update が呼び出された回数)で消去
-		Time,		//経過した時間で消去
+		None,		//何もせず、Task::Destroy を呼び出して消去する必要があります。
+		Destroy,	//Task::All::Update が呼び出された時に消去されます。
+		Count,		//経過したフレーム数(Task::Update が呼び出された回数)で消去されます。
+		Time,		//経過した時間で消去されます。
 	};
 
 	///<summary>
@@ -139,16 +139,21 @@ namespace rnfs
 		}
 
 		template<typename TYPE = float>
-		Task(const TaskDestroyMode & mode, const TYPE & target = 0.0f);
+		Task(const TaskDestroyMode & mode, const TYPE & destroyValue = 0.0f);
 
 		//継承クラスのデストラクタが呼ばれる
 		virtual ~Task() = default;
+
+	public:
+		Task(const Task & task) = delete;
+		Task(Task && task) = delete;
+		void operator =(const Task & task) = delete;
+		void operator =(Task && task) = delete;
 
 		///<summary>
 		///<para>───────────────</para>
 		///<para>消去フラグを立てます。</para>
 		///<para>キープ中のタスクは消去できません。</para>
-		///<para>タスク内からの呼び出し限定です。</para>
 		///<para>───────────────</para>
 		///<para>次の Task::All::Update 呼び出し時に</para>
 		///<para>タスクの消去が行われます。</para>
@@ -163,11 +168,8 @@ namespace rnfs
 			m_Mode = TaskDestroyMode::Destroy;
 		}
 
-	public:
-		Task(const Task & task) = delete;
-		Task(Task && task) = delete;
-		void operator =(const Task & task) = delete;
-		void operator =(Task && task) = delete;
+		template<typename TYPE = float>
+		void SetAutoDestroy(const TaskDestroyMode & mode, const TYPE & destroyValue = 0.0f);
 
 		///<summary>
 		///<para>────────────────</para>
@@ -301,7 +303,7 @@ namespace rnfs
 	///<para>タスクの消去方法</para>
 	///</param>
 	///
-	///<param name="target">
+	///<param name="destroyValue">
 	///<para>─────────────────────────────</para>
 	///<para>手前の引数(mode)で設定した消去方法により、変化します。</para>
 	///<para>─────────────────────────────</para>
@@ -315,10 +317,41 @@ namespace rnfs
 	///<para>─────────────────────────────</para>
 	///</param>
 	template<typename TYPE>
-	inline Task::Task(const TaskDestroyMode & mode, const TYPE & target)
-		: mp_Prev(nullptr), mp_Next(nullptr), m_Mode(mode), m_Count(0), m_Target(static_cast<float>(target)), m_Link(0)
+	inline Task::Task(const TaskDestroyMode & mode, const TYPE & destroyValue)
+		: mp_Prev(nullptr), mp_Next(nullptr), m_Mode(mode), m_Count(0), m_Target(static_cast<float>(destroyValue)), m_Link(0)
 	{
 		Task::_Register_(this);
+	}
+
+	///<summary>
+	///<para>─────────────────────────</para>
+	///<para>タスクの消去方法を設定します。</para>
+	///<para>タスクが生成されてからの経過設定になる為、注意が必要です。</para>
+	///<para>─────────────────────────</para>
+	///</summary>
+	///
+	///<param name="mode">
+	///<para>タスクの消去方法</para>
+	///</param>
+	///
+	///<param name="destroyValue">
+	///<para>─────────────────────────────</para>
+	///<para>手前の引数(mode)で設定した消去方法により、変化します。</para>
+	///<para>─────────────────────────────</para>
+	///<para>TaskDestroyMode::Count</para>
+	///<para>消去フレーム数(消去呼び出し回数)</para>
+	///<para>─────────────────────────────</para>
+	///<para>TaskDestroyMode::Time</para>
+	///<para>消去時間(秒)</para>
+	///<para>─────────────────────────────</para>
+	///<para>型変換の省略とデフォルト引数の設定のため、テンプレートになっています。</para>
+	///<para>─────────────────────────────</para>
+	///</param>
+	template<typename TYPE>
+	inline void Task::SetAutoDestroy(const TaskDestroyMode & mode, const TYPE & destroyValue)
+	{
+		m_Mode = mode;
+		m_Target = destroyValue;
 	}
 
 	///<summary>

@@ -6,7 +6,6 @@ Chapter_3：タスク内からタスクを生成
 
 Fireworks を生成し、消去の際に Spark を100個生成し、花火を作ります。
 include と Create の2ステップで生成できます。
-乱数を様々な場所に使用している為、コンストラクタが複雑になっています。
 */
 
 //-------------------------------------------- 区切り --------------------------------------------//
@@ -52,7 +51,7 @@ private:
 	TaskCall	m_Update;	//更新設定
 
 public:
-	Fireworks() : Task(TaskDestroyMode::Count, Random(30, 90))
+	Fireworks() : Task(TaskDestroyMode::Time, Random(0.5, 1.5))
 		, m_Pos(Mouse::Pos().x, 480.0)
 		, m_Color(RandomColor())
 		, m_Update(this, &Fireworks::Update)

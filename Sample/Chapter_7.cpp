@@ -30,7 +30,7 @@ private:
 	double		m_Radius;	//描画半径
 	int			m_Alpha;	//不透明度
 
-	size_t		m_ID;		//識別番号
+	TaskID		m_ID;		//識別番号
 
 	TaskCall	m_Update;	//更新設定
 	TaskCall	m_Draw;		//描画設定

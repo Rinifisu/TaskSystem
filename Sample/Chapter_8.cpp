@@ -6,7 +6,7 @@ Chapter_8：TaskKeepArray 要らずの TaskGet
 
 Chapter_7 とほとんど同じ構造ですが、構造を少し複雑にしていた TaskKeepArray がありません。
 TaskGet に登録する事で、内部に事前用意されている TaskKeepArray に登録され、どこからでも呼び出せるようになります。
-登録解除はタスク消滅時に TaskGet のデストラクタで自動解除する為、this->Destroy(); で簡単に行えます。
+タスク消滅時に TaskGet のデストラクタで自動で登録解除する為、気にする事無く Destroy で消去できます。
 その為、TaskKeepArray ではなく TaskGet を推奨しますが、可視性が失われる事やイテレータなどの一部機能が無いデメリットもあります。
 */
 

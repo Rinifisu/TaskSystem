@@ -193,7 +193,7 @@ namespace rnfs
 	///<param name="p_Task">
 	///<para>自身のポインタ</para>
 	///<para>必ず this を入力してください。</para>
-	///<para>タスク識別用の名前を取得するため、テンプレートになっています。</para>
+	///<para>タスク識別用の情報を取得するため、テンプレートになっています。</para>
 	///</param>
 	template<class TASK>
 	inline TaskGet::TaskGet(TASK* p_Task)
@@ -214,7 +214,7 @@ namespace rnfs
 	///<param name="p_Task">
 	///<para>自身のポインタ</para>
 	///<para>必ず this を入力してください。</para>
-	///<para>タスク識別用の名前を取得するため、テンプレートになっています。</para>
+	///<para>タスク識別用の情報を取得するため、テンプレートになっています。</para>
 	///</param>
 	template<class TASK>
 	inline void TaskGet::Register(TASK* p_Task)

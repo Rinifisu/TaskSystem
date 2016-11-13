@@ -25,7 +25,7 @@ private:
 public:
 	Balloon() : Task()
 		, m_Pos(Mouse::Pos())
-		, m_Radius(0.0), m_Alpha(126)
+		, m_Radius(0.0), m_Alpha(100)
 		, m_Update(this, &Balloon::Swell)
 	{ }
 
@@ -44,7 +44,7 @@ private:
 	void Rupture()
 	{
 		//不透明度を下げる
-		m_Alpha -= 18;
+		m_Alpha -= 10;
 		//完全透明で消去
 		if (m_Alpha <= 0) this->Destroy();
 
