@@ -19,11 +19,11 @@ namespace rnfs
 	class _TaskLink_
 	{
 	protected:
-		static TYPE	m_Send; //接続側リストのポインタ
+		static TYPE	m_List; //受信側のリスト
 	};
 
 	template<class TYPE>
-	TYPE _TaskLink_<TYPE>::m_Send;
+	TYPE _TaskLink_<TYPE>::m_List;
 
 	///<summary>
 	///<para>──────────────</para>
@@ -34,7 +34,7 @@ namespace rnfs
 	class TaskLink final : public _TaskLink_<>
 	{
 	private:
-		Task*				mp_Task;	//コール対象タスクのポインタ
+		Task*				mp_Task;	//対象タスクのポインタ
 
 		std::type_index		m_Type;		//識別用の情報
 		TaskID				m_ID;		//消去用の管理番号
@@ -82,10 +82,10 @@ namespace rnfs
 			if (mp_Task)
 			{
 				//タスクの解放
-				m_Send[m_Type].Free_ID(m_ID);
+				m_List[m_Type].Free_ID(m_ID);
 
 				//リストが空になったら、消去する
-				if (m_Send[m_Type].isEmpty()) m_Send.erase(m_Type);
+				if (m_List[m_Type].isEmpty()) m_List.erase(m_Type);
 			}
 
 			//初期化
@@ -145,23 +145,23 @@ namespace rnfs
 		if (mp_Task)
 		{
 			//タスクの解放
-			m_Send[m_Type].Free_ID(m_ID);
+			m_List[m_Type].Free_ID(m_ID);
 
 			//リストが空になったら、消去する
-			if (m_Send[m_Type].isEmpty()) m_Send.erase(m_Type);
+			if (m_List[m_Type].isEmpty()) m_List.erase(m_Type);
 		}
 
 		mp_Task = p_Task;
 		m_Type = typeid(TASK);
 
 		//追加される位置を取得する
-		m_ID = m_Send[m_Type].nextID();
+		m_ID = m_List[m_Type].nextID();
 
 		//カウントを無効にする(assert を回避する為、追加の前に実行)
-		m_Send[m_Type].Safety_ID(m_ID, false);
+		m_List[m_Type].Safety_ID(m_ID, false);
 
 		//追加
-		m_Send[m_Type].Keep_Back(mp_Task);
+		m_List[m_Type].Keep_Back(mp_Task);
 	}
 
 	///<summary>
@@ -188,7 +188,7 @@ namespace rnfs
 	inline void TaskLink::All::Call(Task * p_Task, const Func & callbackFunction)
 	{
 		//関数の実行
-		for (auto & i : TaskLink::m_Send[typeid(TARGET)])
+		for (auto & i : TaskLink::m_List[typeid(TARGET)])
 		{
 			(*p_Task.*(void(Task::*)(Task &))callbackFunction)(i.second.task());
 		}

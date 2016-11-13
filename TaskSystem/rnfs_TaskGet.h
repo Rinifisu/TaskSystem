@@ -19,11 +19,11 @@ namespace rnfs
 	class _TaskGet_
 	{
 	protected:
-		static TYPE	m_Data; //登録タスクのキープ
+		static TYPE	m_List; //登録リスト
 	};
 
 	template<class TYPE>
-	TYPE _TaskGet_<TYPE>::m_Data;
+	TYPE _TaskGet_<TYPE>::m_List;
 
 	///<summary>
 	///<para>─────────────</para>
@@ -44,23 +44,23 @@ namespace rnfs
 		void _Register_()
 		{
 			//追加される位置を取得する
-			m_ID = m_Data[m_Type].nextID();
+			m_ID = m_List[m_Type].nextID();
 
 			//カウントを無効にする(assert を回避する為、追加の前に実行)
-			m_Data[m_Type].Safety_ID(m_ID, false);
+			m_List[m_Type].Safety_ID(m_ID, false);
 
 			//追加
-			m_Data[m_Type].Keep_Back(mp_Task);
+			m_List[m_Type].Keep_Back(mp_Task);
 		}
 
 		//ゲットリストから消去
 		void _Unregister_()
 		{
 			//タスクの解放
-			m_Data[m_Type].Free_ID(m_ID);
+			m_List[m_Type].Free_ID(m_ID);
 
 			//リストが空になったら、消去する
-			if (m_Data[m_Type].isEmpty()) m_Data.erase(m_Type);
+			if (m_List[m_Type].isEmpty()) m_List.erase(m_Type);
 		}
 
 	public:
@@ -243,7 +243,7 @@ namespace rnfs
 	template<class TASK>
 	inline TASK & TaskGet::All::task_ID(const TaskID id)
 	{
-		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK)).taskPointer_ID(id));
+		return *dynamic_cast<TASK*>(m_List.at(typeid(TASK)).taskPointer_ID(id));
 	}
 
 	///<summary>
@@ -259,7 +259,7 @@ namespace rnfs
 	template<class TASK>
 	inline TASK & TaskGet::All::task(const size_t arrayNumber)
 	{
-		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK)).taskPointer(arrayNumber));
+		return *dynamic_cast<TASK*>(m_List.at(typeid(TASK)).taskPointer(arrayNumber));
 	}
 
 	///<summary>
@@ -271,7 +271,7 @@ namespace rnfs
 	template<class TASK>
 	inline TASK & TaskGet::All::back()
 	{
-		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK)).backPointer());
+		return *dynamic_cast<TASK*>(m_List.at(typeid(TASK)).backPointer());
 	}
 
 	///<summary>
@@ -283,7 +283,7 @@ namespace rnfs
 	template<class TASK>
 	inline TASK & TaskGet::All::front()
 	{
-		return *dynamic_cast<TASK*>(m_Data.at(typeid(TASK)).frontPointer());
+		return *dynamic_cast<TASK*>(m_List.at(typeid(TASK)).frontPointer());
 	}
 
 	///<summary>
@@ -299,7 +299,7 @@ namespace rnfs
 	template<class TASK>
 	inline const size_t TaskGet::All::toArrayNumber(const TaskID id)
 	{
-		return m_Data.at(typeid(TASK)).toArrayNumber(id);
+		return m_List.at(typeid(TASK)).toArrayNumber(id);
 	}
 
 	///<summary>
@@ -315,7 +315,7 @@ namespace rnfs
 	template<class TASK>
 	inline const TaskID TaskGet::All::toID(const size_t arrayNumber)
 	{
-		return m_Data.at(typeid(TASK)).toID(arrayNumber);
+		return m_List.at(typeid(TASK)).toID(arrayNumber);
 	}
 
 	///<summary>
@@ -332,9 +332,9 @@ namespace rnfs
 	inline const bool TaskGet::All::isID(const TaskID id)
 	{
 		//登録済みのタスクが１つも無い場合は存在しない
-		if (m_Data.count(typeid(TASK)) <= 0) return false;
+		if (m_List.count(typeid(TASK)) <= 0) return false;
 		//要素数の取得
-		return m_Data.at(typeid(TASK)).isID(id);
+		return m_List.at(typeid(TASK)).isID(id);
 	}
 
 	///<summary>
@@ -346,7 +346,7 @@ namespace rnfs
 	template<class TASK>
 	inline const bool TaskGet::All::isEmpty()
 	{
-		return m_Data.count(typeid(TASK)) <= 0;
+		return m_List.count(typeid(TASK)) <= 0;
 	}
 
 	///<summary>
@@ -359,9 +359,9 @@ namespace rnfs
 	inline const size_t TaskGet::All::size()
 	{
 		//登録済みのタスクが１つも無い場合は０を返す
-		if (m_Data.count(typeid(TASK)) <= 0) return 0;
+		if (m_List.count(typeid(TASK)) <= 0) return 0;
 		//要素数の取得
-		else return m_Data.at(typeid(TASK)).size();
+		else return m_List.at(typeid(TASK)).size();
 	}
 
 	///<summary>
@@ -373,7 +373,7 @@ namespace rnfs
 	template<class TASK>
 	inline const TaskID TaskGet::All::backID()
 	{
-		return m_Data.at(typeid(TASK)).backID();
+		return m_List.at(typeid(TASK)).backID();
 	}
 
 	///<summary>
@@ -385,7 +385,7 @@ namespace rnfs
 	template<class TASK>
 	inline const TaskID TaskGet::All::frontID()
 	{
-		return m_Data.at(typeid(TASK)).frontID();
+		return m_List.at(typeid(TASK)).frontID();
 	}
 
 	///<summary>
@@ -403,10 +403,10 @@ namespace rnfs
 	inline const bool TaskGet::All::clear(const size_t arrayNumber)
 	{
 		//登録済みのタスクが１つも無い場合は何もしない
-		if (m_Data.count(typeid(TASK)) <= 0) return false;
+		if (m_List.count(typeid(TASK)) <= 0) return false;
 
 		//一時的に参照
-		TaskKeepArray<Task> & taskKeepArray = m_Data.at(typeid(TASK));
+		TaskKeepArray<Task> & taskKeepArray = m_List.at(typeid(TASK));
 		//キープしているタスクがある場合は何もせずに終了
 		if (0 < taskKeepArray.task(arrayNumber).link()) return false;
 
@@ -432,10 +432,10 @@ namespace rnfs
 	inline const bool TaskGet::All::clear_ID(const TaskID id)
 	{
 		//登録済みのタスクが１つも無い場合は何もしない
-		if (m_Data.count(typeid(TASK)) <= 0) return false;
+		if (m_List.count(typeid(TASK)) <= 0) return false;
 
 		//一時的に参照
-		TaskKeepArray<Task> & taskKeepArray = m_Data.at(typeid(TASK));
+		TaskKeepArray<Task> & taskKeepArray = m_List.at(typeid(TASK));
 		//キープしているタスクがある場合は何もせずに終了
 		if (0 < taskKeepArray.task_ID(id).link()) return false;
 
@@ -457,10 +457,10 @@ namespace rnfs
 	inline const bool TaskGet::All::clear_Back()
 	{
 		//登録済みのタスクが１つも無い場合は何もしない
-		if (m_Data.count(typeid(TASK)) <= 0) return false;
+		if (m_List.count(typeid(TASK)) <= 0) return false;
 
 		//一時的に参照
-		TaskKeepArray<Task> & taskKeepArray = m_Data.at(typeid(TASK));
+		TaskKeepArray<Task> & taskKeepArray = m_List.at(typeid(TASK));
 		//キープしているタスクがある場合は何もせずに終了
 		if (0 < taskKeepArray.back().link()) return false;
 
@@ -482,10 +482,10 @@ namespace rnfs
 	inline const bool TaskGet::All::clear_Front()
 	{
 		//登録済みのタスクが１つも無い場合は何もしない
-		if (m_Data.count(typeid(TASK)) <= 0) return false;
+		if (m_List.count(typeid(TASK)) <= 0) return false;
 
 		//一時的に参照
-		TaskKeepArray<Task> & taskKeepArray = m_Data.at(typeid(TASK));
+		TaskKeepArray<Task> & taskKeepArray = m_List.at(typeid(TASK));
 		//キープしているタスクがある場合は何もせずに終了
 		if (0 < taskKeepArray.front().link()) return false;
 
@@ -508,12 +508,12 @@ namespace rnfs
 	inline const size_t TaskGet::All::clear_All()
 	{
 		//登録済みのタスクが１つも無い場合は何もしない
-		if (m_Data.count(typeid(TASK)) <= 0) return 0;
+		if (m_List.count(typeid(TASK)) <= 0) return 0;
 
 		//消去したタスクの数
 		size_t deleteTask = 0;
 		//一時的に参照
-		TaskKeepArray<Task> & taskKeepArray = m_Data.at(typeid(TASK));
+		TaskKeepArray<Task> & taskKeepArray = m_List.at(typeid(TASK));
 
 		for (size_t i = 0; i < taskKeepArray.size();)
 		{
