@@ -414,6 +414,9 @@ namespace rnfs
 		taskKeepArray.Safety(arrayNumber, true);
 		taskKeepArray.Clear(arrayNumber);
 
+		//リストが空になったら、消去する
+		if (taskKeepArray.isEmpty()) m_List.erase(typeid(TASK));
+
 		return true;
 	}
 
@@ -443,6 +446,9 @@ namespace rnfs
 		taskKeepArray.Safety_ID(id, true);
 		taskKeepArray.Clear_ID(id);
 
+		//リストが空になったら、消去する
+		if (taskKeepArray.isEmpty()) m_List.erase(typeid(TASK));
+
 		return true;
 	}
 
@@ -468,6 +474,9 @@ namespace rnfs
 		taskKeepArray.Safety_ID(taskKeepArray.backID(), true);
 		taskKeepArray.Clear_Back();
 
+		//リストが空になったら、消去する
+		if (taskKeepArray.isEmpty()) m_List.erase(typeid(TASK));
+
 		return true;
 	}
 
@@ -492,6 +501,9 @@ namespace rnfs
 		//カウントを有効にして消去する
 		taskKeepArray.Safety_ID(taskKeepArray.frontID(), true);
 		taskKeepArray.Clear_Front();
+
+		//リストが空になったら、消去する
+		if (taskKeepArray.isEmpty()) m_List.erase(typeid(TASK));
 
 		return true;
 	}
@@ -527,6 +539,9 @@ namespace rnfs
 				++deleteTask;
 			}
 		}
+
+		//リストが空になったら、消去する
+		if (taskKeepArray.isEmpty()) m_List.erase(typeid(TASK));
 
 		return deleteTask;
 	}
