@@ -15,6 +15,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 namespace rnfs
 {
+	//ソースファイル生成回避宣言
 	template<class TYPE = std::unordered_map<std::type_index, TaskKeepArray<Task>>>
 	class _TaskGet_
 	{
@@ -101,7 +102,7 @@ namespace rnfs
 		///<para>タスクゲットの登録が行われるかを確認します。</para>
 		///<para>──────────────────</para>
 		///</summary>
-		const bool isRegister() const
+		bool isRegister() const
 		{
 			return mp_Task != nullptr;
 		}
@@ -157,9 +158,9 @@ namespace rnfs
 			static inline const TaskID toID(const size_t arrayNumber);
 
 			template<class TASK>
-			static inline const bool isID(const TaskID id);
+			static inline bool isID(const TaskID id);
 			template<class TASK>
-			static inline const bool isEmpty();
+			static inline bool isEmpty();
 			template<class TASK>
 			static inline const size_t size();
 
@@ -169,14 +170,14 @@ namespace rnfs
 			static inline const TaskID frontID();
 
 			template<class TASK>
-			static inline const bool clear(const size_t arrayNumber);
+			static inline bool clear(const size_t arrayNumber);
 			template<class TASK>
-			static inline const bool clear_ID(const TaskID id);
+			static inline bool clear_ID(const TaskID id);
 
 			template<class TASK>
-			static inline const bool clear_Back();
+			static inline bool clear_Back();
 			template<class TASK>
-			static inline const bool clear_Front();
+			static inline bool clear_Front();
 			template<class TASK>
 			static inline const size_t clear_All();
 		};
@@ -329,7 +330,7 @@ namespace rnfs
 	///<para>配列の識別番号</para>
 	///</param>
 	template<class TASK>
-	inline const bool TaskGet::All::isID(const TaskID id)
+	inline bool TaskGet::All::isID(const TaskID id)
 	{
 		//登録済みのタスクが１つも無い場合は存在しない
 		if (m_List.count(typeid(TASK)) <= 0) return false;
@@ -344,7 +345,7 @@ namespace rnfs
 	///<para>──────────────────────────────</para>
 	///</summary>
 	template<class TASK>
-	inline const bool TaskGet::All::isEmpty()
+	inline bool TaskGet::All::isEmpty()
 	{
 		return m_List.count(typeid(TASK)) <= 0;
 	}
@@ -400,7 +401,7 @@ namespace rnfs
 	///<para>配列番号</para>
 	///</param>
 	template<class TASK>
-	inline const bool TaskGet::All::clear(const size_t arrayNumber)
+	inline bool TaskGet::All::clear(const size_t arrayNumber)
 	{
 		//登録済みのタスクが１つも無い場合は何もしない
 		if (m_List.count(typeid(TASK)) <= 0) return false;
@@ -432,7 +433,7 @@ namespace rnfs
 	///<para>配列の識別番号</para>
 	///</param>
 	template<class TASK>
-	inline const bool TaskGet::All::clear_ID(const TaskID id)
+	inline bool TaskGet::All::clear_ID(const TaskID id)
 	{
 		//登録済みのタスクが１つも無い場合は何もしない
 		if (m_List.count(typeid(TASK)) <= 0) return false;
@@ -460,7 +461,7 @@ namespace rnfs
 	///<para>────────────────────────────────</para>
 	///</summary>
 	template<class TASK>
-	inline const bool TaskGet::All::clear_Back()
+	inline bool TaskGet::All::clear_Back()
 	{
 		//登録済みのタスクが１つも無い場合は何もしない
 		if (m_List.count(typeid(TASK)) <= 0) return false;
@@ -488,7 +489,7 @@ namespace rnfs
 	///<para>────────────────────────────────</para>
 	///</summary>
 	template<class TASK>
-	inline const bool TaskGet::All::clear_Front()
+	inline bool TaskGet::All::clear_Front()
 	{
 		//登録済みのタスクが１つも無い場合は何もしない
 		if (m_List.count(typeid(TASK)) <= 0) return false;

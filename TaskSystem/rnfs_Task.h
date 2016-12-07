@@ -15,7 +15,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 namespace rnfs
 {
 	//時間を計測するクラス
-	class _TaskTime_
+	class _TaskTime_ final
 	{
 	private:
 		LARGE_INTEGER			m_Buf;		//開始時のカウント時間
@@ -42,6 +42,7 @@ namespace rnfs
 		}
 	};
 
+	//ソースファイル生成回避宣言
 	template<class TYPE = Task*>
 	class _Task_
 	{
@@ -192,6 +193,18 @@ namespace rnfs
 		}
 
 		///<summary>
+		///<para>────────────────────────────────────</para>
+		///<para>タスクが消去されるまでの残りフレーム数(Task::Update が呼び出された回数)を取得します。</para>
+		///<para>TaskDestroyMode::Count で自動消去設定を行う必要があります。</para>
+		///<para>設定が不適切であれば 0 が返されます。</para>
+		///<para>────────────────────────────────────</para>
+		///</summary>
+		virtual size_t remainingCount() const final
+		{
+			return m_Mode == TaskDestroyMode::Count ? static_cast<size_t>(m_Target) - m_Count : 0;
+		}
+
+		///<summary>
 		///<para>─────────────────────</para>
 		///<para>タスクが生成されてから経過した時間を取得します。</para>
 		///<para>─────────────────────</para>
@@ -199,6 +212,18 @@ namespace rnfs
 		virtual float time() const final
 		{
 			return m_Time.get();
+		}
+
+		///<summary>
+		///<para>───────────────────────────</para>
+		///<para>タスクが消去されるまでの残り時間を取得します。</para>
+		///<para>TaskDestroyMode::Time で自動消去設定を行う必要があります。</para>
+		///<para>設定が不適切であれば 0.0f が返されます。</para>
+		///<para>───────────────────────────</para>
+		///</summary>
+		virtual float remainingTime() const final
+		{
+			return m_Mode == TaskDestroyMode::Time ? m_Target - m_Time.get() : 0.0f;
 		}
 
 		///<summary>

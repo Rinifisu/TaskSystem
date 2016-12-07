@@ -115,8 +115,8 @@ namespace rnfs
 
 		const TaskID nextID() const;
 
-		const bool isID(const TaskID id) const;
-		const bool isEmpty() const;
+		bool isID(const TaskID id) const;
+		bool isEmpty() const;
 		const size_t size() const;
 
 		const TaskID backID() const;
@@ -951,7 +951,7 @@ namespace rnfs
 	///<para>配列の識別番号</para>
 	///</param>
 	template<class TYPE>
-	inline const bool TaskKeepArray<TYPE>::isID(const TaskID id) const
+	inline bool TaskKeepArray<TYPE>::isID(const TaskID id) const
 	{
 		return m_Data.count(id) != 0;
 	}
@@ -962,7 +962,7 @@ namespace rnfs
 	///<para>─────────────</para>
 	///</summary>
 	template<class TYPE>
-	inline const bool TaskKeepArray<TYPE>::isEmpty() const
+	inline bool TaskKeepArray<TYPE>::isEmpty() const
 	{
 		return m_RegistID.empty();
 	}

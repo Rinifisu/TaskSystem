@@ -15,6 +15,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 namespace rnfs
 {
+	//ソースファイル生成回避宣言
 	template<class TYPE = std::unordered_map<std::type_index, TaskKeepArray<Task>>>
 	class _TaskLink_
 	{

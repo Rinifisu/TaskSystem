@@ -9,12 +9,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #pragma once
 
-#include <unordered_map> //std::unordered_map
+#include <deque>			//std::deque
+#include <unordered_map>	//std::unordered_map
 
 #include "rnfs_Task.h"
 
 namespace rnfs
 {
+	//ソースファイル生成回避宣言
 	template<class TYPE = std::unordered_map<unsigned char, TaskCall*>>
 	class _TaskCall_
 	{
@@ -217,7 +219,7 @@ namespace rnfs
 		///<para>false -> コール無効</para>
 		///<para>────────────────────────────</para>
 		///</summary>
-		const bool isActive() const
+		bool isActive() const
 		{
 			return m_Active;
 		}
