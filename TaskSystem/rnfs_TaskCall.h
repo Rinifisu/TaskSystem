@@ -40,13 +40,15 @@ namespace rnfs
 
 		TaskCall*		mp_Prev;	//自身の前のポインタ
 		TaskCall*		mp_Next;	//自身の後のポインタ
-		size_t			m_Priority;	//自身のコール優先順位
 
-		std::string		m_Tag;		//タグ
 		unsigned char	m_Group;	//リストのグループ番号
+		size_t			m_Priority;	//コール優先順位
 
 		void(Task::*	m_Call)();	//コール関数
 		bool			m_Active;	//コールが行われるか
+
+		std::string		m_Tag;		//タグ
+		bool			m_IsFirst;	//最初のコールであるか
 
 	private:
 		//コールリストへの登録
@@ -128,8 +130,8 @@ namespace rnfs
 		///</summary>
 		TaskCall()
 			: mp_Task(nullptr), mp_Prev(nullptr), mp_Next(nullptr)
-			, m_Priority(0), m_Tag(), m_Group(0)
-			, m_Active(false)
+			, m_Group(0), m_Priority(0)
+			, m_Active(false), m_IsFirst(true)
 		{
 
 		}
@@ -170,17 +172,44 @@ namespace rnfs
 			mp_Task = nullptr;
 			mp_Prev = nullptr;
 			mp_Next = nullptr;
-			m_Priority = 0;
 			m_Group = 0;
+			m_Priority = 0;
 			m_Call = nullptr;
 			m_Active = false;
 		}
 
-		template<typename FUNC>
-		void SetCall(const FUNC & callbackFunction, const bool active = true);
+		///<summary>
+		///<para>───────────</para>
+		///<para>グループ番号を変更します。</para>
+		///<para>───────────</para>
+		///</summary>
+		///
+		///<param name="group">
+		///<para>グループ番号（TaskCall::All::Update の引数で使われる分類）</para>
+		///</param>
+		void SetGroup(const unsigned char group)
+		{
+			m_Group = group;
+		}
+
+		///<summary>
+		///<para>───────────</para>
+		///<para>グループ番号を取得します。</para>
+		///<para>───────────</para>
+		///</summary>
+		unsigned char group() const
+		{
+			return m_Group;
+		}
+
+		template<typename PRIORITY>
+		void SetPriority(const PRIORITY & priority, const bool pushBack = true);
+
+		template<typename PRIORITY = size_t>
+		PRIORITY priority() const;
 
 		template<typename FUNC>
-		void SetCall(const FUNC & callbackFunction, const bool active, const std::string & tag);
+		void SetCall(const FUNC & callbackFunction, const bool active = true, const std::string & tag = "");
 
 		///<summary>
 		///<para>─────────────────────────────</para>
@@ -224,12 +253,6 @@ namespace rnfs
 			return m_Active;
 		}
 
-		template<typename PRIORITY>
-		void SetPriority(const PRIORITY & priority, const bool pushBack = true);
-
-		template<typename PRIORITY = size_t>
-		const PRIORITY priority() const;
-
 		///<summary>
 		///<para>────────</para>
 		///<para>タグを変更します。</para>
@@ -255,27 +278,25 @@ namespace rnfs
 		}
 
 		///<summary>
-		///<para>───────────</para>
-		///<para>グループ番号を変更します。</para>
-		///<para>───────────</para>
+		///<para>────────────────────</para>
+		///<para>最初のコール状態か確認します。</para>
+		///<para>仕様上、2 回以上の確認を行う事ができません。</para>
+		///<para>初期化などに利用できます。</para>
+		///<para>────────────────────</para>
+		///<para>true  -> 最初のコール</para>
+		///<para>false -> 既にコールが行われている</para>
+		///<para>────────────────────</para>
 		///</summary>
-		///
-		///<param name="group">
-		///<para>グループ番号（TaskCall::All::Update の引数で使われる分類）</para>
-		///</param>
-		void SetGroup(const unsigned char group)
+		bool isFirst()
 		{
-			m_Group = group;
-		}
+			if (m_IsFirst)
+			{
+				m_IsFirst = false;
 
-		///<summary>
-		///<para>───────────</para>
-		///<para>グループ番号を取得します。</para>
-		///<para>───────────</para>
-		///</summary>
-		const unsigned char group() const
-		{
-			return m_Group;
+				return true;
+			}
+
+			return false;
 		}
 
 		///<summary>
@@ -305,7 +326,7 @@ namespace rnfs
 					//コールが有効であり、コールが設定されていたら
 					if (p_TaskCall->m_Active && p_TaskCall->m_Call)
 					{
-						//関数の実行
+						//コールの実行
 						(p_TaskCall->mp_Task->*p_TaskCall->m_Call)();
 					}
 
@@ -353,9 +374,9 @@ namespace rnfs
 	///</param>
 	template<typename FUNC, typename PRIORITY>
 	inline TaskCall::TaskCall(Task* p_Task, const FUNC & callbackFunction, const unsigned char group, const PRIORITY & priority, const bool priorityPushBack)
-		: mp_Task(p_Task), m_Priority(static_cast<size_t>(priority)), m_Tag()
-		, m_Group(group), m_Call(static_cast<void(Task::*)()>(callbackFunction))
-		, m_Active(true)
+		: mp_Task(p_Task), m_Group(group), m_Priority(static_cast<size_t>(priority))
+		, m_Call(static_cast<void(Task::*)()>(callbackFunction))
+		, m_Active(true), m_IsFirst(true)
 	{
 		//登録
 		this->_Register_(priorityPushBack);
@@ -404,64 +425,14 @@ namespace rnfs
 
 		//初期化
 		mp_Task = p_Task;
-		m_Priority = static_cast<size_t>(priority);
 		m_Group = group;
+		m_Priority = static_cast<size_t>(priority);
 		m_Call = static_cast<void(Task::*)()>(callbackFunction);
 		m_Active = true;
+		m_IsFirst = true;
 
 		//登録
 		this->_Register_(priorityPushBack);
-	}
-
-	///<summary>
-	///<para>────────────────────────────</para>
-	///<para>TaskCall::All::Update 呼び出し時に呼ばれるコール関数を設定します。</para>
-	///<para>前回の更新関数リストは消去され、新たに上書きされます。</para>
-	///<para>────────────────────────────</para>
-	///</summary>
-	///
-	///<param name="callbackFunction">
-	///<para>コール関数</para>
-	///</param>
-	///
-	///<param name="active">
-	///<para>コールが行われるか</para>
-	///<para>true  -> コール有効</para>
-	///<para>false -> コール無効</para>
-	///</param>
-	template<typename FUNC>
-	inline void TaskCall::SetCall(const FUNC & callbackFunction, const bool active)
-	{
-		m_Call = static_cast<void(Task::*)()>(callbackFunction);
-		m_Active = active;
-	}
-
-	///<summary>
-	///<para>────────────────────────────</para>
-	///<para>TaskCall::All::Update 呼び出し時に呼ばれるコール関数を設定します。</para>
-	///<para>前回の更新関数リストは消去され、新たに上書きされます。</para>
-	///<para>────────────────────────────</para>
-	///</summary>
-	///
-	///<param name="callbackFunction">
-	///<para>コール関数</para>
-	///</param>
-	///
-	///<param name="active">
-	///<para>コールが行われるか</para>
-	///<para>true  -> コール有効</para>
-	///<para>false -> コール無効</para>
-	///</param>
-	///
-	///<param name="tag">
-	///<para>タグ</para>
-	///</param>
-	template<typename FUNC>
-	inline void TaskCall::SetCall(const FUNC & callbackFunction, const bool active, const std::string & tag)
-	{
-		m_Call = static_cast<void(Task::*)()>(callbackFunction);
-		m_Active = active;
-		m_Tag = tag;
 	}
 
 	///<summary>
@@ -499,8 +470,37 @@ namespace rnfs
 	///<para>─────────────────────────────</para>
 	///</summary>
 	template<typename PRIORITY>
-	inline const PRIORITY TaskCall::priority() const
+	inline PRIORITY TaskCall::priority() const
 	{
 		return static_cast<PRIORITY>(m_Priority);
+	}
+
+	///<summary>
+	///<para>────────────────────────────</para>
+	///<para>TaskCall::All::Update 呼び出し時に呼ばれるコール関数を設定します。</para>
+	///<para>前回の更新関数リストは消去され、新たに上書きされます。</para>
+	///<para>────────────────────────────</para>
+	///</summary>
+	///
+	///<param name="callbackFunction">
+	///<para>コール関数</para>
+	///</param>
+	///
+	///<param name="active">
+	///<para>コールが行われるか</para>
+	///<para>true  -> コール有効</para>
+	///<para>false -> コール無効</para>
+	///</param>
+	///
+	///<param name="tag">
+	///<para>タグ</para>
+	///</param>
+	template<typename FUNC>
+	inline void TaskCall::SetCall(const FUNC & callbackFunction, const bool active, const std::string & tag)
+	{
+		m_Call = static_cast<void(Task::*)()>(callbackFunction);
+		m_Active = active;
+		m_Tag = tag;
+		m_IsFirst = true;
 	}
 }
