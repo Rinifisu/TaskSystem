@@ -26,7 +26,7 @@ namespace rnfs
 
 	///<summary>
 	///<para>─────────────────────</para>
-	///<para>タスクキープ配列</para>
+	///<para>タスクキープ配列版</para>
 	///<para>タスクを配列で持つための専用ポインタ配列です。</para>
 	///<para>ソート機能が無い代わりに、識別番号を使用します。</para>
 	///<para>─────────────────────</para>
@@ -37,7 +37,7 @@ namespace rnfs
 	private:
 		TaskID										m_NextID;		//次に代入する unordered_map の識別番号
 
-		std::unordered_map<TaskID, TaskKeep<TYPE>>	m_Data;			//タスクキープ配列
+		std::unordered_map<TaskID, TaskKeep<TYPE>>	m_Data;			//保管配列
 		std::deque<TaskID>							m_RegistID;		//登録済みの番号一覧
 		std::deque<TaskID>							m_ClearID;		//消去済みの番号一覧
 
@@ -158,18 +158,18 @@ namespace rnfs
 	}
 
 	///<summary>
-	///<para>───────────────</para>
-	///<para>タスクを全てキープし、初期化します。</para>
-	///<para>───────────────</para>
+	///<para>──────────────</para>
+	///<para>タスクを全て保管し、初期化します。</para>
+	///<para>──────────────</para>
 	///</summary>
 	///
 	///<param name="taskKeepArray">
-	///<para>キープ対象のタスクをキープしている TaskKeepArray</para>
+	///<para>保管対象のタスクを保管している TaskKeepArray</para>
 	///</param>
 	template<class TYPE>
 	inline TaskKeepArray<TYPE>::TaskKeepArray(const TaskKeepArray<TYPE> & taskKeepArray)
 	{
-		//全てのタスクキープを取り出し、キープする
+		//全てのTaskKeepを取り出し、保管する
 		for (auto & i : taskKeepArray) this->Keep_Back(i.second.taskPointer());
 	}
 
@@ -177,7 +177,7 @@ namespace rnfs
 	///<para>────────────</para>
 	///<para>先頭のイテレータを返します。</para>
 	///<para>first -> 識別番号</para>
-	///<para>second -> タスクキープ</para>
+	///<para>second -> TaskKeep</para>
 	///<para>────────────</para>
 	///</summary>
 	template<class TYPE>
@@ -190,7 +190,7 @@ namespace rnfs
 	///<para>────────────</para>
 	///<para>末尾のイテレータを返します。</para>
 	///<para>first -> 識別番号</para>
-	///<para>second -> タスクキープ</para>
+	///<para>second -> TaskKeep</para>
 	///<para>────────────</para>
 	///</summary>
 	template<class TYPE>
@@ -203,7 +203,7 @@ namespace rnfs
 	///<para>────────────</para>
 	///<para>先頭のイテレータを返します。</para>
 	///<para>first -> 識別番号</para>
-	///<para>second -> タスクキープ</para>
+	///<para>second -> TaskKeep</para>
 	///<para>────────────</para>
 	///</summary>
 	template<class TYPE>
@@ -216,7 +216,7 @@ namespace rnfs
 	///<para>────────────</para>
 	///<para>末尾のイテレータを返します。</para>
 	///<para>first -> 識別番号</para>
-	///<para>second -> タスクキープ</para>
+	///<para>second -> TaskKeep</para>
 	///<para>────────────</para>
 	///</summary>
 	template<class TYPE>
@@ -227,21 +227,21 @@ namespace rnfs
 
 	///<summary>
 	///<para>──────────────────────</para>
-	///<para>タスクを全てキープし、初期化します。</para>
-	///<para>既にキープ中であるタスクは消去、または解放されます。</para>
+	///<para>タスクを全て保管し、初期化します。</para>
+	///<para>既に保管中であるタスクは消去、または解放されます。</para>
 	///<para>──────────────────────</para>
 	///</summary>
 	///
 	///<param name="taskKeep">
-	///<para>キープ対象のタスクをキープしている TaskKeepArray</para>
+	///<para>保管対象のタスクを保管している TaskKeepArray</para>
 	///</param>
 	template<class TYPE>
 	inline void TaskKeepArray<TYPE>::operator =(const TaskKeepArray<TYPE> & taskKeepArray)
 	{
-		//タスクキープを全消去
+		//TaskKeep を全消去
 		this->Clear_All();
 
-		//全てのタスクキープを取り出し、キープする
+		//全ての TaskKeep を取り出し、保管する
 		for (auto & i : taskKeepArray) this->Keep_Back(i.second.taskPointer());
 	}
 
@@ -381,12 +381,12 @@ namespace rnfs
 
 	///<summary>
 	///<para>─────────────────</para>
-	///<para>タスクをキープし、配列の末尾に追加します。</para>
+	///<para>タスクを保管し、配列の末尾に追加します。</para>
 	///<para>─────────────────</para>
 	///</summary>
 	///
 	///<param name="p_Task">
-	///<para>キープ対象のタスク</para>
+	///<para>保管対象のタスク</para>
 	///</param>
 	template<class TYPE>
 	inline void TaskKeepArray<TYPE>::Keep_Back(TYPE* p_Task)
@@ -394,7 +394,7 @@ namespace rnfs
 		//消去済み配列が空であれば
 		if (m_ClearID.empty())
 		{
-			//新規識別番号の位置にタスクをキープ
+			//新規識別番号の位置にタスクを保管
 			m_Data[m_NextID] = p_Task;
 
 			//新規識別番号を登録済み配列に追加
@@ -406,7 +406,7 @@ namespace rnfs
 		//そうでなければ
 		else
 		{
-			//消去済み識別番号の位置にタスクをキープ
+			//消去済み識別番号の位置にタスクを保管
 			m_Data[m_ClearID.front()] = p_Task;
 
 			//消去済み識別番号を登録済み配列に追加
@@ -418,20 +418,20 @@ namespace rnfs
 	}
 
 	///<summary>
-	///<para>──────────────────</para>
-	///<para>タスクをキープし、配列の先頭に追加します。</para>
-	///<para>──────────────────</para>
+	///<para>─────────────────</para>
+	///<para>タスクを保管し、配列の先頭に追加します。</para>
+	///<para>─────────────────</para>
 	///</summary>
 	///
 	///<param name="p_Task">
-	///<para>キープ対象のタスク</para>
+	///<para>保管対象のタスク</para>
 	///</param>
 	template<class TYPE>
 	inline void TaskKeepArray<TYPE>::Keep_Front(TYPE* p_Task)
 	{
 		if (m_ClearID.empty())
 		{
-			//新規識別番号の位置にタスクをキープ
+			//新規識別番号の位置にタスクを保管
 			m_Data[m_NextID] = p_Task;
 
 			//新規識別番号を登録済み配列に追加
@@ -443,7 +443,7 @@ namespace rnfs
 		//そうでなければ
 		else
 		{
-			//消去済み識別番号の位置にタスクをキープ
+			//消去済み識別番号の位置にタスクを保管
 			m_Data[m_ClearID.front()] = p_Task;
 
 			//消去済み識別番号を登録済み配列に追加
@@ -455,9 +455,9 @@ namespace rnfs
 	}
 
 	///<summary>
-	///<para>─────────────────</para>
-	///<para>タスクをキープし、配列の間に追加します。</para>
-	///<para>─────────────────</para>
+	///<para>────────────────</para>
+	///<para>タスクを保管し、配列の間に追加します。</para>
+	///<para>────────────────</para>
 	///</summary>
 	///
 	///<param name="arrayNumber">
@@ -465,7 +465,7 @@ namespace rnfs
 	///</param>
 	///
 	///<param name="p_Task">
-	///<para>キープ対象のタスク</para>
+	///<para>保管対象のタスク</para>
 	///</param>
 	template<class TYPE>
 	inline void TaskKeepArray<TYPE>::Keep_Insert(const size_t arrayNumber, TYPE * p_Task)
@@ -473,7 +473,7 @@ namespace rnfs
 		//消去済み配列が空であれば
 		if (m_ClearID.empty())
 		{
-			//新規識別番号の位置にタスクをキープ
+			//新規識別番号の位置にタスクを保管
 			m_Data[m_NextID] = p_Task;
 
 			//新規識別番号を登録済み配列に追加
@@ -485,7 +485,7 @@ namespace rnfs
 		//そうでなければ
 		else
 		{
-			//消去済み識別番号の位置にタスクをキープ
+			//消去済み識別番号の位置にタスクを保管
 			m_Data[m_ClearID.front()] = p_Task;
 
 			//消去済み識別番号を登録済み配列に追加
@@ -614,7 +614,7 @@ namespace rnfs
 
 	///<summary>
 	///<para>───────────────────</para>
-	///<para>識別番号を使用して、タスクキープを消去します。</para>
+	///<para>識別番号を使用して、TaskKeep を消去します。</para>
 	///<para>───────────────────</para>
 	///</summary>
 	///
@@ -627,7 +627,7 @@ namespace rnfs
 		//存在しない場合は終了
 		if (m_Data.count(id) <= 0) return;
 
-		//タスクキープの消去
+		//TaskKeep の消去
 		m_Data.erase(id);
 
 		//消去済み配列に追加
@@ -639,7 +639,7 @@ namespace rnfs
 
 	///<summary>
 	///<para>───────────</para>
-	///<para>タスクキープを消去します。</para>
+	///<para>TaskKeep を消去します。</para>
 	///<para>───────────</para>
 	///</summary>
 	///
@@ -652,7 +652,7 @@ namespace rnfs
 		//存在しない場合は終了
 		if (m_Data.count(m_RegistID[arrayNumber]) <= 0) return;
 
-		//タスクキープの消去
+		//TaskKeep の消去
 		m_Data.erase(m_RegistID[arrayNumber]);
 
 		//消去済み配列に追加
@@ -664,7 +664,7 @@ namespace rnfs
 
 	///<summary>
 	///<para>──────────────────</para>
-	///<para>配列の末尾にあるタスクキープを消去します。</para>
+	///<para>配列の末尾にある TaskKeep を消去します。</para>
 	///<para>──────────────────</para>
 	///</summary>
 	template<class TYPE>
@@ -673,7 +673,7 @@ namespace rnfs
 		//存在しない場合は終了
 		if (m_Data.empty()) return;
 
-		//タスクキープの消去
+		//TaskKeep の消去
 		m_Data.erase(m_RegistID.back());
 
 		//消去済み配列に追加
@@ -685,7 +685,7 @@ namespace rnfs
 
 	///<summary>
 	///<para>──────────────────</para>
-	///<para>配列の先頭にあるタスクキープを消去します。</para>
+	///<para>配列の先頭にある TaskKeep を消去します。</para>
 	///<para>──────────────────</para>
 	///</summary>
 	template<class TYPE>
@@ -694,7 +694,7 @@ namespace rnfs
 		//存在しない場合は終了
 		if (m_Data.empty()) return;
 
-		//タスクキープの消去
+		//TaskKeep の消去
 		m_Data.erase(m_RegistID.front());
 
 		//消去済み配列に追加
@@ -706,7 +706,7 @@ namespace rnfs
 
 	///<summary>
 	///<para>────────────</para>
-	///<para>タスクキープを全消去します。</para>
+	///<para>TaskKeep を全消去します。</para>
 	///<para>────────────</para>
 	///</summary>
 	template<class TYPE>
@@ -726,10 +726,10 @@ namespace rnfs
 	}
 
 	///<summary>
-	///<para>───────────────────────────────────</para>
-	///<para>識別番号を使用して、タスクキープ配列からタスクを解放します。</para>
-	///<para>タスクは消去されないので、自身で Task::Destroy を呼び出して消去する必要があります。</para>
-	///<para>───────────────────────────────────</para>
+	///<para>──────────────────────────────────</para>
+	///<para>識別番号を使用して、タスクを消去せずに解放します。</para>
+	///<para>タスクは消去されない為、自身で Task::Destroy を呼び出して消去する必要があります。</para>
+	///<para>──────────────────────────────────</para>
 	///</summary>
 	///
 	///<param name="id">
@@ -744,7 +744,7 @@ namespace rnfs
 		//タスクの解放
 		m_Data[id].Free();
 
-		//空のタスクキープの消去
+		//空の TaskKeep の消去
 		m_Data.erase(id);
 
 		//消去済み配列に追加
@@ -755,10 +755,10 @@ namespace rnfs
 	}
 
 	///<summary>
-	///<para>───────────────────────────────────</para>
-	///<para>タスクキープ配列から解放します。</para>
-	///<para>タスクは消去されないので、自身で Task::Destroy を呼び出して消去する必要があります。</para>
-	///<para>───────────────────────────────────</para>
+	///<para>──────────────────────────────────</para>
+	///<para>タスクを消去せずに解放します。</para>
+	///<para>タスクは消去されない為、自身で Task::Destroy を呼び出して消去する必要があります。</para>
+	///<para>──────────────────────────────────</para>
 	///</summary>
 	///
 	///<param name="arrayNumber">
@@ -773,7 +773,7 @@ namespace rnfs
 		//タスクの解放
 		m_Data[m_RegistID[arrayNumber]].Free();
 
-		//空のタスクキープの消去
+		//空の TaskKeep の消去
 		m_Data.erase(m_RegistID[arrayNumber]);
 
 		//消去済み配列に追加
@@ -783,6 +783,12 @@ namespace rnfs
 		m_RegistID.erase(m_RegistID.begin() + arrayNumber);
 	}
 
+	///<summary>
+	///<para>──────────────────────────────────</para>
+	///<para>配列の末尾にあるタスクを消去せずに解放します。</para>
+	///<para>タスクは消去されない為、自身で Task::Destroy を呼び出して消去する必要があります。</para>
+	///<para>──────────────────────────────────</para>
+	///</summary>
 	template<class TYPE>
 	inline void TaskKeepArray<TYPE>::Free_Back()
 	{
@@ -792,7 +798,7 @@ namespace rnfs
 		//タスクの解放
 		m_Data[m_RegistID.back()].Free();
 
-		//空のタスクキープの消去
+		//空の TaskKeep の消去
 		m_Data.erase(m_RegistID.back());
 
 		//消去済み配列に追加
@@ -802,6 +808,12 @@ namespace rnfs
 		m_RegistID.erase(m_RegistID.end());
 	}
 
+	///<summary>
+	///<para>──────────────────────────────────</para>
+	///<para>配列の先頭にあるタスクを消去せずに解放します。</para>
+	///<para>タスクは消去されない為、自身で Task::Destroy を呼び出して消去する必要があります。</para>
+	///<para>──────────────────────────────────</para>
+	///</summary>
 	template<class TYPE>
 	inline void TaskKeepArray<TYPE>::Free_Front()
 	{
@@ -811,7 +823,7 @@ namespace rnfs
 		//タスクの解放
 		m_Data[m_RegistID.front()].Free();
 
-		//空のタスクキープの消去
+		//空の TaskKeep の消去
 		m_Data.erase(m_RegistID.front());
 
 		//消去済み配列に追加
@@ -821,6 +833,12 @@ namespace rnfs
 		m_RegistID.erase(m_RegistID.begin());
 	}
 
+	///<summary>
+	///<para>──────────────────────────────────</para>
+	///<para>全てのタスクを消去せずに解放します。</para>
+	///<para>タスクは消去されない為、自身で Task::Destroy を呼び出して消去する必要があります。</para>
+	///<para>──────────────────────────────────</para>
+	///</summary>
 	template<class TYPE>
 	inline void TaskKeepArray<TYPE>::Free_All()
 	{
@@ -842,7 +860,7 @@ namespace rnfs
 
 	///<summary>
 	///<para>───────────────────────────────</para>
-	///<para>識別番号を使用して、タスクキープの安全保障機能の有効無効を設定します。</para>
+	///<para>識別番号を使用して、TaskKeep の安全保障機能の有効無効を設定します。</para>
 	///<para>───────────────────────────────</para>
 	///</summary>
 	///
@@ -864,7 +882,7 @@ namespace rnfs
 
 	///<summary>
 	///<para>──────────────────────</para>
-	///<para>タスクキープの安全保障機能の有効無効を設定します。</para>
+	///<para>TaskKeep の安全保障機能の有効無効を設定します。</para>
 	///<para>──────────────────────</para>
 	///</summary>
 	///

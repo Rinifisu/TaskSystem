@@ -14,17 +14,17 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 namespace rnfs
 {
 	///<summary>
-	///<para>───────────────</para>
+	///<para>────────────────</para>
 	///<para>タスクキープ</para>
-	///<para>タスクを持つための専用ポインタです。</para>
-	///<para>───────────────</para>
+	///<para>タスクを保管する為の専用ポインタです。</para>
+	///<para>────────────────</para>
 	///</summary>
 	template<class TYPE = Task>
 	class TaskKeep final
 	{
 	private:
 		TYPE*	mp_Task;	//タスクポインタ
-		bool	m_Safety;	//キープカウント保障
+		bool	m_Safety;	//安全保障フラグ
 
 	private:
 		void _Reset_(TYPE* p_Task);
@@ -64,23 +64,23 @@ namespace rnfs
 	{
 		//消去予定のタスクは次の更新で消えてしまうので追加できない
 		//タスククラスのコンストラクタ内で Task::Destroy を呼び出す事によるエラーが多い
-		//自動消去設定を行ったタスクはキープしているにも関わらず消えてしまうので追加できない
-		assert(!p_Task || (p_Task->m_Mode == TaskDestroyMode::None || !m_Safety) || !"TaskKeep -> 消去予定のタスクはキープできません。");
+		//自動消去設定を行ったタスクは保管しているにも関わらず消えてしまうので追加できない
+		assert(!p_Task || (p_Task->m_Mode == TaskDestroyMode::None || !m_Safety) || !"TaskKeep -> 消去予定のタスクは保管できません。");
 
-		//タスクが既にキープされている場合は、消去する
+		//タスクが既に保管されている場合は、消去する
 		if (mp_Task && m_Safety)
 		{
-			//キープカウントを減らす
+			//保管カウントを減らす
 			--mp_Task->m_Link;
 
-			//キープがない場合はタスクを消去
+			//保管していない場合はタスクを消去
 			mp_Task->Destroy();
 		}
 
 		//タスクの代入
 		mp_Task = p_Task;
 
-		//タスクが存在する場合は、ここ以外からの消去を出来ないようにキープカウントを追加する
+		//タスクが存在する場合は、ここ以外からの消去を出来ないように保管カウントを追加する
 		if (mp_Task && m_Safety) ++mp_Task->m_Link;
 	}
 
@@ -99,13 +99,13 @@ namespace rnfs
 
 	///<summary>
 	///<para>──────────────────────</para>
-	///<para>タスクをキープします。</para>
-	///<para>既にキープ中であるタスクは消去、または解放されます。</para>
+	///<para>タスクを保管します。</para>
+	///<para>既に保管中であるタスクは消去、または解放されます。</para>
 	///<para>──────────────────────</para>
 	///</summary>
 	///
 	///<param name="p_Task">
-	///<para>キープ対象のタスク</para>
+	///<para>保管対象のタスク</para>
 	///</param>
 	template<class TYPE>
 	inline TaskKeep<TYPE>::TaskKeep(TYPE* p_Task)
@@ -116,13 +116,13 @@ namespace rnfs
 
 	///<summary>
 	///<para>──────────────────────</para>
-	///<para>タスクをキープします。</para>
-	///<para>既にキープ中であるタスクは消去、または解放されます。</para>
+	///<para>タスクを保管します。</para>
+	///<para>既に保管中であるタスクは消去、または解放されます。</para>
 	///<para>──────────────────────</para>
 	///</summary>
 	///
 	///<param name="taskKeep">
-	///<para>キープ対象のタスクをキープしている TaskKeep</para>
+	///<para>保管対象のタスクを保管している TaskKeep</para>
 	///</param>
 	template<class TYPE>
 	inline TaskKeep<TYPE>::TaskKeep(const TaskKeep<TYPE> & taskKeep)
@@ -140,13 +140,13 @@ namespace rnfs
 
 	///<summary>
 	///<para>──────────────────────</para>
-	///<para>タスクをキープします。</para>
-	///<para>既にキープ中であるタスクは消去、または解放されます。</para>
+	///<para>タスクを保管します。</para>
+	///<para>既に保管中であるタスクは消去、または解放されます。</para>
 	///<para>──────────────────────</para>
 	///</summary>
 	///
 	///<param name="p_Task">
-	///<para>キープ対象のタスク</para>
+	///<para>保管対象のタスク</para>
 	///</param>
 	template<class TYPE>
 	inline void TaskKeep<TYPE>::operator =(TYPE* p_Task)
@@ -156,13 +156,13 @@ namespace rnfs
 
 	///<summary>
 	///<para>──────────────────────</para>
-	///<para>タスクをキープします。</para>
-	///<para>既にキープ中であるタスクは消去、または解放されます。</para>
+	///<para>タスクを保管します。</para>
+	///<para>既に保管中であるタスクは消去、または解放されます。</para>
 	///<para>──────────────────────</para>
 	///</summary>
 	///
 	///<param name="taskKeep">
-	///<para>キープ対象のタスクをキープしている TaskKeep</para>
+	///<para>保管対象のタスクを保管している TaskKeep</para>
 	///</param>
 	template<class TYPE>
 	inline void TaskKeep<TYPE>::operator =(const TaskKeep<TYPE> & taskKeep)
@@ -172,8 +172,8 @@ namespace rnfs
 
 	///<summary>
 	///<para>──────────────────────</para>
-	///<para>タスクを生成し、キープします。</para>
-	///<para>既にキープ中であるタスクは消去、または解放されます。</para>
+	///<para>タスクを生成し、保管します。</para>
+	///<para>既に保管中であるタスクは消去、または解放されます。</para>
 	///<para>──────────────────────</para>
 	///</summary>
 	///
@@ -201,7 +201,7 @@ namespace rnfs
 	///<summary>
 	///<para>──────────────────────────────────</para>
 	///<para>タスクを消去せずに解放します。</para>
-	///<para>タスクは消去されないので、自身で Task::Destroy を呼び出して消去する必要があります。</para>
+	///<para>タスクは消去されない為、自身で Task::Destroy を呼び出して消去する必要があります。</para>
 	///<para>──────────────────────────────────</para>
 	///</summary>
 	template<class TYPE>
@@ -213,15 +213,15 @@ namespace rnfs
 		//ロックを解除する
 		if (m_Safety) --mp_Task->m_Link;
 
-		//タスク消去をしないまま、キープを切断する
+		//タスク消去をしないまま、保管を切断する
 		mp_Task = nullptr;
 	}
 
 	///<summary>
 	///<para>──────────────────────────────────────────────</para>
-	///<para>タスクの消去防止機能であるキープカウントの有効無効を切り替えます。</para>
+	///<para>タスクの消去防止機能である保管カウントの有効無効を切り替えます。</para>
 	///<para>初期状態では自動で有効になっています。</para>
-	///<para>無効状態で Task::Destroy を行うとキープしているにも関わらず、消去が可能になります。</para>
+	///<para>無効状態で Task::Destroy を行うと保管しているにも関わらず、消去が可能になります。</para>
 	///<para>また、無効にした TaskKeep では、タスクの消去ができなくなるため、注意が必要になります。</para>
 	///<para>Task::Destroy の説明にある「TaskKeep のタスクは消去できません。」を無効にする場合は、ここで false を設定します。</para>
 	///<para>──────────────────────────────────────────────</para>
@@ -240,9 +240,9 @@ namespace rnfs
 		//情報を更新
 		m_Safety = safety;
 
-		//キープしていなければ終了
+		//保管していなければ終了
 		if (!mp_Task) return;
-		//キープカウントを調整
+		//保管カウントを調整
 		if (m_Safety) ++mp_Task->m_Link;
 		else --mp_Task->m_Link;
 	}

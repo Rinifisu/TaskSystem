@@ -41,7 +41,7 @@ namespace rnfs
 		TaskID				m_ID;		//消去用の管理番号
 
 	private:
-		//ゲットリストへの登録
+		//外部取得リストへの登録
 		void _Register_()
 		{
 			//追加される位置を取得する
@@ -54,7 +54,7 @@ namespace rnfs
 			m_List[m_Type].Keep_Back(mp_Task);
 		}
 
-		//ゲットリストから消去
+		//外部取得リストから消去
 		void _Unregister_()
 		{
 			//タスクの解放
@@ -80,9 +80,9 @@ namespace rnfs
 		TaskGet(TASK* p_Task);
 
 		///<summary>
-		///<para>──────────────</para>
-		///<para>タスクゲットの登録解除を行います。</para>
-		///<para>──────────────</para>
+		///<para>────────────────</para>
+		///<para>タスク外部取得の登録解除を行います。</para>
+		///<para>────────────────</para>
 		///</summary>
 		~TaskGet()
 		{
@@ -98,9 +98,9 @@ namespace rnfs
 		void Register(TASK* p_Task);
 
 		///<summary>
-		///<para>──────────────────</para>
-		///<para>タスクゲットの登録が行われるかを確認します。</para>
-		///<para>──────────────────</para>
+		///<para>────────────────────</para>
+		///<para>タスク外部取得の登録が行われるかを確認します。</para>
+		///<para>────────────────────</para>
 		///</summary>
 		bool isRegister() const
 		{
@@ -108,9 +108,9 @@ namespace rnfs
 		}
 
 		///<summary>
-		///<para>──────────────</para>
-		///<para>タスクゲットの登録解除を行います。</para>
-		///<para>──────────────</para>
+		///<para>────────────────</para>
+		///<para>タスク外部取得の登録解除を行います。</para>
+		///<para>────────────────</para>
 		///</summary>
 		void Unregister()
 		{
@@ -185,7 +185,7 @@ namespace rnfs
 
 	///<summary>
 	///<para>───────────────────────────────</para>
-	///<para>タスクゲットの登録を行います。</para>
+	///<para>タスク外部取得の登録を行います。</para>
 	///<para>───────────────────────────────</para>
 	///<para>登録を行うことで TaskGet::task で指定したタスクが配列形式で呼び出せます。</para>
 	///<para>───────────────────────────────</para>
@@ -205,7 +205,7 @@ namespace rnfs
 
 	///<summary>
 	///<para>───────────────────────────────</para>
-	///<para>タスクゲットの登録を行います。</para>
+	///<para>タスク外部取得の登録を行います。</para>
 	///<para>テンプレート引数を使用することで、継承元クラスに登録可能になります。</para>
 	///<para>───────────────────────────────</para>
 	///<para>登録を行うことで TaskGet::task で指定したタスクが配列形式で呼び出せます。</para>
@@ -454,11 +454,11 @@ namespace rnfs
 	}
 
 	///<summary>
-	///<para>────────────────────────────────</para>
-	///<para>指定した識別番号の TaskGet::Register で登録済みの末尾タスクを消去します。</para>
+	///<para>───────────────────────</para>
+	///<para>TaskGet::Register で登録済みの末尾タスクを消去します。</para>
 	///<para>キープ中のタスクは消去できません。</para>
 	///<para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	///<para>────────────────────────────────</para>
+	///<para>───────────────────────</para>
 	///</summary>
 	template<class TASK>
 	inline bool TaskGet::All::clear_Back()
@@ -482,11 +482,11 @@ namespace rnfs
 	}
 
 	///<summary>
-	///<para>────────────────────────────────</para>
-	///<para>指定した識別番号の TaskGet::Register で登録済みの先頭タスクを消去します。</para>
+	///<para>───────────────────────</para>
+	///<para>TaskGet::Register で登録済みの先頭タスクを消去します。</para>
 	///<para>キープ中のタスクは消去できません。</para>
 	///<para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
-	///<para>────────────────────────────────</para>
+	///<para>───────────────────────</para>
 	///</summary>
 	template<class TASK>
 	inline bool TaskGet::All::clear_Front()

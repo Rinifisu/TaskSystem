@@ -28,7 +28,7 @@ namespace rnfs
 
 	///<summary>
 	///<para>──────────────</para>
-	///<para>タスク接続</para>
+	///<para>タスクリンク</para>
 	///<para>タスク同士のやり取りを行えます。</para>
 	///<para>──────────────</para>
 	///</summary>
@@ -55,9 +55,9 @@ namespace rnfs
 		TaskLink(TASK* p_Task);
 
 		///<summary>
-		///<para>──────────────</para>
-		///<para>タスク接続の登録解除を行います。</para>
-		///<para>──────────────</para>
+		///<para>─────────────</para>
+		///<para>送信側の登録解除を行います。</para>
+		///<para>─────────────</para>
 		///</summary>
 		~TaskLink()
 		{
@@ -73,9 +73,9 @@ namespace rnfs
 		void Register(TASK* p_Task);
 
 		///<summary>
-		///<para>──────────────</para>
-		///<para>タスク接続の登録解除を行います。</para>
-		///<para>──────────────</para>
+		///<para>─────────────</para>
+		///<para>送信側の登録解除を行います。</para>
+		///<para>─────────────</para>
 		///</summary>
 		void Unregister()
 		{
@@ -110,8 +110,8 @@ namespace rnfs
 
 	///<summary>
 	///<para>────────────────────────────────────</para>
-	///<para>タスク接続の登録を行います。</para>
-	///<para>登録を行うことで TaskLink::All::Call 呼び出し時に指定されたタスクの関数に接続されます。</para>
+	///<para>送信側の登録を行います。</para>
+	///<para>登録を行うことで TaskLink::All::Call 呼び出し時に指定されたタスクの関数に送信されます。</para>
 	///<para>────────────────────────────────────</para>
 	///</summary>
 	///
@@ -129,8 +129,8 @@ namespace rnfs
 
 	///<summary>
 	///<para>────────────────────────────────────</para>
-	///<para>タスク接続の登録を行います。</para>
-	///<para>登録を行うことで TaskLink::All::Call 呼び出し時に指定されたタスクの関数に接続されます。</para>
+	///<para>送信側の登録を行います。</para>
+	///<para>登録を行うことで TaskLink::All::Call 呼び出し時に指定されたタスクの関数に送信されます。</para>
 	///<para>────────────────────────────────────</para>
 	///</summary>
 	///

@@ -18,9 +18,9 @@ namespace rnfs
 	class _TaskTime_ final
 	{
 	private:
-		LARGE_INTEGER			m_Buf;		//開始時のカウント時間
-		mutable LARGE_INTEGER	m_Pos;		//現在のカウント時間
-		LARGE_INTEGER			m_Freq;		//周波数
+		LARGE_INTEGER			m_Buf;	//開始時のカウント時間
+		mutable LARGE_INTEGER	m_Pos;	//現在のカウント時間
+		LARGE_INTEGER			m_Freq;	//周波数
 
 	public:
 		_TaskTime_()
@@ -73,7 +73,7 @@ namespace rnfs
 	class Task : public _Task_<>
 	{
 		template<class TYPE>
-		friend class	TaskKeep;	//キープや消去で必要
+		friend class	TaskKeep;	//保管や消去で必要
 
 	private:
 		Task*			mp_Prev;	//自身の前ポインタ
@@ -154,7 +154,7 @@ namespace rnfs
 		///<summary>
 		///<para>───────────────</para>
 		///<para>消去フラグを立てます。</para>
-		///<para>キープ中のタスクは消去できません。</para>
+		///<para>保管中のタスクは消去できません。</para>
 		///<para>───────────────</para>
 		///<para>次の Task::All::Update 呼び出し時に</para>
 		///<para>タスクの消去が行われます。</para>
@@ -162,10 +162,10 @@ namespace rnfs
 		///</summary>
 		virtual void Destroy() final
 		{
-			//キープしているタスクは消去できない
+			//保管しているタスクは消去できない
 			if (0 < m_Link) return;
 
-			//次の更新で消滅するように設定
+			//次の更新で消去するように設定
 			m_Mode = TaskDestroyMode::Destroy;
 		}
 
@@ -228,8 +228,8 @@ namespace rnfs
 
 		///<summary>
 		///<para>────────────────────</para>
-		///<para>キープ数を取得します。</para>
-		///<para>キープされている場合は、1 以上の値が返されます。</para>
+		///<para>TaskKeep の保管数を取得します。</para>
+		///<para>保管されている場合は、1 以上の値が返されます。</para>
 		///<para>────────────────────</para>
 		///</summary>
 		virtual size_t link() const final
@@ -248,7 +248,7 @@ namespace rnfs
 			///<summary>
 			///<para>────────────────</para>
 			///<para>登録されているタスクを全て消去します。</para>
-			///<para>キープ中のタスクは消去されません。</para>
+			///<para>保管中のタスクは消去されません。</para>
 			///<para>────────────────</para>
 			///</summary>
 			static inline void Clear()
@@ -259,7 +259,7 @@ namespace rnfs
 				while (p_Task != nullptr)
 				{
 					//タスクを消去し、次のタスクへ移動
-					//キープしているタスクは消去できない
+					//保管しているタスクは消去できない
 					if (p_Task->m_Link <= 0) p_Task = Task::_Unregister_(p_Task);
 					else p_Task = p_Task->mp_Next;
 				}
@@ -351,7 +351,7 @@ namespace rnfs
 	///<summary>
 	///<para>─────────────────────────</para>
 	///<para>タスクの消去方法を設定します。</para>
-	///<para>タスクが生成されてからの経過設定になる為、注意が必要です。</para>
+	///<para>タスクが生成されてからの経過設定になる為、差分が必要です。</para>
 	///<para>─────────────────────────</para>
 	///</summary>
 	///
@@ -382,7 +382,7 @@ namespace rnfs
 	///<summary>
 	///<para>───────────────────────────────────────────────────────</para>
 	///<para>タスクを生成します。</para>
-	///<para>new タスク名(); のタスク生成も可能ですが、delete 記述を行わない事による違和感やルール違反を避ける為、この関数の使用を推奨します。</para>
+	///<para>new タスク名; のタスク生成も可能ですが、delete 記述を行わない事による違和感やルール違反を避ける為、この関数の使用を推奨します。</para>
 	///<para>テンプレート引数を使用します。&lt;タスク名&gt;</para>
 	///<para>───────────────────────────────────────────────────────</para>
 	///<para>　推奨：Create&lt;タスク名&gt;(引数);</para>

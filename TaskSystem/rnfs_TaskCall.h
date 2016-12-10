@@ -21,7 +21,7 @@ namespace rnfs
 	class _TaskCall_
 	{
 	protected:
-		static TYPE	m_Begin; //コールリストの先頭ポインタ
+		static TYPE	m_Begin; //関数呼び出しリストの先頭ポインタ
 	};
 
 	template<class TYPE>
@@ -36,22 +36,23 @@ namespace rnfs
 	class TaskCall final : public _TaskCall_<>
 	{
 	private:
-		Task*			mp_Task;	//コール対象タスクのポインタ
+		Task*			mp_Task;	//呼び出し対象タスクのポインタ
 
 		TaskCall*		mp_Prev;	//自身の前のポインタ
 		TaskCall*		mp_Next;	//自身の後のポインタ
 
 		unsigned char	m_Group;	//リストのグループ番号
-		size_t			m_Priority;	//コール優先順位
+		size_t			m_Priority;	//呼び出し優先順位
 
-		void(Task::*	m_Call)();	//コール関数
-		bool			m_Active;	//コールが行われるか
+		void(Task::*	m_Call)();	//呼び出し関数
+		bool			m_Active;	//呼び出しが行われるか
 
-		std::string		m_Tag;		//タグ
-		bool			m_IsFirst;	//最初のコールであるか
+		std::string		m_Tag;		//状態を残せるタグ
+		bool			m_IsFirst;	//最初の呼び出しであるか
+		bool			m_IsSet;	//関数変更設定を行ったか
 
 	private:
-		//コールリストへの登録
+		//呼び出しリストへの登録
 		void _Register_(const bool pushBack)
 		{
 			//先頭が空の場合は新規リストを設定
@@ -104,7 +105,7 @@ namespace rnfs
 			}
 		}
 
-		//コールリストから消去
+		//呼び出しリストから消去
 		void _Unregister_()
 		{
 			TaskCall* updateNext = mp_Next; //リストの次
@@ -131,7 +132,7 @@ namespace rnfs
 		TaskCall()
 			: mp_Task(nullptr), mp_Prev(nullptr), mp_Next(nullptr)
 			, m_Group(0), m_Priority(0)
-			, m_Active(false), m_IsFirst(true)
+			, m_Active(false), m_IsFirst(false), m_IsSet(false)
 		{
 
 		}
@@ -140,13 +141,13 @@ namespace rnfs
 		TaskCall(Task* p_Task, const FUNC & callbackFunction = nullptr, const unsigned char group = 0, const PRIORITY & priority = 0, const bool priorityPushBack = true);
 
 		///<summary>
-		///<para>───────────────</para>
-		///<para>コールリストの登録解除を行います。</para>
-		///<para>───────────────</para>
+		///<para>────────────────</para>
+		///<para>呼び出しリストの登録解除を行います。</para>
+		///<para>────────────────</para>
 		///</summary>
 		~TaskCall()
 		{
-			//コールが登録されていたら登録解除する
+			//呼び出しが登録されていたら登録解除する
 			if (mp_Task) this->_Unregister_();
 		}
 
@@ -159,9 +160,9 @@ namespace rnfs
 		void Register(Task* p_Task, const FUNC & callbackFunction = nullptr, const unsigned char group = 0, const PRIORITY & priority = 0, const bool priorityPushBack = true);
 
 		///<summary>
-		///<para>───────────────</para>
-		///<para>コールリストの登録解除を行います。</para>
-		///<para>───────────────</para>
+		///<para>────────────────</para>
+		///<para>呼び出しリストの登録解除を行います。</para>
+		///<para>────────────────</para>
 		///</summary>
 		void Unregister()
 		{
@@ -176,6 +177,9 @@ namespace rnfs
 			m_Priority = 0;
 			m_Call = nullptr;
 			m_Active = false;
+			m_Tag = "";
+			m_IsFirst = false;
+			m_IsSet = false;
 		}
 
 		///<summary>
@@ -212,11 +216,11 @@ namespace rnfs
 		void SetCall(const FUNC & callbackFunction, const bool active = true, const std::string & tag = "");
 
 		///<summary>
-		///<para>─────────────────────────────</para>
-		///<para>TaskCall::All::Update 呼び出し時にコールが行われるかを切り替えます。</para>
+		///<para>────────────────────────────────</para>
+		///<para>TaskCall::All::Update 呼び出し時に関数呼び出しが行われるかを切り替えます。</para>
 		///<para>有効と無効が呼び出す度に反転します。</para>
 		///<para>一時停止などに利用できます。</para>
-		///<para>─────────────────────────────</para>
+		///<para>────────────────────────────────</para>
 		///</summary>
 		void SetActive()
 		{
@@ -224,16 +228,16 @@ namespace rnfs
 		}
 
 		///<summary>
-		///<para>────────────────────────────</para>
-		///<para>TaskCall::All::Update 呼び出し時にコールが行われるかを設定します。</para>
+		///<para>───────────────────────────────</para>
+		///<para>TaskCall::All::Update 呼び出し時に関数呼び出しが行われるかを設定します。</para>
 		///<para>一時停止などに利用できます。</para>
-		///<para>────────────────────────────</para>
+		///<para>───────────────────────────────</para>
 		///</summary>
 		///
 		///<param name="active">
-		///<para>コールが行われるか</para>
-		///<para>true  -> コール有効</para>
-		///<para>false -> コール無効</para>
+		///<para>呼び出しが行われるか</para>
+		///<para>true  -> 呼び出し有効</para>
+		///<para>false -> 呼び出し無効</para>
 		///</param>
 		void SetActive(const bool active)
 		{
@@ -241,12 +245,12 @@ namespace rnfs
 		}
 
 		///<summary>
-		///<para>────────────────────────────</para>
-		///<para>TaskCall::All::Update 呼び出し時にコールが行われるかを確認します。</para>
-		///<para>────────────────────────────</para>
-		///<para>true  -> コール有効</para>
-		///<para>false -> コール無効</para>
-		///<para>────────────────────────────</para>
+		///<para>───────────────────────────────</para>
+		///<para>TaskCall::All::Update 呼び出し時に関数呼び出しが行われるかを確認します。</para>
+		///<para>───────────────────────────────</para>
+		///<para>true  -> 呼び出し有効</para>
+		///<para>false -> 呼び出し無効</para>
+		///<para>───────────────────────────────</para>
 		///</summary>
 		bool isActive() const
 		{
@@ -254,9 +258,11 @@ namespace rnfs
 		}
 
 		///<summary>
-		///<para>────────</para>
+		///<para>────────────────────────────────────────</para>
 		///<para>タグを変更します。</para>
-		///<para>────────</para>
+		///<para>TaskCall::All::Update 呼び出し時に呼ばれる関数が変更する際に、タグが強制的に置き換わります。</para>
+		///<para>その為、現在呼ばれる関数内限定で利用できます。</para>
+		///<para>────────────────────────────────────────</para>
 		///</summary>
 		///
 		///<param name="tag">
@@ -278,25 +284,17 @@ namespace rnfs
 		}
 
 		///<summary>
-		///<para>────────────────────</para>
-		///<para>最初のコール状態か確認します。</para>
-		///<para>仕様上、2 回以上の確認を行う事ができません。</para>
+		///<para>────────────────</para>
+		///<para>最初の呼び出しか確認します。</para>
 		///<para>初期化などに利用できます。</para>
-		///<para>────────────────────</para>
-		///<para>true  -> 最初のコール</para>
-		///<para>false -> 既にコールが行われている</para>
-		///<para>────────────────────</para>
+		///<para>────────────────</para>
+		///<para>true  -> 最初の呼び出し</para>
+		///<para>false -> 過去に呼び出しが行われている</para>
+		///<para>────────────────</para>
 		///</summary>
 		bool isFirst()
 		{
-			if (m_IsFirst)
-			{
-				m_IsFirst = false;
-
-				return true;
-			}
-
-			return false;
+			return m_IsFirst;
 		}
 
 		///<summary>
@@ -323,11 +321,15 @@ namespace rnfs
 				//末尾までループする
 				while (p_TaskCall != nullptr)
 				{
-					//コールが有効であり、コールが設定されていたら
+					//呼び出しが有効であり、関数が設定されていたら
 					if (p_TaskCall->m_Active && p_TaskCall->m_Call)
 					{
-						//コールの実行
+						//関数呼び出し
 						(p_TaskCall->mp_Task->*p_TaskCall->m_Call)();
+
+						//フラグ変更
+						p_TaskCall->m_IsFirst = p_TaskCall->m_IsSet;
+						p_TaskCall->m_IsSet = false;
 					}
 
 					//次のリストへ移動
@@ -339,7 +341,7 @@ namespace rnfs
 
 	///<summary>
 	///<para>──────────────────────────────────────────</para>
-	///<para>コールリストの登録を行います。</para>
+	///<para>呼び出しリストの登録を行います。</para>
 	///<para>──────────────────────────────────────────</para>
 	///<para>登録を行うことで TaskCall::All::Update 呼び出し時に 引数や SetCall で設定した関数が呼び出されます。</para>
 	///<para>──────────────────────────────────────────</para>
@@ -352,7 +354,7 @@ namespace rnfs
 	///
 	///<param name="callbackFunction">
 	///<para>省略可能</para>
-	///<para>TaskCall::All::Update 呼び出し時に呼ばれるコール関数</para>
+	///<para>TaskCall::All::Update 呼び出し時に呼ばれる関数</para>
 	///<para>型変換の省略とデフォルト引数の設定のため、テンプレートになっています。</para>
 	///</param>
 	///
@@ -362,21 +364,22 @@ namespace rnfs
 	///
 	///<param name="priority">
 	///<para>省略可能</para>
-	///<para>優先度（値が少なければ少ないほどコールが先に行われる）</para>
+	///<para>優先度（値が少なければ少ないほど呼び出しが先に行われる）</para>
+	///<para>負の値は設定できません。</para>
 	///<para>型変換の省略（主にenum class）のため、テンプレートになっています。</para>
 	///</param>
 	///
 	///<param name="priorityPushBack">
 	///<para>省略可能</para>
 	///<para>同じ優先度の集まりと競合した際の処理</para>
-	///<para>true  -> コールの集まりの末尾に設定</para>
-	///<para>false -> コールの集まりの先頭に設定</para>
+	///<para>true  -> 呼び出し集まりの末尾に設定</para>
+	///<para>false -> 呼び出し集まりの先頭に設定</para>
 	///</param>
 	template<typename FUNC, typename PRIORITY>
 	inline TaskCall::TaskCall(Task* p_Task, const FUNC & callbackFunction, const unsigned char group, const PRIORITY & priority, const bool priorityPushBack)
 		: mp_Task(p_Task), m_Group(group), m_Priority(static_cast<size_t>(priority))
 		, m_Call(static_cast<void(Task::*)()>(callbackFunction))
-		, m_Active(true), m_IsFirst(true)
+		, m_Active(true), m_IsFirst(true), m_IsSet(false)
 	{
 		//登録
 		this->_Register_(priorityPushBack);
@@ -384,7 +387,7 @@ namespace rnfs
 
 	///<summary>
 	///<para>──────────────────────────────────────────</para>
-	///<para>コールリストの登録を行います。</para>
+	///<para>呼び出しリストの登録を行います。</para>
 	///<para>──────────────────────────────────────────</para>
 	///<para>登録を行うことで TaskCall::All::Update 呼び出し時に 引数や SetCall で設定した関数が呼び出されます。</para>
 	///<para>──────────────────────────────────────────</para>
@@ -397,7 +400,7 @@ namespace rnfs
 	///
 	///<param name="callbackFunction">
 	///<para>省略可能</para>
-	///<para>TaskCall::All::Update 呼び出し時に呼ばれるコール関数</para>
+	///<para>TaskCall::All::Update 呼び出し時に呼ばれる関数</para>
 	///<para>型変換の省略とデフォルト引数の設定のため、テンプレートになっています。</para>
 	///</param>
 	///
@@ -407,20 +410,21 @@ namespace rnfs
 	///
 	///<param name="priority">
 	///<para>省略可能</para>
-	///<para>優先度（値が少なければ少ないほどコールが先に行われる）</para>
+	///<para>優先度（値が少なければ少ないほど呼び出しが先に行われる）</para>
+	///<para>負の値は設定できません。</para>
 	///<para>型変換の省略（主にenum class）のため、テンプレートになっています。</para>
 	///</param>
 	///
 	///<param name="priorityPushBack">
 	///<para>省略可能</para>
 	///<para>同じ優先度の集まりと競合した際の処理</para>
-	///<para>true  -> コールの集まりの末尾に設定</para>
-	///<para>false -> コールの集まりの先頭に設定</para>
+	///<para>true  -> 呼び出し集まりの末尾に設定</para>
+	///<para>false -> 呼び出し集まりの先頭に設定</para>
 	///</param>
 	template<typename FUNC, typename PRIORITY>
 	inline void TaskCall::Register(Task* p_Task, const FUNC & callbackFunction, const unsigned char group, const PRIORITY & priority, const bool priorityPushBack)
 	{
-		//コールが登録されていたら登録解除する
+		//呼び出しが登録されていたら登録解除する
 		if (mp_Task) this->_Unregister_();
 
 		//初期化
@@ -429,26 +433,30 @@ namespace rnfs
 		m_Priority = static_cast<size_t>(priority);
 		m_Call = static_cast<void(Task::*)()>(callbackFunction);
 		m_Active = true;
+		m_Tag = "";
 		m_IsFirst = true;
+		m_IsSet = false;
 
 		//登録
 		this->_Register_(priorityPushBack);
 	}
 
 	///<summary>
-	///<para>──────────────────────────</para>
-	///<para>TaskCall::All::Update 呼び出し時のコール優先度を変更します。</para>
-	///<para>──────────────────────────</para>
+	///<para>───────────────────────────</para>
+	///<para>TaskCall::All::Update 呼び出し時の呼び出し優先度を変更します。</para>
+	///<para>───────────────────────────</para>
 	///</summary>
 	///
 	///<param name="priority">
-	///<para>優先度（値が少なければ少ないほどコールが先に行われる）</para>
+	///<para>優先度（値が少なければ少ないほど呼び出しが先に行われる）</para>
+	///<para>負の値は設定できません。</para>
+	///<para>型変換の省略（主にenum class）のため、テンプレートになっています。</para>
 	///</param>
 	///
 	///<param name="pushBack">
 	///<para>同じ優先度の集まりと競合した際の処理</para>
-	///<para>true  -> コールの集まりの末尾に設定</para>
-	///<para>false -> コールの集まりの先頭に設定</para>
+	///<para>true  -> 呼び出し集まりの末尾に設定</para>
+	///<para>false -> 呼び出し集まりの先頭に設定</para>
 	///</param>
 	template<typename PRIORITY>
 	inline void TaskCall::SetPriority(const PRIORITY & priority, const bool pushBack)
@@ -476,20 +484,21 @@ namespace rnfs
 	}
 
 	///<summary>
-	///<para>────────────────────────────</para>
-	///<para>TaskCall::All::Update 呼び出し時に呼ばれるコール関数を設定します。</para>
-	///<para>前回の更新関数リストは消去され、新たに上書きされます。</para>
-	///<para>────────────────────────────</para>
+	///<para>──────────────────────────</para>
+	///<para>TaskCall::All::Update 呼び出し時に呼ばれる関数を設定します。</para>
+	///<para>前回の呼び出し関数は消去され、新たに上書きされます。</para>
+	///<para>──────────────────────────</para>
 	///</summary>
 	///
 	///<param name="callbackFunction">
-	///<para>コール関数</para>
+	///<para>TaskCall::All::Update 呼び出し時に呼ばれる関数</para>
+	///<para>型変換の省略のため、テンプレートになっています。</para>
 	///</param>
 	///
 	///<param name="active">
-	///<para>コールが行われるか</para>
-	///<para>true  -> コール有効</para>
-	///<para>false -> コール無効</para>
+	///<para>呼び出しが行われるか</para>
+	///<para>true  -> 呼び出し有効</para>
+	///<para>false -> 呼び出し無効</para>
 	///</param>
 	///
 	///<param name="tag">
@@ -501,6 +510,6 @@ namespace rnfs
 		m_Call = static_cast<void(Task::*)()>(callbackFunction);
 		m_Active = active;
 		m_Tag = tag;
-		m_IsFirst = true;
+		m_IsSet = true;
 	}
 }
