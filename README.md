@@ -41,6 +41,6 @@ http://qiita.com/Rinifisu/items/b4395ba2cff7da0363d8
 ##ライセンス
 Copyright (c) 2015-2017 Rinifisu
 
-http://rinifisu.blog.jp/
+https://twitter.com/Rinifisu
 
 Released under the MIT license
