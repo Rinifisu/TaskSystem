@@ -39,7 +39,7 @@ http://qiita.com/Rinifisu/items/b4395ba2cff7da0363d8
 ７．チャプターを１ステップずつ進めながら、タスクシステムを理解して行ってください。
 
 ##ライセンス
-Copyright (c) 2015-2016 Rinifisu
+Copyright (c) 2015-2017 Rinifisu
 
 http://rinifisu.blog.jp/
 
